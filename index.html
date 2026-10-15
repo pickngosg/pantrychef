@@ -1468,10 +1468,15 @@
         if (!this.ready || !this.user) return;
         const keys = this.dirty(); if (!keys.length) return;
         const snap = {}; const rows = [];
+        const empty = [];
         for (const k of keys) {
           snap[k] = this.ts(k);
-          rows.push({ user_id: this.user.id, key: k, value: await db.get(k, null), updated_at: new Date(snap[k] || Date.now()).toISOString() });
+          const v = await db.get(k, null);
+          if (v === null || v === undefined) { empty.push(k); continue; } // never upload empty values
+          rows.push({ user_id: this.user.id, key: k, value: v, updated_at: new Date(snap[k] || Date.now()).toISOString() });
         }
+        if (empty.length) this.setDirty(this.dirty().filter(k => !empty.includes(k)));
+        if (!rows.length) return;
         const { error } = await this.sb.from('kitchen_data').upsert(rows, { onConflict: 'user_id,key' });
         if (error) { this.status('⚠️ Sync failed – will retry'); return; }
         this.setDirty(this.dirty().filter(k => !(keys.includes(k) && this.ts(k) === snap[k])));
@@ -1487,7 +1492,7 @@
         this.applying = true;
         try {
           for (const r of data) {
-            if (!SYNC_KEYS.includes(r.key)) continue;
+            if (!SYNC_KEYS.includes(r.key) || r.value === null || r.value === undefined) continue; // ignore empty cloud rows
             const rts = new Date(r.updated_at).getTime();
             if (fresh || (rts > this.ts(r.key) && !dirty.includes(r.key))) {
               if (JSON.stringify(await db.get(r.key, null)) !== JSON.stringify(r.value)) { await db.set(r.key, r.value); changed = true; }
