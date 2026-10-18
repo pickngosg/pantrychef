@@ -812,6 +812,11 @@
           </div>
         </div>
 
+        <div>
+          <label class="block font-bold mb-1">Servings (base portions the quantities are for)</label>
+          <input type="number" id="editorRecipeServings" value="2" min="1" step="1" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 outline-none">
+        </div>
+
         <!-- Recipe Image URL & Live Preview -->
         <div>
           <label class="block font-bold mb-1">Recipe Image URL</label>
@@ -2095,19 +2100,23 @@
         const imgPreview = document.getElementById('editorRecipeImagePreview');
 
         const r = recipeId ? AppState.state.recipes.find(x => x.id === recipeId) : prefill;
+        this.baseRecipe = r ? JSON.parse(JSON.stringify(r)) : null;
+        this.fromImport = !recipeId && !!prefill;
+        const servingsInput = document.getElementById('editorRecipeServings');
+        if (servingsInput) servingsInput.value = (r && r.servings) ? r.servings : 2;
         if (r) {
           document.getElementById('recipeEditorModalTitle').textContent = recipeId ? 'Edit Recipe' : 'Review Imported Recipe';
           document.getElementById('editorRecipeId').value = recipeId || '';
           document.getElementById('editorRecipeTitle').value = r.title || '';
           document.getElementById('editorRecipeCategory').value = r.category || AppState.state.categories[0];
-          document.getElementById('editorRecipeTime').value = r.prepTime || 20;
-          document.getElementById('editorRecipeCal').value = r.cal || 450;
-          document.getElementById('editorRecipePro').value = r.pro || 25;
-          document.getElementById('editorRecipeCarbs').value = r.carbs || 45;
-          document.getElementById('editorRecipeFat').value = r.fat || 15;
-          document.getElementById('editorRecipeFibre').value = r.fibre || 4;
-          document.getElementById('editorRecipeSodium').value = r.sodium || 550;
-          document.getElementById('editorRecipeSugar').value = r.sugar || 4;
+          document.getElementById('editorRecipeTime').value = (r.prepTime ?? 20);
+          document.getElementById('editorRecipeCal').value = (r.cal ?? 450);
+          document.getElementById('editorRecipePro').value = (r.pro ?? 25);
+          document.getElementById('editorRecipeCarbs').value = (r.carbs ?? 45);
+          document.getElementById('editorRecipeFat').value = (r.fat ?? 15);
+          document.getElementById('editorRecipeFibre').value = (r.fibre ?? 4);
+          document.getElementById('editorRecipeSodium').value = (r.sodium ?? 550);
+          document.getElementById('editorRecipeSugar').value = (r.sugar ?? 4);
           if (imgInput) imgInput.value = r.image || '';
           if (imgPreview) imgPreview.src = getRecipeImage(r);
           document.getElementById('editorRecipeSteps').value = (r.steps || []).join('\n');
@@ -2137,6 +2146,10 @@
 
       closeModal() {
         document.getElementById('recipeEditorModal').classList.add('hidden');
+        if (this.fromImport && recipeScraper.previewedRecipe) {
+          this.fromImport = false;
+          recipeScraper.reopenPreview();
+        }
       }
 
       addIngredientRow(ing = { name: '', qty: 100, unit: 'g' }) {
@@ -2160,14 +2173,20 @@
         const id = document.getElementById('editorRecipeId').value;
         const title = document.getElementById('editorRecipeTitle').value.trim();
         const category = document.getElementById('editorRecipeCategory').value;
-        const prepTime = parseInt(document.getElementById('editorRecipeTime').value, 10) || 20;
-        const cal = parseInt(document.getElementById('editorRecipeCal').value, 10) || 450;
-        const pro = parseInt(document.getElementById('editorRecipePro').value, 10) || 25;
-        const carbs = parseInt(document.getElementById('editorRecipeCarbs').value, 10) || 45;
-        const fat = parseInt(document.getElementById('editorRecipeFat').value, 10) || 15;
-        const fibre = parseInt(document.getElementById('editorRecipeFibre').value, 10) || 4;
-        const sodium = parseInt(document.getElementById('editorRecipeSodium').value, 10) || 550;
-        const sugar = parseInt(document.getElementById('editorRecipeSugar').value, 10) || 4;
+        const readNum = (elId, dflt, min = 0) => {
+          const v = parseInt(document.getElementById(elId).value, 10);
+          return isNaN(v) ? dflt : Math.max(min, v);
+        };
+        const prepTime = readNum('editorRecipeTime', 20, 1);
+        const cal = readNum('editorRecipeCal', 450);
+        const pro = readNum('editorRecipePro', 25);
+        const carbs = readNum('editorRecipeCarbs', 45);
+        const fat = readNum('editorRecipeFat', 15);
+        const fibre = readNum('editorRecipeFibre', 4);
+        const sodium = readNum('editorRecipeSodium', 550);
+        const sugar = readNum('editorRecipeSugar', 4);
+        const servings = readNum('editorRecipeServings', 2, 1) || 2;
+        const base = this.baseRecipe || {};
         const rawImage = (document.getElementById('editorRecipeImage')?.value || '').trim();
         const image = rawImage || getRecipeFallbackImage(title, category);
         const steps = document.getElementById('editorRecipeSteps').value.split('\n').map(s => s.replace(/^\d+[\.\)]\s*/, '').trim()).filter(Boolean);
@@ -2177,18 +2196,22 @@
           const name = row.querySelector('.ing-name').value.trim();
           const qty = parseFloat(row.querySelector('.ing-qty').value) || 1;
           const unit = row.querySelector('.ing-unit').value;
-          if (name) ingredients.push({ name, qty, unit, store: 'FairPrice' });
+          if (name) {
+            const prev = (base.ingredients || []).find(i => (i.name || '').toLowerCase() === name.toLowerCase());
+            ingredients.push({ ...(prev || {}), name, qty, unit, store: (prev && prev.store) || 'FairPrice' });
+          }
         });
 
         if (!title || ingredients.length === 0) return showToast('Please add a title and at least 1 ingredient', '⚠️');
 
         const recipeObj = {
+          ...base,
           id: id || ('rec_' + Date.now()),
           title,
           category,
           image,
           prepTime,
-          servings: 2,
+          servings,
           cal,
           pro,
           carbs,
@@ -2211,6 +2234,7 @@
         }
 
         AppState.setRecipes(list);
+        this.fromImport = false;
         this.closeModal();
         recipeDetailModal.close();
       }
@@ -2220,6 +2244,7 @@
         if (!id) return;
         AppState.setRecipes(AppState.state.recipes.filter(r => r.id !== id));
         showToast('Deleted recipe', '🗑️');
+        this.fromImport = false;
         this.closeModal();
         recipeDetailModal.close();
       }
@@ -2264,6 +2289,11 @@
 
       closeModal() {
         document.getElementById('recipeImportUrlModal')?.classList.add('hidden');
+      }
+
+      reopenPreview() {
+        document.getElementById('recipeImportUrlModal')?.classList.remove('hidden');
+        this.showPreview();
       }
 
       switchTab(tab) {
@@ -3197,7 +3227,7 @@
                 <div class="p-4 pb-2"><h3 class="font-black text-sm truncate">${recipe.title}</h3></div>
               </div>
               <div class="px-4 pb-3.5 pt-2 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-100 dark:border-slate-800 mx-4">
-                <span>⏱️ ${recipe.prepTime}m</span>
+                <span class="flex items-center gap-2"><span>⏱️ ${recipe.prepTime}m</span><button type="button" onclick="event.stopPropagation(); recipeEditor.openModal('${recipe.id}')" class="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold hover:bg-brand-500 hover:text-slate-950 transition">✏️ Edit</button></span>
                 <span>🔥 ${recipe.cal}kcal · 💪 ${recipe.pro}g · 🌾 ${recipe.carbs || 45}g · 🥑 ${recipe.fat || 15}g</span>
               </div>
             </div>
@@ -3346,6 +3376,27 @@
       document.getElementById('btnOpenCategoryManagerModal')?.addEventListener('click', () => categoryManager.openModal());
       document.getElementById('btnOpenRecipeImport')?.addEventListener('click', () => recipeScraper.openModal());
       document.getElementById('closeRecipeDetailModalBtn')?.addEventListener('click', () => recipeDetailModal.close());
+      document.getElementById('btnEditCurrentRecipeFromDetail')?.addEventListener('click', () => {
+        if (recipeDetailModal.currentRecipe) recipeEditor.openModal(recipeDetailModal.currentRecipe.id);
+      });
+      document.getElementById('editorRecipeImage')?.addEventListener('input', (e) => {
+        const prev = document.getElementById('editorRecipeImagePreview');
+        const v = e.target.value.trim();
+        if (prev) prev.src = v || 'https://placehold.co/160x120/064e3b/ecfdf5?text=Photo';
+      });
+      document.getElementById('btnEditorManageCategories')?.addEventListener('click', () => {
+        const m = document.getElementById('categoryManagerModal');
+        if (m) m.style.zIndex = '70';
+        categoryManager.openModal();
+      });
+      document.getElementById('closeCategoryManagerBtn')?.addEventListener('click', () => {
+        const sel = document.getElementById('editorRecipeCategory');
+        if (sel) {
+          const cur = sel.value;
+          sel.innerHTML = AppState.state.categories.map(c => `<option value="${c}">${c}</option>`).join('');
+          if (AppState.state.categories.includes(cur)) sel.value = cur;
+        }
+      });
       document.getElementById('btnPaxMinus')?.addEventListener('click', () => recipeDetailModal.updatePax(-1));
       document.getElementById('btnPaxPlus')?.addEventListener('click', () => recipeDetailModal.updatePax(1));
       document.getElementById('btnPushMissingToCart')?.addEventListener('click', () => recipeDetailModal.pushToCart());
