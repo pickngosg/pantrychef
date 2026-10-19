@@ -63,6 +63,34 @@
       header nav .nav-tab-btn:hover{background:#1E3128!important}
       header nav .nav-tab-btn.shadow-sm{background:#F6F7F3!important;color:#14211C!important;font-weight:700!important}
     }
+
+    /* ===== Recipe editor: roomy, readable layout ===== */
+    #recipeEditorModal .re-label{display:block;font-size:14px;font-weight:700;margin-bottom:6px;color:#334155}
+    html.dark #recipeEditorModal .re-label{color:#CBD5E1}
+    #recipeEditorModal .re-input{width:100%;min-width:0;padding:12px 16px;border-radius:12px;font-size:16px;line-height:1.4;outline:none;background:#fff;border:1px solid #CBD5E1;color:#0F172A;transition:border-color .15s, box-shadow .15s}
+    html.dark #recipeEditorModal .re-input{background:#1E293B;border-color:#334155;color:#fff}
+    #recipeEditorModal .re-input:focus{border-color:#1F6B4A;box-shadow:0 0 0 3px rgba(31,107,74,.22)}
+    #recipeEditorModal .re-input::placeholder{color:#94A3B8}
+    #recipeEditorModal .re-card{border-radius:20px;padding:20px 22px;background:#fff;border:1px solid #E2E8F0}
+    html.dark #recipeEditorModal .re-card{background:#0F172A;border-color:#1E293B}
+    #recipeEditorModal .re-card-title{display:flex;align-items:center;gap:10px;font-family:'Bricolage Grotesque','DM Sans',sans-serif;font-weight:800;font-size:19px;letter-spacing:-0.01em;margin-bottom:14px;color:#14211C}
+    html.dark #recipeEditorModal .re-card-title{color:#F1F5F9}
+    #recipeEditorModal .re-card-title small{font-family:'DM Sans',sans-serif;font-weight:500;font-size:13px;letter-spacing:0;color:#64748B}
+    /* Ingredient rows: fixed grid so name / qty / unit / remove always line up */
+    #recipeEditorModal .editor-ing-row{display:grid;grid-template-columns:minmax(0,1fr) 96px 120px 44px;gap:10px;align-items:center}
+    #recipeEditorModal .editor-ing-head{grid-template-columns:minmax(0,1fr) 96px 120px 44px;gap:10px;align-items:end}
+    #recipeEditorModal .editor-ing-row .re-input{padding:11px 14px}
+    #recipeEditorModal .editor-ing-row .ing-remove{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#94A3B8;background:#F1F5F9;transition:background .15s,color .15s}
+    html.dark #recipeEditorModal .editor-ing-row .ing-remove{background:#1E293B}
+    #recipeEditorModal .editor-ing-row .ing-remove:hover{color:#E11D48;background:rgba(225,29,72,.1)}
+    @media (max-width:639px){
+      #recipeEditorModal .editor-ing-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 44px;padding-bottom:10px;border-bottom:1px dashed #E2E8F0}
+      html.dark #recipeEditorModal .editor-ing-row{border-bottom-color:#1E293B}
+      #recipeEditorModal .editor-ing-row .ing-name{grid-column:1 / -1}
+    }
+    #recipeEditorModal ::-webkit-scrollbar{width:10px;height:10px}
+    #recipeEditorModal ::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:10px;border:2px solid transparent;background-clip:content-box}
+    html.dark #recipeEditorModal ::-webkit-scrollbar-thumb{background:#334155;background-clip:content-box}
   </style>
 <base target="_blank">
 </head>
@@ -523,64 +551,105 @@
     </div>
   </div>
 
-  <div id="recipeEditorModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="w-full sm:max-w-xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 text-xs">
-      <div class="flex items-center justify-between">
-        <h3 id="recipeEditorModalTitle" class="font-black text-sm text-slate-900 dark:text-white">Create Recipe</h3>
-        <button id="closeRecipeEditorModalBtn" class="p-1 text-slate-400 hover:text-slate-600">✕</button>
+  <!-- ===== RECIPE EDITOR (large, roomy layout) ===== -->
+  <div id="recipeEditorModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-6">
+    <div class="w-full sm:max-w-5xl h-[96vh] sm:h-auto sm:max-h-[94vh] bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-base">
+
+      <!-- Sticky header -->
+      <div class="flex items-center justify-between gap-4 px-5 sm:px-8 py-4 sm:py-5 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
+        <div class="min-w-0">
+          <h3 id="recipeEditorModalTitle" class="font-extrabold text-2xl sm:text-3xl text-slate-900 dark:text-white truncate">Create Recipe</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Fill in the details below, then tap Save at the bottom.</p>
+        </div>
+        <button type="button" id="closeRecipeEditorModalBtn" aria-label="Close" class="w-11 h-11 flex-shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-300 text-lg font-bold transition">✕</button>
       </div>
-      <form id="recipeEditorForm" class="space-y-3">
+
+      <form id="recipeEditorForm" class="flex flex-col flex-1 min-h-0">
         <input type="hidden" id="editorRecipeId">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <div class="sm:col-span-2">
-            <label class="block font-bold mb-1">Recipe Title *</label>
-            <input type="text" id="editorRecipeTitle" required placeholder="e.g. Sambal Stingray, Grandma's Chicken Curry" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 outline-none">
-          </div>
-          <div>
-            <div class="flex items-center justify-between mb-1">
-              <label class="block font-bold">Category</label>
-              <button type="button" id="btnEditorManageCategories" class="text-[10px] text-brand-600 font-bold hover:underline">⚙️ Edit</button>
+
+        <!-- Scrollable body -->
+        <div class="flex-1 overflow-y-auto px-5 sm:px-8 py-5 sm:py-6 space-y-5 bg-slate-50 dark:bg-slate-950/40">
+
+          <!-- Basics -->
+          <section class="re-card">
+            <div class="re-card-title"><span>📝</span>Basics</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="sm:col-span-2">
+                <label class="re-label" for="editorRecipeTitle">Recipe title *</label>
+                <input type="text" id="editorRecipeTitle" required placeholder="e.g. Sambal Stingray, Grandma's Chicken Curry" class="re-input">
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="re-label !mb-0" for="editorRecipeCategory">Category</label>
+                  <button type="button" id="btnEditorManageCategories" class="text-sm text-brand-600 dark:text-brand-400 font-bold hover:underline">⚙️ Edit</button>
+                </div>
+                <select id="editorRecipeCategory" class="re-input"></select>
+              </div>
             </div>
-            <select id="editorRecipeCategory" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 outline-none"></select>
+            <div class="grid grid-cols-2 gap-4 mt-4">
+              <div>
+                <label class="re-label" for="editorRecipeTime">Prep time (min)</label>
+                <input type="number" id="editorRecipeTime" value="20" min="1" required class="re-input">
+              </div>
+              <div>
+                <label class="re-label" for="editorRecipeServings">Servings <span class="font-normal text-slate-400">(quantities are for this many)</span></label>
+                <input type="number" id="editorRecipeServings" value="2" min="1" step="1" required class="re-input">
+              </div>
+            </div>
+          </section>
+
+          <!-- Photo -->
+          <section class="re-card">
+            <div class="re-card-title"><span>📷</span>Photo</div>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+              <img id="editorRecipeImagePreview" src="https://placehold.co/160x120/064e3b/ecfdf5?text=Photo" alt="Preview" class="w-full sm:w-40 h-32 sm:h-28 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/160x120/064e3b/ecfdf5?text=Photo';">
+              <div class="flex-1 min-w-0">
+                <label class="re-label" for="editorRecipeImage">Recipe image URL</label>
+                <input type="url" id="editorRecipeImage" placeholder="https://example.com/recipe-photo.jpg" class="re-input">
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1.5">Leave empty and a matching photo is picked for you.</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Nutrition -->
+          <section class="re-card">
+            <div class="re-card-title"><span>🥗</span>Nutrition <small>per serving</small></div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
+              <div><label class="re-label" for="editorRecipeCal">Calories (kcal)</label><input type="number" id="editorRecipeCal" value="450" min="10" required class="re-input"></div>
+              <div><label class="re-label" for="editorRecipePro">Protein (g)</label><input type="number" id="editorRecipePro" value="28" min="0" required class="re-input"></div>
+              <div><label class="re-label" for="editorRecipeCarbs">Carbs (g)</label><input type="number" id="editorRecipeCarbs" value="45" min="0" required class="re-input"></div>
+              <div><label class="re-label" for="editorRecipeFat">Fat (g)</label><input type="number" id="editorRecipeFat" value="15" min="0" required class="re-input"></div>
+              <div><label class="re-label" for="editorRecipeFibre">Fibre (g)</label><input type="number" id="editorRecipeFibre" value="4" min="0" required class="re-input"></div>
+              <div><label class="re-label" for="editorRecipeSodium">Sodium (mg)</label><input type="number" id="editorRecipeSodium" value="550" min="0" required class="re-input"></div>
+              <div><label class="re-label" for="editorRecipeSugar">Sugar (g)</label><input type="number" id="editorRecipeSugar" value="4" min="0" required class="re-input"></div>
+            </div>
+          </section>
+
+          <!-- Ingredients + Steps -->
+          <div class="grid grid-cols-1 lg:grid-cols-5 gap-5 items-start">
+            <section class="re-card lg:col-span-3">
+              <div class="re-card-title"><span>🧂</span>Ingredients *</div>
+              <div class="editor-ing-head hidden sm:grid px-0.5 mb-1.5 text-xs font-bold uppercase tracking-wider text-slate-400">
+                <span>Ingredient</span><span>Qty</span><span>Unit</span><span></span>
+              </div>
+              <div id="editorIngredientsContainer" class="space-y-2.5"></div>
+              <button type="button" id="btnAddEditorIngredientRow" class="mt-3 w-full py-3 rounded-xl border-2 border-dashed border-brand-500/50 text-brand-600 dark:text-brand-400 font-bold text-base hover:bg-brand-500/10 transition">+ Add ingredient</button>
+            </section>
+
+            <section class="re-card lg:col-span-2">
+              <div class="re-card-title"><span>👨‍🍳</span>Cooking steps * <small>one step per line</small></div>
+              <textarea id="editorRecipeSteps" rows="12" required placeholder="1. Marinate chicken with light soy sauce for 10 mins.&#10;2. Stir-fry garlic over medium heat for 3 mins...&#10;3. Add chicken and cook until golden." class="re-input min-h-[20rem] leading-relaxed resize-y"></textarea>
+            </section>
           </div>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-6 gap-2">
-          <div><label class="block font-bold mb-1">Prep (min)</label><input type="number" id="editorRecipeTime" value="20" min="1" required class="w-full px-2 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700"></div>
-          <div><label class="block font-bold mb-1">Cal (kcal)</label><input type="number" id="editorRecipeCal" value="450" min="10" required class="w-full px-2 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700"></div>
-          <div><label class="block font-bold mb-1">Pro (g)</label><input type="number" id="editorRecipePro" value="28" min="0" required class="w-full px-2 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700"></div>
-          <div><label class="block font-bold mb-1">Carbs (g)</label><input type="number" id="editorRecipeCarbs" value="45" min="0" required class="w-full px-2 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700"></div>
-          <div><label class="block font-bold mb-1">Fat (g)</label><input type="number" id="editorRecipeFat" value="15" min="0" required class="w-full px-2 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700"></div>
-          <div><label class="block font-bold mb-1">Fibre (g)</label><input type="number" id="editorRecipeFibre" value="4" min="0" required class="w-full px-2 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700"></div>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div><label class="block font-bold mb-1">Sodium (mg)</label><input type="number" id="editorRecipeSodium" value="550" min="0" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700"></div>
-          <div><label class="block font-bold mb-1">Sugar (g)</label><input type="number" id="editorRecipeSugar" value="4" min="0" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700"></div>
-        </div>
-        <div>
-          <label class="block font-bold mb-1">Servings (base portions the quantities are for)</label>
-          <input type="number" id="editorRecipeServings" value="2" min="1" step="1" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 outline-none">
-        </div>
-        <div>
-          <label class="block font-bold mb-1">Recipe Image URL</label>
-          <div class="flex items-center gap-2.5">
-            <img id="editorRecipeImagePreview" src="https://placehold.co/160x120/064e3b/ecfdf5?text=Photo" alt="Preview" class="w-16 h-12 rounded-xl object-cover border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/160x120/064e3b/ecfdf5?text=Photo';">
-            <input type="url" id="editorRecipeImage" placeholder="https://example.com/recipe-photo.jpg" class="flex-1 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 outline-none">
+
+        <!-- Sticky footer -->
+        <div class="flex items-center justify-between gap-3 px-5 sm:px-8 py-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-shrink-0" style="padding-bottom:calc(1rem + env(safe-area-inset-bottom,0px))">
+          <button type="button" id="btnDeleteCurrentRecipe" class="hidden px-5 py-3.5 rounded-xl bg-rose-500/10 text-rose-600 text-base font-bold hover:bg-rose-500/20 transition">🗑️ Delete</button>
+          <div class="flex items-center gap-3 ml-auto flex-1 sm:flex-none">
+            <button type="button" id="btnCancelRecipeEditor" class="px-5 py-3.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-base font-bold transition">Cancel</button>
+            <button type="submit" class="flex-1 sm:flex-none sm:min-w-[220px] px-6 py-3.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-base font-black shadow-md transition">💾 Save Recipe</button>
           </div>
-        </div>
-        <div>
-          <div class="flex items-center justify-between mb-1.5">
-            <label class="font-bold">Ingredients *</label>
-            <button type="button" id="btnAddEditorIngredientRow" class="text-[11px] font-bold text-brand-600 dark:text-brand-400 hover:underline">+ Add Ingredient Row</button>
-          </div>
-          <div id="editorIngredientsContainer" class="space-y-2 max-h-44 overflow-y-auto pr-1"></div>
-        </div>
-        <div>
-          <label class="block font-bold mb-1">Cooking Instructions (one step per line) *</label>
-          <textarea id="editorRecipeSteps" rows="4" required placeholder="1. Marinate chicken with light soy sauce for 10 mins.&#10;2. Stir-fry garlic over medium heat for 3 mins..." class="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 outline-none"></textarea>
-        </div>
-        <div class="flex items-center justify-between pt-2 gap-2">
-          <button type="button" id="btnDeleteCurrentRecipe" class="hidden px-3.5 py-2.5 rounded-xl bg-rose-500/10 text-rose-600 font-bold">🗑️ Delete</button>
-          <button type="submit" class="flex-1 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black shadow-md">💾 Save Recipe</button>
         </div>
       </form>
     </div>
@@ -675,14 +744,15 @@
     </div>
   </div>
 
-  <div id="commandPaletteModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-start justify-center pt-16 p-4">
-    <div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-xs">
-      <div class="p-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
-        <span>⚡</span>
-        <input type="text" id="commandPaletteInput" placeholder="Type a command, recipe, or pantry item..." class="flex-1 bg-transparent outline-none text-slate-900 dark:text-white font-semibold">
-        <button id="closeCommandPaletteBtn" class="text-slate-400 hover:text-slate-600 font-bold">ESC</button>
+  <!-- ===== COMMAND PALETTE (larger text) ===== -->
+  <div id="commandPaletteModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-start justify-center pt-12 sm:pt-24 p-4">
+    <div class="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-base">
+      <div class="px-5 py-4 sm:px-6 sm:py-5 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3">
+        <span class="text-2xl">⚡</span>
+        <input type="text" id="commandPaletteInput" placeholder="Type a command, recipe, or pantry item..." class="flex-1 min-w-0 bg-transparent outline-none text-slate-900 dark:text-white font-semibold text-lg sm:text-xl placeholder:text-slate-400">
+        <button id="closeCommandPaletteBtn" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 font-bold text-sm">ESC</button>
       </div>
-      <div id="commandPaletteResults" class="p-2 max-h-72 overflow-y-auto space-y-1"></div>
+      <div id="commandPaletteResults" class="p-3 max-h-[60vh] overflow-y-auto space-y-1.5"></div>
     </div>
   </div>
 
@@ -1794,6 +1864,9 @@
           document.getElementById('btnDeleteCurrentRecipe').classList.add('hidden');
         }
         modal.classList.remove('hidden');
+        // Always start at the top of the form
+        const body = modal.querySelector('form > .overflow-y-auto');
+        if (body) body.scrollTop = 0;
       }
 
       closeModal() {
@@ -1804,17 +1877,21 @@
       addIngredientRow(ing = { name: '', qty: 100, unit: 'g' }) {
         const container = document.getElementById('editorIngredientsContainer');
         const row = document.createElement('div');
-        row.className = 'flex items-center gap-1.5 editor-ing-row';
+        row.className = 'editor-ing-row';
         const baseUnits = AppState.state.pantryUnits.map(u => u.id);
         const currentUnit = (ing.unit || 'g').toLowerCase();
         const allUnits = baseUnits.includes(currentUnit) ? baseUnits : [...baseUnits, currentUnit];
         const unitOptions = allUnits.map(u => `<option value="${esc(u)}" ${u === currentUnit ? 'selected' : ''}>${esc(u)}</option>`).join('');
         row.innerHTML = `
-          <input type="text" required placeholder="Ingredient" value="${esc(ing.name || '')}" class="ing-name flex-1 px-2.5 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs">
-          <input type="number" step="any" required value="${ing.qty || 1}" class="ing-qty w-20 px-2 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs">
-          <select class="ing-unit w-20 px-2 py-1.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs">${unitOptions}</select>
-          <button type="button" class="p-1.5 text-slate-400 hover:text-rose-500" onclick="this.parentElement.remove()">✕</button>`;
+          <input type="text" required placeholder="Ingredient name" value="${esc(ing.name || '')}" aria-label="Ingredient name" class="re-input ing-name">
+          <input type="number" step="any" required value="${ing.qty || 1}" aria-label="Quantity" class="re-input ing-qty">
+          <select aria-label="Unit" class="re-input ing-unit">${unitOptions}</select>
+          <button type="button" aria-label="Remove ingredient" class="ing-remove" onclick="this.parentElement.remove()">✕</button>`;
         container.appendChild(row);
+        // Focus the new name field when the user adds an empty row
+        if (!ing.name && document.activeElement && document.activeElement.id === 'btnAddEditorIngredientRow') {
+          row.querySelector('.ing-name').focus();
+        }
       }
 
       saveRecipe() {
@@ -2448,12 +2525,16 @@
           { label: '🌙 Toggle Dark / Light Theme', run: () => AppState.toggleDarkMode() }
         ];
         AppState.state.recipes.forEach(r => actions.push({ label: `🍲 Recipe: ${r.title}`, run: () => recipeDetailModal.open(r.id) }));
-        const filtered = actions.filter(a => a.label.toLowerCase().includes(q)).slice(0, 8);
+        const filtered = actions.filter(a => a.label.toLowerCase().includes(q)).slice(0, 10);
         results.innerHTML = '';
+        if (filtered.length === 0) {
+          results.innerHTML = '<div class="px-4 py-8 text-center text-base text-slate-400 font-semibold">No matching commands or recipes</div>';
+          return;
+        }
         filtered.forEach(item => {
           const btn = document.createElement('button');
-          btn.className = 'w-full text-left px-3 py-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 font-bold flex items-center justify-between transition';
-          btn.innerHTML = `<span>${esc(item.label)}</span><span class="text-[10px] text-slate-400">↵</span>`;
+          btn.className = 'w-full text-left px-4 py-3.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-slate-100 dark:focus:bg-slate-800 outline-none text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center justify-between gap-3 transition';
+          btn.innerHTML = `<span class="min-w-0 truncate">${esc(item.label)}</span><span class="text-base text-slate-400 flex-shrink-0">↵</span>`;
           btn.addEventListener('click', () => { this.close(); item.run(); });
           results.appendChild(btn);
         });
@@ -2586,7 +2667,7 @@
       if (cc) {
         const open = AppState.state.shoppingList.filter(i => !i.checked);
         const first = open[0];
-        const money = (n) => `S$${n.toFixed(2)}`;
+        const money = (n) => `S${n.toFixed(2)}`;
         if (!first) {
           cc.innerHTML = `<h2 class="font-bold text-lg">Cart prices</h2><p class="text-sm text-slate-500 mt-2">Add items to your cart to compare prices at FairPrice, Sheng Siong and Cold Storage.</p>`;
         } else {
@@ -2734,7 +2815,7 @@
       const badge = document.getElementById('priceTotalBadge');
       if (!container) return;
       const list = AppState.state.shoppingList;
-      const money = (n) => `S$${n.toFixed(2)}`;
+      const money = (n) => `S${n.toFixed(2)}`;
 
       const priceHtml = (item) => {
         const pf = PriceEngine.priceFor(item, currentPriceStore);
@@ -3057,6 +3138,7 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
       });
 
       on('closeRecipeEditorModalBtn', 'click', () => recipeEditor.closeModal());
+      on('btnCancelRecipeEditor', 'click', () => recipeEditor.closeModal());
       on('recipeEditorForm', 'submit', (e) => { e.preventDefault(); recipeEditor.saveRecipe(); });
       on('btnDeleteCurrentRecipe', 'click', () => recipeEditor.deleteRecipe());
       on('btnAddEditorIngredientRow', 'click', () => recipeEditor.addIngredientRow());
