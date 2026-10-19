@@ -4,7 +4,7 @@ const CACHE = 'pantrychef-sg-v4';
 const PRECACHE = [
   './', './index.html', './manifest.json',
   './icon-192.png', './icon-512.png',
-  './icon-192-maskable.png', './icon-512-maskable.png', './icon-180.png'
+  './icon-maskable-512.png', './icon-180.png'
 ];
 
 // Hosts that must always hit the network (never cached)
