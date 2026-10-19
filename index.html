@@ -1927,7 +1927,7 @@
           'g': 'g', 'gram': 'g', 'grams': 'g', 'gm': 'g', 'gms': 'g', 'kg': 'kg', 'kilogram': 'kg', 'kilograms': 'kg', 'kilo': 'kg',
           'oz': 'g', 'ounce': 'g', 'ounces': 'g', 'lb': 'g', 'lbs': 'g', 'pound': 'g', 'pounds': 'g',
           'ml': 'ml', 'milliliter': 'ml', 'milliliters': 'ml', 'millilitre': 'ml', 'millilitres': 'ml', 'cc': 'ml',
-          'l': 'l', 'liter': 'l', 'liters': 'l', 'litre': 'l', 'litres': 'l',
+          'qt': 'l', 'quart': 'l', 'quarts': 'l', 'l': 'l', 'liter': 'l', 'liters': 'l', 'litre': 'l', 'litres': 'l',
           'tbsp': 'tbsp', 'tbs': 'tbsp', 'tbsp.': 'tbsp', 'tablespoon': 'tbsp', 'tablespoons': 'tbsp', 'T': 'tbsp',
           'tsp': 'tsp', 'tsp.': 'tsp', 'teaspoon': 'tsp', 'teaspoons': 'tsp', 't': 'tsp',
           'cup': 'cup', 'cups': 'cup', 'c': 'cup', 'c.': 'cup',
@@ -2012,15 +2012,15 @@
           if (/^[.)]\s+/.test(rest) && rest.length > 40) return null;
           rest = rest.replace(/^[.)]\s*/, '').trim();
           const wordMatch = rest.match(/^([a-zA-Z.]+)\b\s*(.*)$/);
-          let unit = 'pcs', name = rest;
+          let unit = 'pcs', name = rest, factor = 1;
           if (wordMatch) {
             const cand = wordMatch[1].toLowerCase().replace(/\.$/, '');
-            if (this.unitMap[cand]) { unit = this.unitMap[cand]; name = wordMatch[2].replace(/^of\s+/i, '').trim(); }
+            if (this.unitMap[cand]) { unit = this.unitMap[cand]; name = wordMatch[2].replace(/^of\s+/i, '').trim(); factor = ({ lb: 454, lbs: 454, pound: 454, pounds: 454, oz: 28.35, ounce: 28.35, ounces: 28.35, qt: 0.95, quart: 0.95, quarts: 0.95 })[cand] || 1; }
           }
           if (parenNote && name) name = `${name} (${parenNote})`;
           name = name.replace(/^[-–—,:]+\s*/, '').trim();
           if (name && name.length <= 90 && !/[.!?;].*[a-zA-Z]/.test(name)) {
-            return { name: name.charAt(0).toUpperCase() + name.slice(1), qty: Math.round(qty * 100) / 100, unit, store: 'FairPrice' };
+            return { name: name.charAt(0).toUpperCase() + name.slice(1), qty: Math.round(qty * factor * 100) / 100, unit, store: 'FairPrice' };
           }
         }
 
@@ -2300,6 +2300,26 @@
         let n = 0; lines.forEach(l => { if (unit.test(l) || bullet.test(l)) n++; });
         return n >= 3 || (/ingredients?\s*:?/i.test(text) && n >= 2);
       },
+      explainApiError(msg) {
+        const m = String(msg || '');
+        if (/ipRefererBlocked|referer|Referer/.test(m)) return 'Google blocked the key because the website address does not match the key\'s website restriction.';
+        if (/API_KEY_SERVICE_BLOCKED|API_KEY_API_BLOCKED|blocked.*YouTube Data API/i.test(m)) return 'The key is not allowed to use YouTube Data API v3 (check its API restrictions).';
+        if (/accessNotConfigured|has not been used|is disabled|SERVICE_DISABLED/i.test(m)) return 'YouTube Data API v3 is not switched on for this Google Cloud project.';
+        if (/keyInvalid|API_KEY_INVALID|API key not valid/i.test(m)) return 'The key was not accepted — check it was copied completely.';
+        if (/quota/i.test(m)) return 'The daily YouTube allowance has been used up.';
+        return 'YouTube replied: ' + m.slice(0, 120);
+      },
+      focus(text) {
+        const t = String(text || '');
+        const at = t.search(/^\s*(ingredients?|what you.?ll need|you will need)\b/im);
+        const lines = (at >= 0 ? t.slice(at) : t).split('\n'), out = [];
+        for (const l of lines) {
+          if (out.length > 3 && /^\s*(want to see more|follow me|subscribe|business|tiktok|instagram|ig\s*:|fb\s*:|facebook|twitter|#)/i.test(l)) break;
+          if (/https?:\/\/|www\.|\S+@\S+\.\w+|^\s*#/.test(l)) continue;
+          out.push(l);
+        }
+        return out.join('\n').trim();
+      },
       clean(t) { return this.JUNK.test(t || '') ? '' : String(t || '').trim(); },
       extract(raw) {
         const out = { caption: '', image: '', title: '', reader: false };
@@ -2350,11 +2370,16 @@
       },
       async fetchPost(url) {
         const enc = encodeURIComponent(url);
-        const get = async (u, ms = 11000) => {
+        const get = async (u, ms = 11000, init = {}) => {
           const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), ms);
-          try { const r = await fetch(u, { signal: ctrl.signal }); if (!r.ok) throw new Error('HTTP ' + r.status); return await r.text(); }
-          finally { clearTimeout(timer); }
+          try {
+            const r = await fetch(u, { signal: ctrl.signal, ...init });
+            if (!r.ok) { let body = ''; try { body = (await r.text()).slice(0, 400); } catch (e) {} throw new Error('HTTP ' + r.status + ' ' + body); }
+            return await r.text();
+          } finally { clearTimeout(timer); }
         };
+        const apiGet = (u) => get(u, 9000, { referrerPolicy: 'origin' }).catch(e => { this.lastApiError = e.message; throw e; });   // Google checks the website address of the caller
+        this.lastApiError = '';
         const sources = [
           () => get('https://api.allorigins.win/raw?url=' + enc),
           () => get('https://corsproxy.io/?url=' + enc),
@@ -2364,8 +2389,8 @@
         const yt = this.ytId(url);
         const key = yt ? this.ytKey() : '';
         if (key) {
-          sources.push(() => get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${yt}&key=${encodeURIComponent(key)}`, 9000));
-          sources.push(() => get(`https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${yt}&maxResults=20&order=relevance&textFormat=plainText&key=${encodeURIComponent(key)}`, 9000));
+          sources.push(() => apiGet(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${yt}&key=${encodeURIComponent(key)}`));
+          sources.push(() => apiGet(`https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${yt}&maxResults=20&order=relevance&textFormat=plainText&key=${encodeURIComponent(key)}`).catch(e => { if (/commentsDisabled|HTTP 403/.test(e.message) && /commentsDisabled/.test(e.message)) this.lastApiError = ''; throw e; }));
         }
         if (/tiktok\.com/i.test(url)) sources.push(() => get('https://www.tiktok.com/oembed?url=' + enc, 8000));
         const xid = (url.match(/status\/(\d+)/) || [])[1];
@@ -2408,7 +2433,7 @@
       const meta = await SocialShare.fetchPost(sh.url);
       const shared = SocialShare.clean(sh.text);
       let caption = (shared.length > meta.caption.length) ? shared : meta.caption;
-      caption = String(caption || '').trim();
+      caption = SocialShare.focus(String(caption || '').trim());
       let title = (meta.title || '').replace(/\s*[|\-–]\s*(TikTok|YouTube|Instagram|Facebook|X|Twitter).*$/i, '').trim();
       if (!title) title = SocialShare.clean((caption.split('\n')[0] || '').slice(0, 70)) || `${kind} recipe`;
       if (title.length > 90) title = title.slice(0, 90);
@@ -2423,9 +2448,12 @@
         this.switchTab('text');
         const ta = document.getElementById('inputScrapeRawText');
         if (ta) ta.value = `title: ${title}\n` + (caption || '');
-        const why = kind === 'YouTube'
-          ? 'Could not read a recipe from this video\'s description or comments.'
-          : `The ${kind} post did not include a readable ingredient list.`;
+        let why = `The ${kind} post did not include a readable ingredient list.`;
+        if (kind === 'YouTube') {
+          if (!SocialShare.ytKey()) why = 'No YouTube key is set in this version of the app.';
+          else if (SocialShare.lastApiError) why = 'YouTube key problem: ' + SocialShare.explainApiError(SocialShare.lastApiError);
+          else why = 'Could not find a recipe in this video\'s description or comments.';
+        }
         showToast(`${why} Paste the ingredients here, then tap Parse. The link and photo are kept.`, '📋');
       }
     };
