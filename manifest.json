@@ -1,38 +1,21 @@
 {
-  "id": "./index.html",
-  "name": "PantryChef SG Pro — Smart Kitchen, Expiry & Recipe OS",
+  "name": "PantryChef SG Pro",
   "short_name": "PantryChef",
-  "description": "Smart Singaporean kitchen: pantry expiry tracking, recipe matching, meal planning and shopping lists.",
+  "description": "Smart Singaporean kitchen, expiry tracker and recipe planner",
+  "id": "./index.html",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
-  "lang": "en-SG",
-  "categories": [
-    "food",
-    "lifestyle",
-    "productivity"
-  ],
-  "background_color": "#022c22",
-  "theme_color": "#10b981",
+  "orientation": "any",
+  "background_color": "#F6F7F3",
+  "theme_color": "#14211C",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-maskable-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
-  ]
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "params": { "title": "title", "text": "text", "url": "url" }
+  }
 }
