@@ -2445,7 +2445,7 @@
           });
         } finally { clearTimeout(timer); }
         const j = await res.json().catch(() => ({}));
-        if (!res.ok || !j.ok) return { error: j.error || ('http_' + res.status) };
+        if (!res.ok || !j.ok) return { error: j.error || ('http_' + res.status), detail: j.detail || j.message || '' };
         const a = j.recipe, num = (v, d, lo, hi) => { v = Math.round(Number(v)); return isFinite(v) && v >= lo && v <= hi ? v : d; };
         const okUnit = ['g', 'kg', 'ml', 'l', 'tsp', 'tbsp', 'cup', 'pcs'];
         const title = String(a.title || 'Video recipe').slice(0, 80);
@@ -2472,7 +2472,7 @@
     RecipeScraperController.prototype.importShared = async function (sh) {
       const kind = SocialShare.kind(sh.url);
       if (!kind) return this.scrapeFromUrl(sh.url);
-      let aiNote = '';
+      let aiNote = '', aiDetail = '';
       if (typeof Sync !== 'undefined' && Sync.user) {
         this.setStatus(true, `Watching the ${kind} video and listening for the recipe — about 30 seconds...`);
         const ai = await SocialShare.aiImport(sh.url, sh.text);
@@ -2483,7 +2483,7 @@
           showToast(ai.estimated ? 'Recipe ready. Some amounts were not stated in the video, so they are estimates — please check them.' : `Recipe ready: ${r.ingredients.length} ingredients, ${r.steps.length} steps. Check it before saving.`, '✨');
           return;
         }
-        aiNote = ai.error || 'failed';
+        aiNote = ai.error || 'failed'; aiDetail = ai.detail || '';
       } else { aiNote = 'sign_in_required'; }
       this.setStatus(true, `Reading the ${kind} post...`);
       const meta = await SocialShare.fetchPost(sh.url);
@@ -2504,8 +2504,20 @@
         this.switchTab('text');
         const ta = document.getElementById('inputScrapeRawText');
         if (ta) ta.value = `title: ${title}\n` + (caption || '');
+        const AI_MSG = {
+          not_configured: 'The video reader is not finished being set up (the Gemini key is missing in Supabase).',
+          http_404: 'The video reader was not found. Check the Supabase function is deployed and named recipe-from-link.',
+          http_401: 'Your sign-in has expired. Sign out and in again under Backup & Sync.',
+          network: 'Could not reach the video reader. Check the Supabase function is deployed.',
+          no_recipe_found: 'The video was watched but no recipe was found in it.',
+          no_content: 'There was nothing in this post to read.',
+          ai_bad_output: 'The AI gave an unreadable answer. Try again.',
+          ai_failed: 'Google AI refused the request' + (aiDetail ? ': ' + aiDetail.replace(/\s+/g, ' ').slice(0, 140) : '.'),
+          server_error: 'The video reader hit an error' + (aiDetail ? ': ' + aiDetail.slice(0, 120) : '.')
+        };
         let why = `The ${kind} post did not include a readable ingredient list.`;
-        if (kind === 'YouTube') {
+        if (AI_MSG[aiNote]) why = AI_MSG[aiNote];
+        else if (kind === 'YouTube') {
           if (!SocialShare.ytKey()) why = 'No YouTube key is set in this version of the app.';
           else if (SocialShare.lastApiError) why = 'YouTube key problem: ' + SocialShare.explainApiError(SocialShare.lastApiError);
           else why = 'Could not find a recipe in this video\'s description or comments.';
