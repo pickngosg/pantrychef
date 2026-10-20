@@ -2255,7 +2255,7 @@
     // ===== Share target: recipes sent from TikTok, Instagram, Facebook, X and YouTube =====
     // Optional but recommended: paste a free YouTube Data API key (restricted to your website) between the quotes
     // so YouTube video descriptions and pinned recipe comments can be read reliably.
-    const YOUTUBE_API_KEY = 'AIzaSyCEmxEtpGVHkxKYjkD0sHuEh0O6TeUgILs';
+    const YOUTUBE_API_KEY = '';
     const SocialShare = {
       ytKey() { try { return YOUTUBE_API_KEY || localStorage.getItem('pantrychef_yt_key') || ''; } catch (e) { return YOUTUBE_API_KEY || ''; } },
       KINDS: [[/instagram\.com|instagr\.am/i, 'Instagram'], [/tiktok\.com/i, 'TikTok'], [/facebook\.com|fb\.watch|fb\.me/i, 'Facebook'],
@@ -2426,9 +2426,65 @@
       }
     };
 
+
+    // ===== "Watch the video" import via the recipe-from-link function (Supabase) =====
+    SocialShare.aiImport = async function (url, text) {
+      try {
+        if (typeof Sync === 'undefined' || !Sync.user || !Sync.sb) return { error: 'sign_in_required' };
+        const { data } = await Sync.sb.auth.getSession();
+        const token = data && data.session && data.session.access_token;
+        if (!token) return { error: 'sign_in_required' };
+        const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), 130000);
+        let res;
+        try {
+          res = await fetch(SUPABASE_URL + '/functions/v1/recipe-from-link', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token, apikey: SUPABASE_ANON_KEY },
+            body: JSON.stringify({ url, text: text || '' }),
+            signal: ctrl.signal
+          });
+        } finally { clearTimeout(timer); }
+        const j = await res.json().catch(() => ({}));
+        if (!res.ok || !j.ok) return { error: j.error || ('http_' + res.status) };
+        const a = j.recipe, num = (v, d, lo, hi) => { v = Math.round(Number(v)); return isFinite(v) && v >= lo && v <= hi ? v : d; };
+        const okUnit = ['g', 'kg', 'ml', 'l', 'tsp', 'tbsp', 'cup', 'pcs'];
+        const title = String(a.title || 'Video recipe').slice(0, 80);
+        const recipe = {
+          id: 'rec_' + Date.now(), title, category: 'Quick Weeknight',
+          image: j.image || getRecipeFallbackImage(title),
+          prepTime: num(a.prepMinutes, 25, 1, 600), servings: num(a.servings, 2, 1, 50),
+          cal: num(a.kcal, 450, 10, 3000), pro: num(a.protein, 25, 0, 300), carbs: num(a.carbs, 45, 0, 500),
+          fat: num(a.fat, 15, 0, 300), fibre: num(a.fibre, 4, 0, 100), sodium: num(a.sodiumMg, 550, 0, 6000), sugar: 4,
+          ingredients: (a.ingredients || []).filter(i => i && i.name).map(i => ({
+            name: String(i.name).trim().replace(/^./, c => c.toUpperCase()).slice(0, 80),
+            qty: Math.round((Number(i.qty) > 0 ? Number(i.qty) : 1) * 100) / 100,
+            unit: okUnit.includes(i.unit) ? i.unit : 'pcs', store: 'FairPrice'
+          })),
+          steps: (a.steps || []).map(x => String(x).trim()).filter(Boolean),
+          sourceBadge: j.source === 'video' ? 'Watched from video' : 'Read from caption',
+          quantitiesEstimated: !!a.quantitiesEstimated
+        };
+        if (!recipe.steps.length) recipe.steps = ['Follow the method shown in the original post.'];
+        return { ok: true, recipe, image: j.image || '', estimated: !!a.quantitiesEstimated };
+      } catch (e) { return { error: 'network' }; }
+    };
+
     RecipeScraperController.prototype.importShared = async function (sh) {
       const kind = SocialShare.kind(sh.url);
       if (!kind) return this.scrapeFromUrl(sh.url);
+      let aiNote = '';
+      if (typeof Sync !== 'undefined' && Sync.user) {
+        this.setStatus(true, `Watching the ${kind} video and listening for the recipe — about 30 seconds...`);
+        const ai = await SocialShare.aiImport(sh.url, sh.text);
+        if (ai.ok) {
+          this.pendingSource = { url: sh.url, image: ai.image || '', kind };
+          const r = ai.recipe; r.source = sh.url;
+          this.previewedRecipe = r; this.setStatus(false); this.showPreview(); soundEngine.playChime();
+          showToast(ai.estimated ? 'Recipe ready. Some amounts were not stated in the video, so they are estimates — please check them.' : `Recipe ready: ${r.ingredients.length} ingredients, ${r.steps.length} steps. Check it before saving.`, '✨');
+          return;
+        }
+        aiNote = ai.error || 'failed';
+      } else { aiNote = 'sign_in_required'; }
       this.setStatus(true, `Reading the ${kind} post...`);
       const meta = await SocialShare.fetchPost(sh.url);
       const shared = SocialShare.clean(sh.text);
@@ -2454,7 +2510,8 @@
           else if (SocialShare.lastApiError) why = 'YouTube key problem: ' + SocialShare.explainApiError(SocialShare.lastApiError);
           else why = 'Could not find a recipe in this video\'s description or comments.';
         }
-        showToast(`${why} Paste the ingredients here, then tap Parse. The link and photo are kept.`, '📋');
+        const tip = aiNote === 'sign_in_required' ? ' Tip: sign in under Backup & Sync and the app can watch the video for you.' : (aiNote === 'busy' ? ' The video reader is busy, try again in a minute.' : '');
+        showToast(`${why}${tip} Paste the ingredients here, then tap Parse. The link and photo are kept.`, '📋');
       }
     };
     RecipeScraperController.prototype.applySource = function (r) {
