@@ -637,67 +637,69 @@
     </div>
   </div>
 
-  <div id="recipeImportUrlModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="w-full sm:max-w-lg bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 text-xs">
-      <div class="flex items-center justify-between">
+  <div id="recipeImportUrlModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-6">
+    <div class="w-full sm:max-w-3xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-9 space-y-6 text-lg text-slate-800 dark:text-slate-100">
+      <div class="flex items-start justify-between gap-4">
         <div>
-          <h3 class="font-black text-sm text-slate-900 dark:text-white">🌐 Smart Recipe Importer</h3>
-          <p class="text-[10px] text-slate-400">Import from URL, paste raw recipe text, or use the browser bookmarklet</p>
+          <h3 class="font-display font-extrabold text-3xl text-slate-900 dark:text-white">🌐 Add a Recipe</h3>
+          <p class="text-lg text-slate-500 dark:text-slate-400 mt-1">Get a recipe from a link, or paste it in.</p>
         </div>
-        <button id="closeRecipeImportUrlModalBtn" class="p-1 text-slate-400 hover:text-slate-600">✕</button>
+        <button id="closeRecipeImportUrlModalBtn" type="button" aria-label="Close" class="w-12 h-12 flex-shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 text-xl font-bold">✕</button>
       </div>
-      <div class="flex gap-1.5">
-        <button type="button" id="tabScrapeUrl" class="flex-1 py-2 rounded-xl font-black bg-brand-500 text-slate-950">🔗 URL</button>
-        <button type="button" id="tabScrapeText" class="flex-1 py-2 rounded-xl font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">📋 Paste Text</button>
-        <button type="button" id="tabScrapeBookmarklet" class="flex-1 py-2 rounded-xl font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">🔖 Bookmarklet</button>
+      <div class="flex gap-3">
+        <button type="button" id="tabScrapeUrl" class="flex-1 py-4 rounded-2xl text-lg font-bold bg-brand-500 text-white shadow-sm transition inline-flex items-center justify-center gap-2">🔗 Link</button>
+        <button type="button" id="tabScrapeText" class="flex-1 py-4 rounded-2xl text-lg font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition inline-flex items-center justify-center gap-2">📋 Paste</button>
+        <button type="button" id="tabScrapeBookmarklet" class="flex-1 py-4 rounded-2xl text-lg font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition inline-flex items-center justify-center gap-2">🔖 Bookmark</button>
       </div>
-      <form id="recipeImportUrlForm" class="space-y-2">
-          <p class="flex items-start gap-2 p-3 rounded-xl bg-[#DCEBE1] dark:bg-slate-800 text-[#145238] dark:text-brand-300 text-sm leading-snug">📤 <span>On TikTok, Instagram, Facebook, X or YouTube, tap <b>Share</b> and choose <b>PantryChef</b> to send a recipe straight here. You can also paste a post link below.</span></p>
-        <input type="url" id="inputScrapeUrl" required placeholder="https://example.com/hainanese-chicken-rice" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 outline-none">
-        <button type="submit" id="btnFetchScrapeUrl" class="w-full py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black transition">Fetch & Parse Recipe</button>
+      <form id="recipeImportUrlForm" class="space-y-4">
+        <p class="flex items-start gap-3 p-4 rounded-2xl bg-[#DCEBE1] dark:bg-slate-800 text-[#145238] dark:text-brand-300 text-lg leading-snug">📤 <span><b>Easy way:</b> in TikTok, Instagram, YouTube or Facebook, tap <b>Share</b> and choose <b>PantryChef</b>.</span></p>
+        <label for="inputScrapeUrl" class="block font-bold text-lg">Or paste a link here</label>
+        <input type="url" id="inputScrapeUrl" required placeholder="Paste the recipe link" class="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-lg outline-none focus:ring-2 focus:ring-brand-500">
+        <button type="submit" id="btnFetchScrapeUrl" class="w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xl shadow-sm transition">Get Recipe</button>
       </form>
-      <form id="recipeImportTextForm" class="hidden space-y-2">
-        <div class="flex items-center justify-between">
-          <button type="button" id="btnLoadSampleScrapedText" class="text-[10px] font-bold text-slate-500 hover:text-brand-600 hover:underline">🧪 Load Sample Full Recipe</button>
-          <button type="button" id="btnPasteFromClipboard" class="text-[10px] font-bold text-brand-600 hover:underline">📋 Paste from Clipboard</button>
+      <form id="recipeImportTextForm" class="hidden space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <button type="button" id="btnPasteFromClipboard" class="px-5 py-3 rounded-xl bg-[#DCEBE1] dark:bg-slate-800 text-[#145238] dark:text-brand-300 font-bold text-base">📋 Paste what I copied</button>
+          <button type="button" id="btnLoadSampleScrapedText" class="px-5 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-base">🧪 Try an example</button>
         </div>
-        <textarea id="inputScrapeRawText" rows="6" placeholder="Paste any recipe text from websites, Instagram, TikTok, or blogs here (including Ingredients & Instructions)..." class="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 outline-none"></textarea>
-        <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black">Extract Recipe from Text</button>
+        <textarea id="inputScrapeRawText" rows="8" placeholder="Paste the recipe here (ingredients and steps)" class="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-lg outline-none focus:ring-2 focus:ring-brand-500 leading-relaxed"></textarea>
+        <button type="submit" class="w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xl shadow-sm transition">Get Recipe</button>
       </form>
-      <div id="secScrapeBookmarklet" class="hidden space-y-2">
-        <p class="text-[11px] text-slate-500">Save this bookmarklet to clip structured JSON-LD, exact recipe photo, full ingredients, &amp; full cooking steps from any food blog in one click:</p>
-        <pre id="bookmarkletCodeDisplay" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 font-mono text-[10px] overflow-x-auto">javascript:(function(){let out='';const og=document.querySelector('meta[property="og:image"],meta[name="twitter:image"]');let img=og?og.content:'';const scripts=document.querySelectorAll('script[type="application/ld+json"]');scripts.forEach(s=>{try{const d=JSON.parse(s.textContent);const findR=o=>{if(!o||typeof o!=='object')return null;const t=o['@type'];if(t==='Recipe'||(typeof t==='string'&&t.endsWith('/Recipe'))||(Array.isArray(t)&&t.some(x=>x==='Recipe'||String(x).endsWith('/Recipe'))))return o;for(const v of Object.values(o)){const f=findR(v);if(f)return f;}return null;};const r=findR(d);if(r&&!out){const ri=r.image;if(ri){img=typeof ri==='string'?ri:Array.isArray(ri)?(typeof ri[0]==='string'?ri[0]:ri[0]?.url||img):(ri.url||ri.contentUrl||img);}out='Title: '+(r.name||document.title)+'\n'+(img?'Image: '+img+'\n':'')+'Ingredients:\n'+(r.recipeIngredient||[]).join('\n')+'\nInstructions:\n'+(Array.isArray(r.recipeInstructions)?r.recipeInstructions.map(x=>typeof x==='string'?x:x.text||(x.itemListElement?x.itemListElement.map(y=>y.text).join('\n'):'')).join('\n'):r.recipeInstructions);}}catch(e){}});if(!out){const card=document.querySelector('.wprm-recipe-container,.tasty-recipes,.mv-create-card,[itemtype*="Recipe"],.recipe-card,#recipe');out='Title: '+document.title+'\n'+(img?'Image: '+img+'\n\n':'')+(card?card.innerText:document.body.innerText);}navigator.clipboard.writeText(out).then(()=>alert('Recipe ingredients & steps copied! Paste into PantryChef SG.'));})();</pre>
-        <button type="button" id="btnCopyBookmarklet" class="w-full py-2 rounded-xl bg-slate-200 dark:bg-slate-800 font-bold">📋 Copy Bookmarklet</button>
+      <div id="secScrapeBookmarklet" class="hidden space-y-4">
+        <p class="text-lg leading-snug">For people who use recipe websites on a computer. Add this button to your browser bookmarks. Then click it on any recipe page to send that recipe here.</p>
+        <details class="rounded-2xl bg-slate-100 dark:bg-slate-800 p-4">
+          <summary class="font-bold cursor-pointer text-base">Show the bookmark code</summary>
+          <pre id="bookmarkletCodeDisplay" class="mt-3 p-3 rounded-xl bg-white dark:bg-slate-900 font-mono text-xs overflow-x-auto">javascript:(function(){let out='';const og=document.querySelector('meta[property="og:image"],meta[name="twitter:image"]');let img=og?og.content:'';const scripts=document.querySelectorAll('script[type="application/ld+json"]');scripts.forEach(s=>{try{const d=JSON.parse(s.textContent);const findR=o=>{if(!o||typeof o!=='object')return null;const t=o['@type'];if(t==='Recipe'||(typeof t==='string'&&t.endsWith('/Recipe'))||(Array.isArray(t)&&t.some(x=>x==='Recipe'||String(x).endsWith('/Recipe'))))return o;for(const v of Object.values(o)){const f=findR(v);if(f)return f;}return null;};const r=findR(d);if(r&&!out){const ri=r.image;if(ri){img=typeof ri==='string'?ri:Array.isArray(ri)?(typeof ri[0]==='string'?ri[0]:ri[0]?.url||img):(ri.url||ri.contentUrl||img);}out='Title: '+(r.name||document.title)+'\n'+(img?'Image: '+img+'\n':'')+'Ingredients:\n'+(r.recipeIngredient||[]).join('\n')+'\nInstructions:\n'+(Array.isArray(r.recipeInstructions)?r.recipeInstructions.map(x=>typeof x==='string'?x:x.text||(x.itemListElement?x.itemListElement.map(y=>y.text).join('\n'):'')).join('\n'):r.recipeInstructions);}}catch(e){}});if(!out){const card=document.querySelector('.wprm-recipe-container,.tasty-recipes,.mv-create-card,[itemtype*="Recipe"],.recipe-card,#recipe');out='Title: '+document.title+'\n'+(img?'Image: '+img+'\n\n':'')+(card?card.innerText:document.body.innerText);}navigator.clipboard.writeText(out).then(()=>alert('Recipe ingredients & steps copied! Paste into PantryChef SG.'));})();</pre>
+        </details>
+        <button type="button" id="btnCopyBookmarklet" class="w-full py-4 rounded-2xl bg-slate-200 dark:bg-slate-800 font-bold text-lg">📋 Copy bookmark code</button>
       </div>
-      <div id="scrapeStatusBanner" class="hidden p-3 rounded-2xl bg-brand-500/10 border border-brand-500/30 text-brand-700 dark:text-brand-300 text-[11px] font-bold flex items-center space-x-2">
+      <div id="scrapeStatusBanner" class="hidden p-5 rounded-2xl bg-brand-500/10 border border-brand-500/30 text-brand-700 dark:text-brand-300 text-lg font-bold flex items-center gap-3">
         <span class="animate-spin">⏳</span>
-        <span id="scrapeStatusText">Fetching webpage & extracting structured recipe...</span>
+        <span id="scrapeStatusText">Getting the recipe...</span>
       </div>
-      <div id="scrapedRecipePreview" class="hidden p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2.5">
-        <div class="flex items-start gap-3">
-          <img id="scrapedPreviewImage" src="" alt="Scraped Recipe" class="w-20 h-20 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 bg-slate-200 dark:bg-slate-700 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/200x200/064e3b/ecfdf5?text=Recipe';">
+      <div id="scrapedRecipePreview" class="hidden p-5 sm:p-6 rounded-3xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-5">
+        <div class="flex items-start gap-4">
+          <img id="scrapedPreviewImage" src="" alt="Recipe photo" class="w-28 h-28 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 bg-slate-200 dark:bg-slate-700 flex-shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/200x200/064e3b/ecfdf5?text=Recipe';">
           <div class="flex-1 min-w-0">
-            <div class="flex items-start justify-between gap-2">
-              <h4 id="scrapedPreviewTitle" class="font-black text-sm text-slate-900 dark:text-white truncate"></h4>
-              <span id="scrapedPreviewSourceBadge" class="px-2 py-0.5 rounded-md bg-brand-500/15 text-brand-600 dark:text-brand-400 font-black text-[9px] uppercase flex-shrink-0">Parsed</span>
-            </div>
-            <p id="scrapedPreviewMeta" class="text-[11px] text-brand-600 dark:text-brand-400 font-bold mt-0.5"></p>
-            <p id="scrapedPreviewImageStatus" class="text-[10px] text-slate-400 truncate mt-1"></p>
+            <span id="scrapedPreviewSourceBadge" class="inline-block px-3 py-1 rounded-lg bg-brand-500/15 text-brand-700 dark:text-brand-300 font-bold text-sm mb-2">Parsed</span>
+            <h4 id="scrapedPreviewTitle" class="font-display font-extrabold text-2xl text-slate-900 dark:text-white leading-tight"></h4>
+            <p id="scrapedPreviewMeta" class="text-base text-brand-700 dark:text-brand-400 font-bold mt-1"></p>
+            <p id="scrapedPreviewImageStatus" class="text-sm text-slate-500 mt-1"></p>
           </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 max-h-52 overflow-y-auto pr-1">
-          <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700">
-            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">Extracted Ingredients</span>
-            <ul id="scrapedPreviewIngList" class="space-y-1 text-[11px] text-slate-700 dark:text-slate-300"></ul>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-72 overflow-y-auto pr-1">
+          <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+            <span class="font-display font-bold text-lg block mb-2">Ingredients</span>
+            <ul id="scrapedPreviewIngList" class="space-y-1.5 text-base text-slate-700 dark:text-slate-300"></ul>
           </div>
-          <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700">
-            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">Extracted Steps</span>
-            <ol id="scrapedPreviewStepList" class="space-y-1 text-[11px] text-slate-700 dark:text-slate-300 list-decimal list-inside"></ol>
+          <div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+            <span class="font-display font-bold text-lg block mb-2">Steps</span>
+            <ol id="scrapedPreviewStepList" class="space-y-1.5 text-base text-slate-700 dark:text-slate-300 list-decimal list-inside"></ol>
           </div>
         </div>
-        <div class="flex gap-2 pt-1">
-          <button type="button" id="btnEditScrapedRecipe" class="flex-1 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 font-bold hover:bg-slate-300 dark:hover:bg-slate-600 transition">✏️ Review / Edit All Fields</button>
-          <button type="button" id="btnSaveScrapedRecipe" class="flex-1 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black shadow-sm transition">💾 Save Recipe</button>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button type="button" id="btnEditScrapedRecipe" class="flex-1 py-4 rounded-2xl bg-slate-200 dark:bg-slate-700 font-bold text-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition">✏️ Check & Edit</button>
+          <button type="button" id="btnSaveScrapedRecipe" class="flex-1 py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-lg shadow-sm transition">💾 Save Recipe</button>
         </div>
       </div>
     </div>
@@ -1955,8 +1957,8 @@
         document.getElementById('recipeImportUrlForm')?.classList.toggle('hidden', tab !== 'url');
         document.getElementById('recipeImportTextForm')?.classList.toggle('hidden', tab !== 'text');
         document.getElementById('secScrapeBookmarklet')?.classList.toggle('hidden', tab !== 'bookmarklet');
-        const on = 'flex-1 py-2 rounded-xl font-black bg-brand-500 text-slate-950 shadow-sm transition';
-        const off = 'flex-1 py-2 rounded-xl font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition';
+        const on = 'flex-1 py-4 rounded-2xl text-lg font-bold bg-brand-500 text-white shadow-sm transition inline-flex items-center justify-center gap-2';
+        const off = 'flex-1 py-4 rounded-2xl text-lg font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition inline-flex items-center justify-center gap-2';
         const set = (id, t) => { const el = document.getElementById(id); if (el) el.className = tab === t ? on : off; };
         set('tabScrapeUrl', 'url'); set('tabScrapeText', 'text'); set('tabScrapeBookmarklet', 'bookmarklet');
       }
@@ -1967,7 +1969,7 @@
         const btn = document.getElementById('btnFetchScrapeUrl');
         if (banner) banner.classList.toggle('hidden', !loading);
         if (statusText && text) statusText.textContent = text;
-        if (btn) { btn.disabled = loading; btn.textContent = loading ? '⏳ Scraping Recipe...' : 'Fetch & Parse Recipe'; }
+        if (btn) { btn.disabled = loading; btn.textContent = loading ? '⏳ Getting recipe...' : 'Get Recipe'; }
       }
 
       parseFractionNumber(str) {
@@ -2130,7 +2132,7 @@
 
       async scrapeFromUrl(url) {
         if (!url) return;
-        this.setStatus(true, 'Trying 5 sources at once — this takes about 10 seconds...');
+        this.setStatus(true, 'Getting the recipe... this can take a few seconds.');
         const fetchWithTimeout = async (u, ms = 12000) => {
           const ctrl = new AbortController();
           const timer = setTimeout(() => ctrl.abort(), ms);
@@ -2175,7 +2177,7 @@
           showToast(`Extracted ${ext.ingredients.length} ingredients & ${ext.steps.length} steps!`, '✨');
         } catch (e) {
           this.setStatus(false);
-          showToast('Could not read that page — paste the recipe text instead', '📋');
+          showToast('Could not read that page. Paste the recipe text instead.', '📋');
           this.switchTab('text');
         }
       }
@@ -2474,18 +2476,18 @@
       if (!kind) return this.scrapeFromUrl(sh.url);
       let aiNote = '', aiDetail = '';
       if (typeof Sync !== 'undefined' && Sync.user) {
-        this.setStatus(true, `Watching the ${kind} video and listening for the recipe — about 30 seconds...`);
+        this.setStatus(true, 'Watching the video... about 30 seconds.');
         const ai = await SocialShare.aiImport(sh.url, sh.text);
         if (ai.ok) {
           this.pendingSource = { url: sh.url, image: ai.image || '', kind };
           const r = ai.recipe; r.source = sh.url;
           this.previewedRecipe = r; this.setStatus(false); this.showPreview(); soundEngine.playChime();
-          showToast(ai.estimated ? 'Recipe ready. Some amounts were not stated in the video, so they are estimates — please check them.' : `Recipe ready: ${r.ingredients.length} ingredients, ${r.steps.length} steps. Check it before saving.`, '✨');
+          showToast(ai.estimated ? 'Recipe ready. Some amounts were guessed, so please check them.' : 'Recipe ready. Please check it, then save.', '✨');
           return;
         }
         aiNote = ai.error || 'failed'; aiDetail = ai.detail || '';
       } else { aiNote = 'sign_in_required'; }
-      this.setStatus(true, `Reading the ${kind} post...`);
+      this.setStatus(true, 'Reading the post...');
       const meta = await SocialShare.fetchPost(sh.url);
       const shared = SocialShare.clean(sh.text);
       let caption = (shared.length > meta.caption.length) ? shared : meta.caption;
@@ -2504,28 +2506,25 @@
         this.switchTab('text');
         const ta = document.getElementById('inputScrapeRawText');
         if (ta) ta.value = `title: ${title}\n` + (caption || '');
+        if (aiNote) console.warn('Video reader:', aiNote, aiDetail);
         const AI_MSG = {
-          not_configured: 'The video reader is not finished being set up (the Gemini key is missing in Supabase).',
-          http_404: 'The video reader was not found. Check the Supabase function is deployed and named recipe-from-link.',
-          http_401: 'Your sign-in has expired. Sign out and in again under Backup & Sync.',
-          network: 'Could not reach the video reader. Check the Supabase function is deployed.',
-          no_recipe_found: 'The video was watched but no recipe was found in it.',
-          busy: 'Google\'s AI is very busy right now. Please try again in a minute.',
-          needs_downloader: 'Reading Instagram and TikTok videos needs the extra reader, which is not switched on yet.',
-          no_content: 'Could not get any video or text from this post. It may be private, deleted, or only photos.',
-          ai_bad_output: 'The AI gave an unreadable answer. Try again.',
-          ai_failed: 'Google AI refused the request' + (aiDetail ? ': ' + aiDetail.replace(/\s+/g, ' ').slice(0, 140) : '.'),
-          server_error: 'The video reader hit an error' + (aiDetail ? ': ' + aiDetail.slice(0, 120) : '.')
+          not_configured: 'Video reading is not set up yet.',
+          http_404: 'Video reading is not available right now.',
+          http_401: 'Please sign in again (Backup & Sync).',
+          network: 'Could not connect. Check your internet and try again.',
+          no_recipe_found: 'No recipe found in this video.',
+          busy: 'Very busy right now. Try again in a minute.',
+          needs_downloader: 'This post could not be read.',
+          no_content: 'Nothing could be read from this post. It may be private.',
+          ai_bad_output: 'Something went wrong. Please try again.',
+          ai_failed: 'The video reader had a problem. Please try again later.',
+          server_error: 'The video reader had a problem. Please try again later.'
         };
-        let why = `The ${kind} post did not include a readable ingredient list.`;
+        let why = 'Could not find the ingredients in this post.';
         if (AI_MSG[aiNote]) why = AI_MSG[aiNote];
-        else if (kind === 'YouTube') {
-          if (!SocialShare.ytKey()) why = 'No YouTube key is set in this version of the app.';
-          else if (SocialShare.lastApiError) why = 'YouTube key problem: ' + SocialShare.explainApiError(SocialShare.lastApiError);
-          else why = 'Could not find a recipe in this video\'s description or comments.';
-        }
-        const tip = aiNote === 'sign_in_required' ? ' Tip: sign in under Backup & Sync and the app can watch the video for you.' : (aiNote === 'busy' ? ' The video reader is busy, try again in a minute.' : '');
-        showToast(`${why}${tip} Paste the ingredients here, then tap Parse. The link and photo are kept.`, '📋');
+        else if (kind === 'YouTube') why = 'No recipe found in this video\'s text.';
+        const tip = aiNote === 'sign_in_required' ? ' Sign in (Backup & Sync) so the app can watch videos.' : '';
+        showToast(`${why}${tip} Paste the ingredients below, then tap Get Recipe.`, '📋');
       }
     };
     RecipeScraperController.prototype.applySource = function (r) {
@@ -3590,8 +3589,8 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
 <script>
 /* Turn UI emoji into consistent line icons (skips user-chosen item icons marked data-noicon) */
 (function () {
-  var PATHS = {"⚙": "<circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z\"/>", "🧾": "<path d=\"M5 3v18l2-1.5L9 21l2-1.5L13 21l2-1.5L17 21l2-1.5V3l-2 1.5L15 3l-2 1.5L11 3 9 4.5 7 3z\"/><path d=\"M9 8h6M9 12h6M9 16h4\"/>", "➕": "<path d=\"M12 5v14M5 12h14\"/>", "🌐": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18\"/>", "✅": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"m8 12 3 3 5-6\"/>", "⏳": "<path d=\"M6 3h12M6 21h12M7 3c0 5 5 6 5 9s-5 4-5 9M17 3c0 5-5 6-5 9s5 4 5 9\"/>", "🌙": "<path d=\"M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z\"/>", "☀": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4\"/>", "💚": "<path d=\"M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.7A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z\"/>", "⚡": "<path d=\"M13 2 4 14h7l-1 8 9-12h-7z\"/>", "📅": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 10h18M8 3v4M16 3v4\"/>", "🎯": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"1\"/>", "🛒": "<path d=\"M3 4h3l2.5 11h10L21 7H7\"/><circle cx=\"9\" cy=\"19\" r=\"1.5\"/><circle cx=\"18\" cy=\"19\" r=\"1.5\"/>", "📦": "<path d=\"M21 8 12 3 3 8v8l9 5 9-5z\"/><path d=\"m3 8 9 5 9-5M12 13v8\"/>", "🧹": "<path d=\"M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3\"/>", "🗑": "<path d=\"M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3\"/>", "🏷": "<path d=\"M3 12V4h8l10 10-8 8z\"/><circle cx=\"7.5\" cy=\"8.5\" r=\"1.2\"/>", "🏆": "<path d=\"M8 4h8v5a4 4 0 0 1-8 0zM8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4M12 13v4M8 21h8M10 17h4\"/>", "🏪": "<path d=\"M4 9l1-5h14l1 5M4 9v11h16V9M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0A2.7 2.7 0 0 0 20 9M10 20v-5h4v5\"/>", "🔍": "<circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"m20 20-3.5-3.5\"/>", "✏": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"m13.5 6.5 4 4\"/>", "⚠": "<path d=\"M12 3 2 20h20z\"/><path d=\"M12 10v4M12 17.5v.01\"/>", "🚨": "<path d=\"M12 3 2 20h20z\"/><path d=\"M12 10v4M12 17.5v.01\"/>", "⏱": "<circle cx=\"12\" cy=\"13\" r=\"8\"/><path d=\"M12 9v4l2.5 2M9 2h6\"/>", "🔥": "<path d=\"M12 22c4 0 7-2.8 7-6.7 0-3-1.8-5-3.5-6.8-.4 1.4-1.2 2.3-2.2 2.8C13.5 7.6 12.3 4.8 10 2c.3 4-5 6.5-5 12 0 4.5 3 8 7 8z\"/>", "💪": "<path d=\"M6.5 6.5v11M17.5 6.5v11M3 9v6M21 9v6M6.5 12h11\"/>", "❄": "<path d=\"M12 2v20M4 7l16 10M20 7 4 17\"/>", "🧊": "<path d=\"M12 3 4 7.5v9L12 21l8-4.5v-9z\"/><path d=\"m4 7.5 8 4.5 8-4.5M12 12v9\"/>", "✨": "<path d=\"M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z\"/>", "🪄": "<path d=\"M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z\"/>", "🎉": "<path d=\"M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z\"/>", "🔄": "<path d=\"M20 11a8 8 0 0 0-14-4L4 9M4 4v5h5M4 13a8 8 0 0 0 14 4l2-2M20 20v-5h-5\"/>", "☁": "<path d=\"M7 18a4 4 0 0 1-.5-8A6 6 0 0 1 18 9.5a4.25 4.25 0 0 1-.5 8.5z\"/>", "🍲": "<path d=\"M3 11h18v3a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6zM8 7c0-1.5 1.5-1.5 1.5-3M13 7c0-1.5 1.5-1.5 1.5-3\"/>", "👨‍🍳": "<path d=\"M7 14a4 4 0 1 1 1.5-7.7A4 4 0 0 1 16 6a4 4 0 0 1 1 8v6H7z\"/><path d=\"M7 17h10\"/>", "📖": "<path d=\"M4 5h7a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H4zM20 5h-7\"/><path d=\"M20 5v13h-7\"/>", "💾": "<path d=\"M5 3h11l3 3v15H5z\"/><path d=\"M8 3v5h7V3M8 21v-7h8v7\"/>", "🥗": "<path d=\"M5 19c0-9 5-14 15-14 0 10-5 15-14 15zM5 19l8-8\"/>", "🌾": "<path d=\"M5 19c0-9 5-14 15-14 0 10-5 15-14 15zM5 19l8-8\"/>", "🥑": "<path d=\"M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z\"/>", "⬇": "<path d=\"M12 4v12M6 12l6 6 6-6M5 21h14\"/>", "⬆": "<path d=\"M12 20V8M6 12l6-6 6 6M5 3h14\"/>", "🌱": "<path d=\"M12 21v-9M12 12c0-4-3-6-7-6 0 4 3 6 7 6zM12 14c0-3 2-5 6-5 0 3-2 5-6 5z\"/>", "🚪": "<path d=\"M5 21V3h10v18M3 21h18M12 12h.01\"/>"};
-  var COLORS = {"⚙": "#64748B", "🧾": "#B7791F", "🌐": "#2B7BB9", "✅": "#1F8A5B", "⏳": "#C77D0A", "🌙": "#4F5BD5", "☀": "#E49B0F", "💚": "#1F9D63", "⚡": "#E8A317", "📅": "#1F6B4A", "🎯": "#D6453D", "🛒": "#1F6B4A", "📦": "#A8742B", "🧹": "#D6453D", "🗑": "#D6453D", "🏷": "#8B5CF6", "🏆": "#E8A317", "🏪": "#2B7BB9", "🔍": "#64748B", "✏": "#E07A1F", "⚠": "#E8A317", "🚨": "#D6453D", "⏱": "#4F5BD5", "🔥": "#E8552D", "💪": "#7C5CD6", "❄": "#3B9BD9", "🧊": "#3B9BD9", "✨": "#E8A317", "🪄": "#E8A317", "🎉": "#E8A317", "🔄": "#2B7BB9", "☁": "#5B8DEF", "🍲": "#D9772B", "📖": "#2B7BB9", "💾": "#1F6B4A", "🥗": "#6BA43A", "🌾": "#C9962B", "🥑": "#5E9B2E", "⬇": "#1F6B4A", "⬆": "#2B7BB9", "🌱": "#4C9A2A", "🚪": "#A8742B"};
+  var PATHS = {"⚙": "<circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z\"/>", "🧾": "<path d=\"M5 3v18l2-1.5L9 21l2-1.5L13 21l2-1.5L17 21l2-1.5V3l-2 1.5L15 3l-2 1.5L11 3 9 4.5 7 3z\"/><path d=\"M9 8h6M9 12h6M9 16h4\"/>", "➕": "<path d=\"M12 5v14M5 12h14\"/>", "🌐": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18\"/>", "✅": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"m8 12 3 3 5-6\"/>", "⏳": "<path d=\"M6 3h12M6 21h12M7 3c0 5 5 6 5 9s-5 4-5 9M17 3c0 5-5 6-5 9s5 4 5 9\"/>", "🌙": "<path d=\"M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z\"/>", "☀": "<circle cx=\"12\" cy=\"12\" r=\"4\"/><path d=\"M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4\"/>", "💚": "<path d=\"M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.7A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z\"/>", "⚡": "<path d=\"M13 2 4 14h7l-1 8 9-12h-7z\"/>", "📅": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 10h18M8 3v4M16 3v4\"/>", "🎯": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"1\"/>", "🛒": "<path d=\"M3 4h3l2.5 11h10L21 7H7\"/><circle cx=\"9\" cy=\"19\" r=\"1.5\"/><circle cx=\"18\" cy=\"19\" r=\"1.5\"/>", "📦": "<path d=\"M21 8 12 3 3 8v8l9 5 9-5z\"/><path d=\"m3 8 9 5 9-5M12 13v8\"/>", "🧹": "<path d=\"M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3\"/>", "🗑": "<path d=\"M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3\"/>", "🏷": "<path d=\"M3 12V4h8l10 10-8 8z\"/><circle cx=\"7.5\" cy=\"8.5\" r=\"1.2\"/>", "🏆": "<path d=\"M8 4h8v5a4 4 0 0 1-8 0zM8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4M12 13v4M8 21h8M10 17h4\"/>", "🏪": "<path d=\"M4 9l1-5h14l1 5M4 9v11h16V9M4 9a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0A2.7 2.7 0 0 0 20 9M10 20v-5h4v5\"/>", "🔍": "<circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"m20 20-3.5-3.5\"/>", "✏": "<path d=\"M4 20h4L19 9l-4-4L4 16z\"/><path d=\"m13.5 6.5 4 4\"/>", "⚠": "<path d=\"M12 3 2 20h20z\"/><path d=\"M12 10v4M12 17.5v.01\"/>", "🚨": "<path d=\"M12 3 2 20h20z\"/><path d=\"M12 10v4M12 17.5v.01\"/>", "⏱": "<circle cx=\"12\" cy=\"13\" r=\"8\"/><path d=\"M12 9v4l2.5 2M9 2h6\"/>", "🔥": "<path d=\"M12 22c4 0 7-2.8 7-6.7 0-3-1.8-5-3.5-6.8-.4 1.4-1.2 2.3-2.2 2.8C13.5 7.6 12.3 4.8 10 2c.3 4-5 6.5-5 12 0 4.5 3 8 7 8z\"/>", "💪": "<path d=\"M6.5 6.5v11M17.5 6.5v11M3 9v6M21 9v6M6.5 12h11\"/>", "❄": "<path d=\"M12 2v20M4 7l16 10M20 7 4 17\"/>", "🧊": "<path d=\"M12 3 4 7.5v9L12 21l8-4.5v-9z\"/><path d=\"m4 7.5 8 4.5 8-4.5M12 12v9\"/>", "✨": "<path d=\"M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z\"/>", "🪄": "<path d=\"M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z\"/>", "🎉": "<path d=\"M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z\"/>", "🔄": "<path d=\"M20 11a8 8 0 0 0-14-4L4 9M4 4v5h5M4 13a8 8 0 0 0 14 4l2-2M20 20v-5h-5\"/>", "☁": "<path d=\"M7 18a4 4 0 0 1-.5-8A6 6 0 0 1 18 9.5a4.25 4.25 0 0 1-.5 8.5z\"/>", "🍲": "<path d=\"M3 11h18v3a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6zM8 7c0-1.5 1.5-1.5 1.5-3M13 7c0-1.5 1.5-1.5 1.5-3\"/>", "👨‍🍳": "<path d=\"M7 14a4 4 0 1 1 1.5-7.7A4 4 0 0 1 16 6a4 4 0 0 1 1 8v6H7z\"/><path d=\"M7 17h10\"/>", "📖": "<path d=\"M4 5h7a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H4zM20 5h-7\"/><path d=\"M20 5v13h-7\"/>", "💾": "<path d=\"M5 3h11l3 3v15H5z\"/><path d=\"M8 3v5h7V3M8 21v-7h8v7\"/>", "🥗": "<path d=\"M5 19c0-9 5-14 15-14 0 10-5 15-14 15zM5 19l8-8\"/>", "🌾": "<path d=\"M5 19c0-9 5-14 15-14 0 10-5 15-14 15zM5 19l8-8\"/>", "🥑": "<path d=\"M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z\"/>", "⬇": "<path d=\"M12 4v12M6 12l6 6 6-6M5 21h14\"/>", "⬆": "<path d=\"M12 20V8M6 12l6-6 6 6M5 3h14\"/>", "🌱": "<path d=\"M12 21v-9M12 12c0-4-3-6-7-6 0 4 3 6 7 6zM12 14c0-3 2-5 6-5 0 3-2 5-6 5z\"/>", "🚪": "<path d=\"M5 21V3h10v18M3 21h18M12 12h.01\"/>", "🔗": "<path d=\"M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7\"/>", "🔖": "<path d=\"M6 3h12v18l-6-4-6 4z\"/>", "📤": "<path d=\"M12 15V3M7 8l5-5 5 5M5 21h14\"/>", "🧪": "<path d=\"M9 3h6M10 3v6L4 20h16L14 9V3M7 15h10\"/>"};
+  var COLORS = {"⚙": "#64748B", "🧾": "#B7791F", "🌐": "#2B7BB9", "✅": "#1F8A5B", "⏳": "#C77D0A", "🌙": "#4F5BD5", "☀": "#E49B0F", "💚": "#1F9D63", "⚡": "#E8A317", "📅": "#1F6B4A", "🎯": "#D6453D", "🛒": "#1F6B4A", "📦": "#A8742B", "🧹": "#D6453D", "🗑": "#D6453D", "🏷": "#8B5CF6", "🏆": "#E8A317", "🏪": "#2B7BB9", "🔍": "#64748B", "✏": "#E07A1F", "⚠": "#E8A317", "🚨": "#D6453D", "⏱": "#4F5BD5", "🔥": "#E8552D", "💪": "#7C5CD6", "❄": "#3B9BD9", "🧊": "#3B9BD9", "✨": "#E8A317", "🪄": "#E8A317", "🎉": "#E8A317", "🔄": "#2B7BB9", "☁": "#5B8DEF", "🍲": "#D9772B", "📖": "#2B7BB9", "💾": "#1F6B4A", "🥗": "#6BA43A", "🌾": "#C9962B", "🥑": "#5E9B2E", "⬇": "#1F6B4A", "⬆": "#2B7BB9", "🌱": "#4C9A2A", "🚪": "#A8742B", "🔗": "#2B7BB9", "🔖": "#E07A1F", "📤": "#1F6B4A", "🧪": "#8B5CF6"};
   var keys = Object.keys(PATHS).sort(function (a, b) { return b.length - a.length; });
   var re = new RegExp('(' + keys.map(function (k) { return k + '\\ufe0f?'; }).join('|') + ')', 'g');
   var SKIP = 'script,style,textarea,input,option,select,title,[data-noicon]';
