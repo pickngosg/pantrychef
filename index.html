@@ -2511,7 +2511,8 @@
           network: 'Could not reach the video reader. Check the Supabase function is deployed.',
           no_recipe_found: 'The video was watched but no recipe was found in it.',
           busy: 'Google\'s AI is very busy right now. Please try again in a minute.',
-          no_content: 'There was nothing in this post to read.',
+          needs_downloader: 'Reading Instagram and TikTok videos needs the extra reader, which is not switched on yet.',
+          no_content: 'Could not get any video or text from this post. It may be private, deleted, or only photos.',
           ai_bad_output: 'The AI gave an unreadable answer. Try again.',
           ai_failed: 'Google AI refused the request' + (aiDetail ? ': ' + aiDetail.replace(/\s+/g, ' ').slice(0, 140) : '.'),
           server_error: 'The video reader hit an error' + (aiDetail ? ': ' + aiDetail.slice(0, 120) : '.')
