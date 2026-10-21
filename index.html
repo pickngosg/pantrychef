@@ -651,7 +651,7 @@
         <button id="closePaywallBtn" type="button" aria-label="Close" class="w-12 h-12 flex-shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-xl font-bold">✕</button>
       </div>
       <ul class="space-y-3 text-lg">
-        <li class="flex items-start gap-3">✨ <span><b>Recipes from videos:</b> 40 a month from TikTok, Instagram and YouTube</span></li>
+        <li class="flex items-start gap-3">✨ <span><b>Recipes from videos:</b> 40 credits a month (YouTube 1, Instagram or TikTok 2)</span></li>
         <li class="flex items-start gap-3">📅 <span><b>7-day meal plan</b> and send missing items to your cart</span></li>
         <li class="flex items-start gap-3">🏷️ <span><b>Live prices</b> from supermarkets</span></li>
         <li class="flex items-start gap-3">🧾 <span><b>Unlimited</b> receipt scans</span></li>
@@ -789,6 +789,7 @@
         <div class="flex items-center justify-between gap-3">
           <span class="font-bold text-base">Your plan: <span id="planName">Free</span></span>
           <button id="btnPlanUpgrade" type="button" class="px-3.5 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm">Upgrade</button>
+          <button id="btnPlanManage" type="button" class="hidden px-3.5 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 font-bold text-sm">Manage plan</button>
         </div>
         <p id="planUsage" class="text-sm leading-snug">Sign in to use video imports and receipt scans.</p>
       </div>
@@ -1020,7 +1021,8 @@
         const issues = [];
         const text = (recipe.ingredients || []).map(i => i.name.toLowerCase()).join(' ');
         for (const word of this.nonHalalKeywords) {
-          if (text.includes(word)) issues.push({ keyword: word, substitute: this.substitutions[word] || 'Halal certified alternative' });
+          const re = new RegExp('\\b' + word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + 's?\\b', 'i');   // whole word only: 'ham' no longer matches 'graham'
+          if (re.test(text)) issues.push({ keyword: word, substitute: this.substitutions[word] || 'Halal certified alternative' });
         }
         return issues;
       }
@@ -1354,11 +1356,22 @@
       },
       async refreshUI() {
         this.applying = true;
+        // remember what is typed or chosen in any open window, so a background sync never wipes it
+        const snap = {};
+        document.querySelectorAll('[id$="Modal"]:not(.hidden) input[id], [id$="Modal"]:not(.hidden) select[id], [id$="Modal"]:not(.hidden) textarea[id]').forEach(el => {
+          if (el.type !== 'file') snap[el.id] = el.type === 'checkbox' ? el.checked : el.value;
+        });
         try {
           await AppState.init();
           populatePantrySelects(); renderDashboard(); renderPantryZoneTabs(); renderPantry();
           renderCategoryFilters(); renderRecipes(); renderPlanner(); renderShoppingList();
-        } finally { this.applying = false; }
+        } finally {
+          for (const [id, v] of Object.entries(snap)) {
+            const el = document.getElementById(id); if (!el) continue;
+            if (el.type === 'checkbox') el.checked = v; else if (el.value !== v) el.value = v;
+          }
+          this.applying = false;
+        }
       },
       renderAuth() {
         const on = !!this.user;
@@ -2302,6 +2315,8 @@
     // Paste your Stripe payment links between the quotes when payments are ready.
     const UPGRADE_URL_MONTHLY = '';
     const UPGRADE_URL_ANNUAL = '';
+    // Paste your Stripe customer portal link here so Plus members can manage or cancel.
+    const MANAGE_SUBSCRIPTION_URL = '';
     const FREE_RECIPE_LIMIT = 25;
     const Plan = {
       info: { plan: 'free', signed_in: false, ai_used: 0, ai_limit: 3, scan_used: 0, scan_limit: 3 },
@@ -2321,16 +2336,17 @@
         let usage;
         if (!i.signed_in) usage = 'Sign in to use video imports and receipt scans.';
         else if (i.plan === 'owner') usage = 'Full access. No limits.';
-        else usage = `Video imports: ${i.ai_used} of ${i.ai_limit} used this month.` + (i.plan === 'free' ? ` Receipt scans: ${i.scan_used} of ${i.scan_limit}.` : '');
+        else usage = `Video credits: ${i.ai_used} of ${i.ai_limit} used this month (YouTube 1, Instagram or TikTok 2).` + (i.plan === 'free' ? ` Receipt scans: ${i.scan_used} of ${i.scan_limit}.` : '');
         set('planUsage', usage);
         document.getElementById('btnPlanUpgrade')?.classList.toggle('hidden', this.isPlus());
+        document.getElementById('btnPlanManage')?.classList.toggle('hidden', !(i.plan === 'plus' && MANAGE_SUBSCRIPTION_URL));
         const chip = document.getElementById('navPlanChip');
         if (chip) { const sp = chip.querySelector('span:last-child'); if (sp) sp.textContent = i.plan === 'owner' ? 'Owner · full access' : i.plan === 'plus' ? 'Plus plan' : 'Free plan · Upgrade'; }
       },
       showPaywall(reason) {
         const i = this.info;
         const text = {
-          ai: `You have used your ${i.ai_limit} free video imports this month.`,
+          ai: `You have used your free video credits for this month (${i.ai_used} of ${i.ai_limit}).`,
           scan: `You have used your ${i.scan_limit} free receipt scans this month.`,
           auto: 'The 7-day meal plan and sending missing items to your cart are part of Plus.',
           price: 'Live prices from supermarkets are part of Plus.',
@@ -2362,6 +2378,7 @@
         on('btnUpgradeYear', () => this.upgrade('year'));
         on('btnUpgradeMonth', () => this.upgrade('month'));
         on('btnPlanUpgrade', () => this.showPaywall());
+        on('btnPlanManage', () => { if (MANAGE_SUBSCRIPTION_URL) window.open(MANAGE_SUBSCRIPTION_URL, '_blank'); });
         on('closePaywallBtn', () => this.hidePaywall());
         on('btnPaywallClose', () => this.hidePaywall());
         on('navPlanChip', () => { if (this.isPlus()) document.getElementById('btnOpenDataBackupModal')?.click(); else this.showPaywall(); });
