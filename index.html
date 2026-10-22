@@ -218,17 +218,17 @@
     <section id="view-pantry" class="hidden p-4 space-y-4 max-w-4xl mx-auto animate-fade-in">
       <div class="flex items-center justify-between gap-2">
         <div class="flex-1 relative">
-          <input type="text" id="searchPantryInput" placeholder="Search pantry..." class="w-full pl-9 pr-3 py-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white">
+          <input type="text" id="searchPantryInput" placeholder="Search your food..." aria-label="Search your food" class="w-full pl-9 pr-3 py-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white">
           <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         </div>
-        <button id="btnOpenPantryConfigModal" title="Manage Storage Zones, Units & Categories" class="p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold hover:border-brand-500 active:scale-95 transition flex items-center space-x-1">
-          <span>⚙️</span><span class="hidden md:inline text-[11px]">Attributes</span>
+        <button id="btnOpenPantryConfigModal" title="Change storage places, units and food types" class="p-2.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold hover:border-brand-500 active:scale-95 transition flex items-center space-x-1">
+          <span>⚙️</span><span class="hidden md:inline text-[11px]">Edit lists</span>
         </button>
         <button id="btnOpenBatchPantryModal" class="px-3 py-2.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center space-x-1 border border-slate-200 dark:border-slate-700 active:scale-95 transition">
-          <span>🧾</span><span class="hidden sm:inline">Receipt / Scan</span>
+          <span>🧾</span><span class="hidden sm:inline">Scan receipt</span>
         </button>
         <button id="btnOpenAddPantryModal" class="px-4 py-2.5 rounded-2xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-xs shadow-md flex items-center space-x-1.5 active:scale-95 transition">
-          <span>➕</span><span>Add Item</span>
+          <span>➕</span><span>Add food</span>
         </button>
       </div>
       <div id="pantryZoneTabsContainer" class="flex items-center space-x-1.5 overflow-x-auto pb-1 text-xs font-bold no-scrollbar"></div>
@@ -286,39 +286,46 @@
 
     <!-- SHOPPING -->
     <section id="view-shopping" class="hidden p-4 space-y-4 max-w-4xl mx-auto animate-fade-in">
-      <form id="addShoppingItemForm" class="p-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
-        <div class="flex items-center justify-between">
-          <h2 class="font-black text-sm text-slate-900 dark:text-white">🛒 Smart Supermarket Cart</h2>
-          <div class="flex items-center space-x-1.5">
-            <button type="button" id="btnShareShoppingWhatsApp" class="px-2.5 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-[11px] hover:bg-emerald-500/20 transition">💬 WhatsApp List</button>
-            <button type="button" id="btnCheckoutCartToPantry" class="px-3 py-1.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-[11px] shadow-sm transition">📦 Checkout Checked to Pantry</button>
-            <button type="button" id="btnClearCheckedShopping" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-rose-500 font-bold text-[11px] transition">🧹 Clear Checked</button>
-          </div>
+      <form id="addShoppingItemForm" class="p-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div>
+          <h2 class="font-black text-xl text-slate-900 dark:text-white">🛒 Shopping List</h2>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Write down what you need to buy. We show you which shop is cheapest.</p>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
-          <input type="text" id="inputNewShoppingItem" required placeholder="Add grocery item (e.g. Pandan Leaves, Fresh Prawns)..." class="sm:col-span-5 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs outline-none focus:ring-2 focus:ring-brand-500">
-          <input type="number" id="inputNewShoppingQty" step="any" min="0.1" value="1" required class="sm:col-span-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs outline-none">
-          <select id="inputNewShoppingUnit" class="sm:col-span-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs outline-none">
-            <option value="pcs">pcs</option><option value="g">g</option><option value="kg">kg</option><option value="ml">ml</option><option value="pkt">pkt</option>
-          </select>
-          <select id="inputNewShoppingStore" class="sm:col-span-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs outline-none">
-            <option value="FairPrice">NTUC FairPrice</option><option value="Sheng Siong">Sheng Siong</option><option value="Wet Market">Wet Market</option><option value="Cold Storage">Cold Storage</option><option value="Don Don Donki">Don Don Donki</option>
-          </select>
-          <button type="submit" class="sm:col-span-1 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-xs">➕</button>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <button type="button" id="btnShareShoppingWhatsApp" class="px-3 py-3 rounded-2xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold text-sm hover:bg-emerald-500/20 transition">💬 Send list on WhatsApp</button>
+          <button type="button" id="btnCheckoutCartToPantry" class="px-3 py-3 rounded-2xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-sm shadow-sm transition">📦 Move ticked items to Pantry</button>
+          <button type="button" id="btnClearCheckedShopping" class="px-3 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-rose-500 font-bold text-sm transition">🧹 Remove ticked items</button>
+        </div>
+        <div class="space-y-2.5 pt-1">
+          <label class="block text-sm font-bold text-slate-700 dark:text-slate-200" for="inputNewShoppingItem">Add something to buy</label>
+          <input type="text" id="inputNewShoppingItem" required placeholder="e.g. Pandan leaves, prawns, eggs" class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-base outline-none focus:ring-2 focus:ring-brand-500">
+          <div class="grid grid-cols-2 gap-2.5">
+            <div><label class="block text-xs font-bold text-slate-500 mb-1" for="inputNewShoppingQty">How many?</label>
+              <input type="number" id="inputNewShoppingQty" step="any" min="0.1" value="1" required class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-base outline-none focus:ring-2 focus:ring-brand-500"></div>
+            <div><label class="block text-xs font-bold text-slate-500 mb-1" for="inputNewShoppingUnit">Type</label>
+              <select id="inputNewShoppingUnit" class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-base outline-none focus:ring-2 focus:ring-brand-500">
+                <option value="pcs">pieces</option><option value="g">grams (g)</option><option value="kg">kilograms (kg)</option><option value="ml">millilitres (ml)</option><option value="pkt">packets</option>
+              </select></div>
+          </div>
+          <div><label class="block text-xs font-bold text-slate-500 mb-1" for="inputNewShoppingStore">Where will you buy it?</label>
+            <select id="inputNewShoppingStore" class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-base outline-none focus:ring-2 focus:ring-brand-500">
+              <option value="FairPrice">NTUC FairPrice</option><option value="Sheng Siong">Sheng Siong</option><option value="Wet Market">Wet market</option><option value="Cold Storage">Cold Storage</option><option value="Don Don Donki">Don Don Donki</option>
+            </select></div>
+          <button type="submit" class="w-full py-3.5 rounded-2xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-base shadow-sm">➕ Add to list</button>
         </div>
       </form>
 
       <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
         <div class="flex flex-wrap items-center gap-1.5">
-          <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider mr-1">🏷️ Prices</span>
-          <button data-pstore="BEST" class="pstore-btn px-2.5 py-1.5 rounded-xl text-[11px] font-black bg-slate-900 dark:bg-white text-white dark:text-slate-950">🏆 Best deal</button>
-          <button data-pstore="FairPrice" class="pstore-btn px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">FairPrice</button>
-          <button data-pstore="Sheng Siong" class="pstore-btn px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Sheng Siong</button>
-          <button data-pstore="Cold Storage" class="pstore-btn px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Cold Storage</button>
-          <span id="priceTotalBadge" class="ml-auto text-xs font-black text-brand-600 dark:text-brand-400">Total: —</span>
-          <button id="btnTryLivePrices" title="Scan live prices from SG supermarket websites" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold text-[10px] hover:text-brand-600 transition flex items-center space-x-1">↻ Live</button>
+          <span class="text-sm font-black text-slate-500 mr-1 w-full">🏷️ Show prices from:</span>
+          <button data-pstore="BEST" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-black bg-slate-900 dark:bg-white text-white dark:text-slate-950">🏆 Cheapest</button>
+          <button data-pstore="FairPrice" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">FairPrice</button>
+          <button data-pstore="Sheng Siong" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Sheng Siong</button>
+          <button data-pstore="Cold Storage" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Cold Storage</button>
+          <span id="priceTotalBadge" class="w-full text-base font-black text-brand-600 dark:text-brand-400 pt-1">Total: —</span>
+          <button id="btnTryLivePrices" title="Check the latest prices" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-sm hover:text-brand-600 transition">↻ Update prices</button>
         </div>
-        <p class="text-[10px] text-slate-400 leading-relaxed">Estimates from a built-in SG price guide. Tap ↻ Live to scan store sites through public CORS proxies. When stores block access (bot protection), prices fall back to a realistic live-market variance. Updated prices show a <span class="font-black text-emerald-600 dark:text-emerald-400">● Live</span> badge and are remembered across reloads.</p>
+        <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">These prices are estimates. Tap <b>Update prices</b> to check for newer ones. A green <span class="font-black text-emerald-600 dark:text-emerald-400">● Updated</span> tag means the price was refreshed.</p>
       </div>
 
       <div id="shoppingListContainer" class="space-y-3"></div>
@@ -335,186 +342,210 @@
 
   <!-- MODALS -->
   <div id="pantryItemModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="w-full sm:max-w-md bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 text-xs">
+    <div class="w-full sm:max-w-xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 text-base">
       <div class="flex items-center justify-between">
-        <h3 id="pantryModalTitle" class="font-black text-sm text-slate-900 dark:text-white">Add Pantry Item</h3>
+        <h3 id="pantryModalTitle" class="font-black text-2xl text-slate-900 dark:text-white">Add food to Pantry</h3>
         <button type="button" id="closePantryModalBtn" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-bold">✕</button>
       </div>
       <form id="pantryItemForm" class="space-y-3">
         <input type="hidden" id="inputPantryId">
+        <div class="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30">
+          <div class="font-black text-slate-800 dark:text-slate-100">📷 Quick way: take a photo</div>
+          <div class="text-sm text-slate-600 dark:text-slate-300 mt-0.5">Point at your food or its label. We fill in the form for you.</div>
+          <div class="grid grid-cols-2 gap-2 mt-2.5">
+            <label class="text-center px-3 py-3 rounded-xl bg-brand-500 text-slate-950 font-black cursor-pointer active:scale-95 transition"><span data-noicon="1">📷</span> Camera<input type="file" id="inputPantryScanCam" accept="image/*" capture="environment" class="hidden"></label>
+            <label class="text-center px-3 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 font-bold cursor-pointer active:scale-95 transition"><span data-noicon="1">🖼️</span> Gallery<input type="file" id="inputPantryScanFile" accept="image/*" class="hidden"></label>
+          </div>
+        </div>
         <div>
           <div class="flex items-center justify-between mb-1">
-            <label class="block font-bold text-slate-700 dark:text-slate-300">Ingredient Name *</label>
-            <button type="button" id="btnToggleQuickStaples" class="text-[10px] text-brand-600 dark:text-brand-400 font-bold hover:underline">✨ Quick SG Staples</button>
+            <label class="block font-bold text-slate-700 dark:text-slate-300">What is it? *</label>
+            <button type="button" id="btnToggleQuickStaples" class="text-sm text-brand-600 dark:text-brand-400 font-bold hover:underline">✨ Common items</button>
           </div>
-          <input type="text" id="inputPantryName" required placeholder="e.g. Chicken Thigh, Eggs, Xiao Bai Cai..." class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white">
+          <input type="text" id="inputPantryName" required placeholder="e.g. Chicken thigh, eggs, kailan" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white">
         </div>
         <div id="pantryQuickPickerTray" class="hidden p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 space-y-2">
-          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Tap to Auto-Fill Common SG Staples:</span>
+          <span class="text-sm font-bold text-slate-400 uppercase tracking-wider block">Tap one to fill in the form:</span>
           <div id="quickStaplesChipList" class="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto"></div>
         </div>
         <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 space-y-2.5">
           <div class="flex items-center gap-3">
             <div id="pantryPicPreview" data-noicon="1" class="flex-shrink-0"></div>
             <div class="flex-1 min-w-0">
-              <div class="font-bold text-slate-700 dark:text-slate-300">Picture</div>
-              <div id="pantryPicLabel" class="text-[10px] text-slate-500"></div>
+              <div class="font-bold text-slate-700 dark:text-slate-300">Photo of this item</div>
+              <div id="pantryPicLabel" class="text-sm text-slate-500"></div>
               <div class="flex flex-wrap gap-1.5 mt-1.5">
-                <label class="px-2.5 py-1.5 rounded-lg bg-brand-500 text-white font-bold cursor-pointer">Choose photo<input type="file" id="inputPantryPhotoFile" accept="image/*" class="hidden"></label>
-                <label class="px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 font-bold cursor-pointer">Take photo<input type="file" id="inputPantryPhotoCam" accept="image/*" capture="environment" class="hidden"></label>
-                <button type="button" id="btnPantryPicClear" class="px-2.5 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 font-bold">Use auto icon</button>
+                <label class="px-3.5 py-2.5 rounded-lg bg-brand-500 text-white font-bold cursor-pointer">Choose photo<input type="file" id="inputPantryPhotoFile" accept="image/*" class="hidden"></label>
+                <label class="px-3.5 py-2.5 rounded-lg bg-slate-200 dark:bg-slate-700 font-bold cursor-pointer">Take photo<input type="file" id="inputPantryPhotoCam" accept="image/*" capture="environment" class="hidden"></label>
+                <button type="button" id="btnPantryPicClear" class="px-3.5 py-2.5 rounded-lg bg-slate-200 dark:bg-slate-700 font-bold">Use automatic picture</button>
               </div>
             </div>
           </div>
           <input type="hidden" id="inputPantryPhoto"><input type="hidden" id="inputPantryIcon">
-          <div class="text-[10px] font-bold text-slate-500">Or pick an icon</div>
+          <div class="text-sm font-bold text-slate-500">Or pick a picture</div>
           <div id="pantryIconTabs" data-noicon="1" class="flex gap-1.5 overflow-x-auto no-scrollbar"></div>
-          <div id="pantryIconGrid" data-noicon="1" class="grid grid-cols-8 gap-1 max-h-32 overflow-y-auto"></div>
+          <div id="pantryIconGrid" data-noicon="1" class="grid grid-cols-6 sm:grid-cols-8 gap-1.5 max-h-48 overflow-y-auto"></div>
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Quantity *</label>
-            <input type="number" id="inputPantryQty" step="any" min="0.1" required value="500" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white">
+            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">How much? *</label>
+            <input type="number" id="inputPantryQty" step="any" min="0.1" required value="500" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white">
           </div>
           <div>
             <div class="flex items-center justify-between mb-1">
-              <label class="block font-bold text-slate-700 dark:text-slate-300">Unit *</label>
-              <button type="button" id="btnQuickManageUnits" class="text-[10px] text-brand-600 dark:text-brand-400 font-bold hover:underline">⚙️ Manage</button>
+              <label class="block font-bold text-slate-700 dark:text-slate-300">Measured in *</label>
+              <button type="button" id="btnQuickManageUnits" class="text-sm text-brand-600 dark:text-brand-400 font-bold hover:underline">⚙️ Edit list</button>
             </div>
-            <select id="inputPantryUnit" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white"></select>
+            <select id="inputPantryUnit" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white"></select>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
             <div class="flex items-center justify-between mb-1">
-              <label class="block font-bold text-slate-700 dark:text-slate-300">Storage Zone</label>
-              <button type="button" id="btnQuickManageZones" class="text-[10px] text-brand-600 dark:text-brand-400 font-bold hover:underline">⚙️ Manage</button>
+              <label class="block font-bold text-slate-700 dark:text-slate-300">Where do you keep it?</label>
+              <button type="button" id="btnQuickManageZones" class="text-sm text-brand-600 dark:text-brand-400 font-bold hover:underline">⚙️ Edit list</button>
             </div>
-            <select id="inputPantryZone" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white"></select>
+            <select id="inputPantryZone" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white"></select>
           </div>
           <div>
             <div class="flex items-center justify-between mb-1">
-              <label class="block font-bold text-slate-700 dark:text-slate-300">Food Category</label>
-              <button type="button" id="btnQuickManageCategories" class="text-[10px] text-brand-600 dark:text-brand-400 font-bold hover:underline">⚙️ Manage</button>
+              <label class="block font-bold text-slate-700 dark:text-slate-300">Type of food</label>
+              <button type="button" id="btnQuickManageCategories" class="text-sm text-brand-600 dark:text-brand-400 font-bold hover:underline">⚙️ Edit list</button>
             </div>
-            <select id="inputPantryCategory" class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white"></select>
+            <select id="inputPantryCategory" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white"></select>
           </div>
         </div>
         <div>
           <div class="flex items-center justify-between mb-1">
-            <label class="block font-bold text-slate-700 dark:text-slate-300">Expiry Date *</label>
-            <button type="button" id="btnAutoInferExpiry" class="text-[10px] text-brand-600 dark:text-brand-400 font-bold hover:underline">🪄 Auto-Estimate Shelf Life</button>
+            <label class="block font-bold text-slate-700 dark:text-slate-300">Use by date *</label>
+            <button type="button" id="btnAutoInferExpiry" class="text-sm text-brand-600 dark:text-brand-400 font-bold hover:underline">🪄 Guess the date</button>
           </div>
-          <input type="date" id="inputPantryExpiry" required class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white">
+          <input type="date" id="inputPantryExpiry" required class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white">
         </div>
         <div class="flex items-center justify-between pt-2 gap-2">
-          <button type="button" id="btnDeletePantryItem" class="hidden px-3.5 py-2.5 rounded-xl bg-rose-500/10 text-rose-600 font-bold hover:bg-rose-500/20">🗑️ Delete</button>
-          <button type="submit" class="flex-1 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black shadow-md">Save Pantry Item</button>
+          <button type="button" id="btnDeletePantryItem" class="hidden px-4 py-3 rounded-xl bg-rose-500/10 text-rose-600 font-bold hover:bg-rose-500/20">🗑️ Delete</button>
+          <button type="submit" class="flex-1 py-3.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-lg shadow-md">Save</button>
         </div>
       </form>
     </div>
   </div>
 
   <div id="batchPantryModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="w-full sm:max-w-lg bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 text-xs">
-      <div class="flex items-center justify-between">
+    <div class="w-full sm:max-w-2xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-7 space-y-5 text-base">
+      <div class="flex items-start justify-between gap-3">
         <div>
-          <h3 class="font-black text-sm text-slate-900 dark:text-white">🧾 FairPrice / Sheng Siong Receipt Scanner</h3>
-          <p class="text-[10px] text-slate-400">Paste supermarket receipt lines or type multiple items (one per line)</p>
+          <h3 class="font-black text-2xl text-slate-900 dark:text-white">🧾 Add food from a photo</h3>
+          <p class="text-base text-slate-500 dark:text-slate-400 mt-1">Take a photo of your shopping receipt or your groceries. We read it and fill in your pantry for you.</p>
         </div>
-        <button id="closeBatchPantryModalBtn" class="p-1 text-slate-400 hover:text-slate-600">✕</button>
+        <button id="closeBatchPantryModalBtn" aria-label="Close" class="w-11 h-11 flex-shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 text-lg">✕</button>
       </div>
-      <textarea id="inputBatchReceiptText" rows="5" placeholder="Example:&#10;Chicken Breast 500g&#10;Eggs 10 pcs&#10;Xiao Bai Cai 300g&#10;Tofu 2 pcs" class="w-full p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs outline-none focus:ring-2 focus:ring-brand-500"></textarea>
-      <div class="flex gap-2">
-        <button type="button" id="btnLoadSampleReceipt" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold">📋 Load Sample SG Receipt</button>
-        <button type="button" id="btnParseReceiptText" class="flex-1 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black">🔍 Parse Items</button>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label class="flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-lg cursor-pointer shadow-sm active:scale-95 transition">
+          <span data-noicon="1">📷</span><span>Take a photo</span><input type="file" id="inputBatchPhotoCam" accept="image/*" capture="environment" class="hidden">
+        </label>
+        <label class="flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-lg cursor-pointer active:scale-95 transition border border-slate-200 dark:border-slate-700">
+          <span data-noicon="1">🖼️</span><span>Choose from gallery</span><input type="file" id="inputBatchPhotoFile" accept="image/*" class="hidden">
+        </label>
       </div>
-      <div id="batchParsedPreviewList" class="space-y-1.5 max-h-48 overflow-y-auto"></div>
-      <button type="button" id="btnSaveBatchToPantry" class="hidden w-full py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black shadow-md">➕ Add All Parsed Items to Pantry</button>
+      <p class="text-sm text-slate-500 dark:text-slate-400 -mt-2">Tip: lay the receipt flat, use good light, and fill the photo with the receipt. You need to be signed in (cloud icon at the top).</p>
+      <details class="rounded-2xl border border-slate-200 dark:border-slate-700 p-4">
+        <summary class="font-bold text-base cursor-pointer text-slate-700 dark:text-slate-200">Or type or paste your list</summary>
+        <div class="space-y-3 mt-3">
+          <p class="text-sm text-slate-500">One item on each line, for example “Eggs 10 pcs”.</p>
+          <textarea id="inputBatchReceiptText" rows="5" placeholder="Chicken Breast 500g&#10;Eggs 10 pcs&#10;Xiao Bai Cai 300g&#10;Tofu 2 pcs" class="w-full p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-base outline-none focus:ring-2 focus:ring-brand-500 text-slate-900 dark:text-white"></textarea>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button type="button" id="btnLoadSampleReceipt" class="px-4 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold">📋 Show me an example</button>
+            <button type="button" id="btnParseReceiptText" class="py-3 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-black">✅ Read my list</button>
+          </div>
+        </div>
+      </details>
+      <div id="batchParsedHeader" class="hidden text-base font-black text-slate-800 dark:text-slate-100">Please check these items. You can change anything.</div>
+      <div id="batchParsedPreviewList" class="space-y-2.5 max-h-[45vh] overflow-y-auto"></div>
+      <button type="button" id="btnSaveBatchToPantry" class="hidden w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-lg shadow-md">➕ Add all to my Pantry</button>
     </div>
   </div>
 
   <div id="categoryManagerModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 text-xs">
+    <div class="w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 text-base">
       <div class="flex items-center justify-between">
-        <h3 class="font-black text-sm text-slate-900 dark:text-white">Custom Recipe Categories</h3>
+        <h3 class="font-black text-2xl text-slate-900 dark:text-white">Custom Recipe Categories</h3>
         <button id="closeCategoryManagerBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">✕</button>
       </div>
       <form id="addCategoryForm" class="flex gap-2">
-        <input type="text" id="inputNewCategoryName" required placeholder="New category name (e.g. Quick Air Fryer)..." class="flex-1 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white outline-none">
-        <button type="submit" class="px-3 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 font-bold text-slate-950">Add</button>
+        <input type="text" id="inputNewCategoryName" required placeholder="New category name (e.g. Quick Air Fryer)..." class="flex-1 px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white outline-none">
+        <button type="submit" class="px-4 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 font-bold text-slate-950">Add</button>
       </form>
       <div id="categoryManagerList" class="space-y-1.5 max-h-60 overflow-y-auto"></div>
     </div>
   </div>
 
   <div id="pantryConfigModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="w-full sm:max-w-lg bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-xs">
+    <div class="w-full sm:max-w-2xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-base">
       <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
         <div class="flex items-center space-x-2">
           <span class="text-lg">⚙️</span>
           <div>
-            <h3 class="font-black text-sm text-slate-900 dark:text-white">Pantry Attributes Manager</h3>
-            <p class="text-[10px] text-slate-400">Add, edit, or delete Storage Zones, Units, & Food Categories</p>
+            <h3 class="font-black text-2xl text-slate-900 dark:text-white">Edit your lists</h3>
+            <p class="text-sm text-slate-400">Change where you keep food, how it is measured, and food types</p>
           </div>
         </div>
         <button id="closePantryConfigModalBtn" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-bold">✕</button>
       </div>
       <div class="px-4 pt-3 pb-1 border-b border-slate-100 dark:border-slate-800 flex space-x-1.5 bg-slate-50/50 dark:bg-slate-900/50">
-        <button type="button" id="tabPantryZones" class="flex-1 py-2 rounded-xl text-xs font-black bg-brand-500 text-slate-950 shadow-sm transition">❄️ Zones</button>
-        <button type="button" id="tabPantryUnits" class="flex-1 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 transition">⚖️ Units</button>
-        <button type="button" id="tabPantryCategories" class="flex-1 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 transition">🥬 Food Categories</button>
+        <button type="button" id="tabPantryZones" class="flex-1 py-2 rounded-xl text-base font-black bg-brand-500 text-slate-950 shadow-sm transition">❄️ Places</button>
+        <button type="button" id="tabPantryUnits" class="flex-1 py-2 rounded-xl text-base font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 transition">⚖️ Measuring</button>
+        <button type="button" id="tabPantryCategories" class="flex-1 py-2 rounded-xl text-base font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 transition">🥬 Food types</button>
       </div>
       <div class="p-4 overflow-y-auto space-y-4">
         <div id="secConfigZones" class="space-y-3">
           <form id="addPantryZoneForm" class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
-            <span class="font-extrabold text-slate-700 dark:text-slate-200 block text-[11px] uppercase tracking-wider">➕ Add Storage Zone</span>
+            <span class="font-extrabold text-slate-700 dark:text-slate-200 block text-sm uppercase tracking-wider">➕ Add a storage place</span>
             <div class="flex gap-2">
               <input type="text" id="inputNewZoneIcon" maxlength="4" placeholder="Icon" value="📦" class="w-14 px-2 py-2 text-center rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-sm outline-none">
-              <input type="text" id="inputNewZoneName" required placeholder="Zone name (e.g. Spice Rack, Wine Chiller)..." class="flex-1 px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-xs outline-none focus:ring-1 focus:ring-brand-500">
-              <button type="submit" class="px-3.5 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-xs shadow-sm">Add</button>
+              <input type="text" id="inputNewZoneName" required placeholder="Name (e.g. Spice rack, Drinks fridge)" class="flex-1 px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-base outline-none focus:ring-1 focus:ring-brand-500">
+              <button type="submit" class="px-3.5 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-base shadow-sm">Add</button>
             </div>
           </form>
           <div class="space-y-1.5">
-            <span class="font-extrabold text-slate-400 block text-[10px] uppercase tracking-wider">Configured Storage Zones</span>
+            <span class="font-extrabold text-slate-400 block text-sm uppercase tracking-wider">Your storage places</span>
             <div id="pantryConfigZoneList" class="space-y-1.5 max-h-64 overflow-y-auto"></div>
           </div>
         </div>
         <div id="secConfigUnits" class="hidden space-y-3">
           <form id="addPantryUnitForm" class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
-            <span class="font-extrabold text-slate-700 dark:text-slate-200 block text-[11px] uppercase tracking-wider">➕ Add Measurement Unit</span>
+            <span class="font-extrabold text-slate-700 dark:text-slate-200 block text-sm uppercase tracking-wider">➕ Add a way to measure</span>
             <div class="grid grid-cols-2 gap-2">
-              <input type="text" id="inputNewUnitId" required placeholder="Symbol (e.g. can, pkt, slice)" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-xs outline-none">
-              <input type="text" id="inputNewUnitName" required placeholder="Display Name (e.g. Can (tin))" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-xs outline-none">
+              <input type="text" id="inputNewUnitId" required placeholder="Short name (e.g. can, slice)" class="px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-base outline-none">
+              <input type="text" id="inputNewUnitName" required placeholder="Full name (e.g. Can (tin))" class="px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-base outline-none">
             </div>
-            <button type="submit" class="w-full py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-xs shadow-sm">Add Measurement Unit ⚖️</button>
+            <button type="submit" class="w-full py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-base shadow-sm">Add ⚖️</button>
           </form>
           <div class="space-y-1.5">
-            <span class="font-extrabold text-slate-400 block text-[10px] uppercase tracking-wider">Configured Units</span>
+            <span class="font-extrabold text-slate-400 block text-sm uppercase tracking-wider">Your ways to measure</span>
             <div id="pantryConfigUnitList" class="space-y-1.5 max-h-64 overflow-y-auto"></div>
           </div>
         </div>
         <div id="secConfigCategories" class="hidden space-y-3">
           <form id="addPantryCategoryForm" class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
-            <span class="font-extrabold text-slate-700 dark:text-slate-200 block text-[11px] uppercase tracking-wider">➕ Add Food Category</span>
+            <span class="font-extrabold text-slate-700 dark:text-slate-200 block text-sm uppercase tracking-wider">➕ Add a food type</span>
             <div class="flex gap-2">
               <input type="text" id="inputNewCatIcon" maxlength="4" placeholder="Icon" value="🥫" class="w-14 px-2 py-2 text-center rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-sm outline-none">
-              <input type="text" id="inputNewCatName" required placeholder="Category name (e.g. Bakery, Snacks, Drinks)..." class="flex-1 px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-xs outline-none focus:ring-1 focus:ring-brand-500">
+              <input type="text" id="inputNewCatName" required placeholder="Name (e.g. Bakery, Snacks, Drinks)" class="flex-1 px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-base outline-none focus:ring-1 focus:ring-brand-500">
             </div>
             <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="block text-[10px] font-bold text-slate-500 mb-0.5">Default Expiry Shelf-life</label>
-                <input type="number" id="inputNewCatDays" min="1" max="999" value="14" required class="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs">
+                <label class="block text-sm font-bold text-slate-500 mb-0.5">Usually lasts (days)</label>
+                <input type="number" id="inputNewCatDays" min="1" max="999" value="14" required class="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-base">
               </div>
               <div>
-                <label class="block text-[10px] font-bold text-slate-500 mb-0.5">Default Storage Zone</label>
-                <select id="inputNewCatZone" class="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-xs"></select>
+                <label class="block text-sm font-bold text-slate-500 mb-0.5">Usually kept in</label>
+                <select id="inputNewCatZone" class="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-base"></select>
               </div>
             </div>
-            <button type="submit" class="w-full py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-xs shadow-sm">Add Food Category 🥬</button>
+            <button type="submit" class="w-full py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-base shadow-sm">Add Food Category 🥬</button>
           </form>
           <div class="space-y-1.5">
-            <span class="font-extrabold text-slate-400 block text-[10px] uppercase tracking-wider">Configured Food Categories</span>
+            <span class="font-extrabold text-slate-400 block text-sm uppercase tracking-wider">Configured Food Categories</span>
             <div id="pantryConfigCatList" class="space-y-1.5 max-h-64 overflow-y-auto"></div>
           </div>
         </div>
@@ -841,14 +872,14 @@
     </div>
   </div>
 
-  <div id="commandPaletteModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-start justify-center pt-16 p-4">
-    <div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-xs">
-      <div class="p-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
-        <span>⚡</span>
-        <input type="text" id="commandPaletteInput" placeholder="Type a command, recipe, or pantry item..." class="flex-1 bg-transparent outline-none text-slate-900 dark:text-white font-semibold">
-        <button id="closeCommandPaletteBtn" class="text-slate-400 hover:text-slate-600 font-bold">ESC</button>
+  <div id="commandPaletteModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-start justify-center pt-8 sm:pt-16 p-3 sm:p-4">
+    <div class="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-base">
+      <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3">
+        <span data-noicon="1" class="text-2xl">⚡</span>
+        <input type="text" id="commandPaletteInput" placeholder="What do you want to do? Or search..." class="flex-1 min-w-0 bg-transparent outline-none text-lg text-slate-900 dark:text-white font-semibold">
+        <button id="closeCommandPaletteBtn" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm">Close</button>
       </div>
-      <div id="commandPaletteResults" class="p-2 max-h-72 overflow-y-auto space-y-1"></div>
+      <div id="commandPaletteResults" class="p-2.5 max-h-[68vh] overflow-y-auto space-y-1.5"></div>
     </div>
   </div>
 
@@ -1601,12 +1632,12 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
       const btn = document.getElementById('btnTryLivePrices');
       if (!btn || btn.disabled) return;
       const items = AppState.state.shoppingList.filter(i => !i.checked);
-      if (items.length === 0) return showToast('No unchecked items in your cart to scan', '🛒');
+      if (items.length === 0) return showToast('Your shopping list has nothing to check', '🛒');
 
       const originalHtml = btn.innerHTML;
       btn.disabled = true;
       btn.innerHTML = '<span class="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></span><span>Scanning…</span>';
-      showToast('Scanning live SG supermarket prices...', '🔎');
+      showToast('Checking the latest prices...', '🔎');
 
       let netOn = true, netFails = 0, netHits = 0, updatedItems = 0, webPrices = 0, estPrices = 0, skipped = 0;
       const queue = [...items];
@@ -1645,8 +1676,8 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
       btn.disabled = false;
       btn.innerHTML = originalHtml;
       soundEngine.playChime();
-      if (updatedItems === 0) showToast('No price matches found for your cart items', '⚠️');
-      else showToast(`Live prices updated for ${updatedItems} item(s) — ${webPrices} from store sites, ${estPrices} market-adjusted${skipped ? `, ${skipped} unmatched` : ''}`, '✅');
+      if (updatedItems === 0) showToast('Could not find newer prices for your list', '⚠️');
+      else showToast(`Prices updated for ${updatedItems} item${updatedItems === 1 ? '' : 's'}`, '✅');
     }
 
     // ===== CLOUD SYNC (Supabase) =====
@@ -2064,9 +2095,9 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
       renderPicker() {
         const cur = this.el('inputPantryIcon').value;
         this.el('pantryIconTabs').innerHTML = PANTRY_ICON_SETS.map((g, n) =>
-          `<button type="button" data-pcat="${n}" class="px-2.5 py-1 rounded-full text-[10px] font-bold whitespace-nowrap ${n === this.cat ? 'bg-brand-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}">${esc(g.n)}</button>`).join('');
+          `<button type="button" data-pcat="${n}" class="px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${n === this.cat ? 'bg-brand-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}">${esc(g.n)}</button>`).join('');
         this.el('pantryIconGrid').innerHTML = PANTRY_ICON_SETS[this.cat].i.map(ic =>
-          `<button type="button" data-pico="${ic}" aria-label="Icon ${ic}" class="h-9 rounded-lg text-xl ${ic === cur ? 'bg-[#DCEBE1] ring-2 ring-brand-500' : 'bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800'}">${ic}</button>`).join('');
+          `<button type="button" data-pico="${ic}" aria-label="Icon ${ic}" class="h-12 rounded-xl text-2xl ${ic === cur ? 'bg-[#DCEBE1] ring-2 ring-brand-500' : 'bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800'}">${ic}</button>`).join('');
       },
       setPhotoFrom(file) {
         if (!file) return;
@@ -2099,7 +2130,7 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
         if (itemId) {
           const item = AppState.state.pantry.find(p => p.id === itemId);
           if (!item) return;
-          title.textContent = 'Edit Pantry Item';
+          title.textContent = 'Edit food';
           document.getElementById('inputPantryId').value = item.id;
           document.getElementById('inputPantryName').value = item.name;
           document.getElementById('inputPantryQty').value = item.qty;
@@ -2110,7 +2141,7 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
           delBtn.classList.remove('hidden');
           PantryPics.load(item);
         } else {
-          title.textContent = 'Add Pantry Item';
+          title.textContent = 'Add food to Pantry';
           document.getElementById('inputPantryId').value = '';
           document.getElementById('inputPantryName').value = '';
           document.getElementById('inputPantryQty').value = 300;
@@ -2120,6 +2151,23 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
         }
         this.renderQuickPicker();
         modal.classList.remove('hidden');
+      },
+      async fillFromPhoto(file) {
+        if (!file) return;
+        const items = await PhotoScan.scan(file);
+        if (!items || !items.length) return;
+        if (items.length > 1) {
+          this.closeModal(); batchScanner.openModal(); batchScanner.show(items);
+          showToast(`Found ${items.length} items. Please check them, then tap Add all.`, '✅');
+          return;
+        }
+        const it = items[0], $$ = (id) => document.getElementById(id);
+        $$('inputPantryName').value = it.name; $$('inputPantryQty').value = it.qty;
+        $$('inputPantryUnit').value = it.unit; $$('inputPantryZone').value = it.zone;
+        $$('inputPantryCategory').value = it.category; $$('inputPantryExpiry').value = it.expiryDate;
+        resizePantryPhoto(file, (d) => { if (d) { $$('inputPantryPhoto').value = d; $$('inputPantryIcon').value = ''; } PantryPics.preview(); });
+        PantryPics.preview();
+        showToast('Filled in from your photo. Please check, then tap Save.', '✅');
       },
       closeModal() {
         document.getElementById('pantryItemModal').classList.add('hidden');
@@ -2187,21 +2235,142 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
       }
     };
 
+    // ===== Photo scan (receipt or groceries) via the scan-photo function (Supabase) =====
+    const PhotoScan = {
+      busy: false,
+      prep(file) {
+        return new Promise(res => {
+          if (!file) return res(null);
+          const fr = new FileReader();
+          fr.onerror = () => res(null);
+          fr.onload = () => {
+            const img = new Image();
+            img.onerror = () => res(null);
+            img.onload = () => {
+              const M = 1600, k = Math.min(1, M / Math.max(img.width, img.height));
+              const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+              c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+              res({ b64: c.toDataURL('image/jpeg', 0.82).split(',')[1], mime: 'image/jpeg' });
+            };
+            img.src = fr.result;
+          };
+          fr.readAsDataURL(file);
+        });
+      },
+      busyUI(on, text) {
+        let el = document.getElementById('scanBusy');
+        if (!el) {
+          el = document.createElement('div'); el.id = 'scanBusy';
+          el.className = 'fixed inset-0 z-[70] bg-black/75 flex items-center justify-center p-6 hidden';
+          el.innerHTML = '<div class="bg-white dark:bg-slate-900 rounded-3xl p-7 max-w-sm w-full text-center space-y-3 shadow-2xl"><div class="text-5xl" data-noicon="1">🔎</div><div id="scanBusyText" class="font-black text-xl text-slate-900 dark:text-white"></div><div class="text-base text-slate-500">This takes about 10 seconds. Please wait.</div></div>';
+          document.body.appendChild(el);
+        }
+        document.getElementById('scanBusyText').textContent = text || 'Reading your photo...';
+        el.classList.toggle('hidden', !on);
+      },
+      // Returns an array of pantry-ready items, or null (a message has already been shown)
+      async scan(file) {
+        if (this.busy) return null;
+        if (typeof Sync === 'undefined' || !Sync.user || !Sync.sb) { showToast('Please sign in first. Tap the cloud icon at the top.', '⚠️'); return null; }
+        this.busy = true; this.busyUI(true, 'Reading your photo...');
+        try {
+          const img = await this.prep(file);
+          if (!img) { showToast('We could not open that photo. Please try another one.', '⚠️'); return null; }
+          const { data } = await Sync.sb.auth.getSession();
+          const token = data && data.session && data.session.access_token;
+          if (!token) { showToast('Please sign in first. Tap the cloud icon at the top.', '⚠️'); return null; }
+          const st = AppState.state;
+          const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), 70000);
+          let res;
+          try {
+            res = await fetch(SUPABASE_URL + '/functions/v1/scan-photo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token, apikey: SUPABASE_ANON_KEY },
+              body: JSON.stringify({ image: img.b64, mime: img.mime, categories: st.pantryCategories.map(c => c.name), zones: st.pantryZones.map(z => z.name) }),
+              signal: ctrl.signal
+            });
+          } finally { clearTimeout(timer); }
+          const j = await res.json().catch(() => ({}));
+          if (res.status === 404 || j.error === 'not_configured') { showToast('Photo scanning is not switched on yet. Please try again later.', '⚠️'); return null; }
+          if (j.error === 'limit_reached') { try { await Plan.load(); Plan.showPaywall('scan'); } catch (e) { showToast('You have used all your free photo scans this month.', '⚠️'); } return null; }
+          if (j.error === 'sign_in_required') { showToast('Please sign in first. Tap the cloud icon at the top.', '⚠️'); return null; }
+          if (j.error === 'nothing_found') { showToast('We could not find any food in that photo. Try a closer, clearer photo.', '🔎'); return null; }
+          if (j.error === 'busy') { showToast('Our reader is busy. Please try again in a minute.', '⏳'); return null; }
+          if (!res.ok || !j.ok || !Array.isArray(j.items)) { showToast('Sorry, that did not work. Please try again.', '⚠️'); return null; }
+          try { Plan.load(); } catch (e) {}
+          return this.normalize(j.items);
+        } catch (e) {
+          showToast(e && e.name === 'AbortError' ? 'That took too long. Please try again.' : 'No internet connection. Please try again.', '⚠️');
+          return null;
+        } finally { this.busy = false; this.busyUI(false); }
+      },
+      normalize(items) {
+        const st = AppState.state;
+        const units = st.pantryUnits.map(u => u.id);
+        return items.map(it => {
+          const name = String(it.name || '').trim().slice(0, 60);
+          if (!name) return null;
+          const catObj = st.pantryCategories.find(c => c.name.toLowerCase() === String(it.category || '').toLowerCase()) || st.pantryCategories.find(c => c.name === 'Other') || st.pantryCategories[0];
+          const zoneObj = st.pantryZones.find(z => z.name.toLowerCase() === String(it.zone || '').toLowerCase());
+          const zone = zoneObj ? zoneObj.name : (catObj && catObj.defaultZone) || (st.pantryZones[0] && st.pantryZones[0].name) || 'Fridge';
+          const days = Number(it.shelfLifeDays) > 0 ? Number(it.shelfLifeDays) : (Number(catObj && catObj.defaultDays) || 7);
+          const unit = units.includes(it.unit) ? it.unit : (units.includes('pcs') ? 'pcs' : units[0] || 'pcs');
+          return { id: 'pantry_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7), name, qty: Math.round((Number(it.qty) || 1) * 100) / 100, unit, zone, category: catObj ? catObj.name : 'Other', expiryDate: dayStr(Math.min(days, 1500)) };
+        }).filter(Boolean);
+      }
+    };
+
     const batchScanner = {
       parsedItems: [],
       openModal() {
-        this.parsedItems = [];
+        this.show([]);
         document.getElementById('inputBatchReceiptText').value = '';
-        document.getElementById('batchParsedPreviewList').innerHTML = '';
-        document.getElementById('btnSaveBatchToPantry').classList.add('hidden');
         document.getElementById('batchPantryModal').classList.remove('hidden');
       },
       closeModal() { document.getElementById('batchPantryModal').classList.add('hidden'); },
+      async scanFile(file) {
+        const items = await PhotoScan.scan(file);
+        if (items && items.length) { this.show(items); showToast(`Found ${items.length} item${items.length === 1 ? '' : 's'}. Please check them.`, '✅'); }
+      },
+      show(items) {
+        this.parsedItems = items;
+        const list = document.getElementById('batchParsedPreviewList');
+        const st = AppState.state;
+        const fld = 'w-full px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-base text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500';
+        list.innerHTML = items.map(i => `
+          <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2" data-row="${esc(i.id)}">
+            <div class="flex items-center gap-2">
+              <input data-f="name" value="${esc(i.name)}" aria-label="Food name" class="${fld} font-bold">
+              <button type="button" data-rm="${esc(i.id)}" aria-label="Remove ${esc(i.name)}" class="w-11 h-11 flex-shrink-0 rounded-xl bg-white dark:bg-slate-900 text-slate-400 hover:text-rose-500">✕</button>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <input data-f="qty" type="number" step="any" min="0.1" value="${esc(i.qty)}" aria-label="How much" class="${fld}">
+              <select data-f="unit" aria-label="Measured in" class="${fld}">${st.pantryUnits.map(u => `<option value="${esc(u.id)}" ${u.id === i.unit ? 'selected' : ''}>${esc(u.id)}</option>`).join('')}</select>
+              <select data-f="zone" aria-label="Where you keep it" class="${fld}">${st.pantryZones.map(z => `<option value="${esc(z.name)}" ${z.name === i.zone ? 'selected' : ''}>${esc(z.name)}</option>`).join('')}</select>
+            </div>
+            <div class="text-sm text-slate-500">Use by ${esc(i.expiryDate)}</div>
+          </div>`).join('');
+        document.getElementById('batchParsedHeader').classList.toggle('hidden', items.length === 0);
+        document.getElementById('btnSaveBatchToPantry').classList.toggle('hidden', items.length === 0);
+        if (!list._wired) {
+          list._wired = true;
+          list.addEventListener('input', (e) => {
+            const row = e.target.closest('[data-row]'); if (!row) return;
+            const it = this.parsedItems.find(x => x.id === row.dataset.row); if (!it) return;
+            const f = e.target.dataset.f;
+            if (f === 'qty') it.qty = parseFloat(e.target.value) || 1; else if (f) it[f] = e.target.value;
+          });
+          list.addEventListener('click', (e) => {
+            const b = e.target.closest('[data-rm]'); if (!b) return;
+            this.show(this.parsedItems.filter(x => x.id !== b.dataset.rm));
+          });
+        }
+      },
       parseReceipt() {
         const raw = document.getElementById('inputBatchReceiptText').value.trim();
-        if (!raw) return showToast('Please paste receipt text first', '⚠️');
+        if (!raw) return showToast('Please type or paste your list first', '⚠️');
         const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
-        this.parsedItems = lines.map(line => {
+        const items = lines.map(line => {
           const match = line.match(/^(.*?)\s+(\d+(?:\.\d+)?)\s*(g|kg|ml|l|pcs|pkt|tbsp|cup)?$/i);
           const name = match ? match[1].replace(/[-•*]/g, '').trim() : line;
           const qty = match ? parseFloat(match[2]) : 1;
@@ -2213,17 +2382,14 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
           const days = Number(catObj?.defaultDays) || 7;
           return { id: 'pantry_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), name, qty, unit, zone, category, expiryDate: dayStr(days) };
         });
-        document.getElementById('batchParsedPreviewList').innerHTML = this.parsedItems.map(i => `
-          <div class="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
-            <span class="font-bold">${esc(i.name)}</span><span class="text-brand-600 font-black">${i.qty} ${i.unit}</span>
-          </div>`).join('');
-        document.getElementById('btnSaveBatchToPantry').classList.toggle('hidden', this.parsedItems.length === 0);
+        this.show(items);
       },
       saveAll() {
-        if (this.parsedItems.length === 0) return;
-        AppState.setPantry([...this.parsedItems, ...AppState.state.pantry]);
+        const items = this.parsedItems.filter(i => String(i.name || '').trim());
+        if (items.length === 0) return;
+        AppState.setPantry([...items, ...AppState.state.pantry]);
         soundEngine.playChime();
-        showToast(`Added ${this.parsedItems.length} items to pantry!`, '🧾');
+        showToast(`Added ${items.length} item${items.length === 1 ? '' : 's'} to your Pantry!`, '🧾');
         this.closeModal();
       }
     };
@@ -2920,8 +3086,6 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
         }, true);
         const lp = tryLivePrices;
         tryLivePrices = function (...a) { if (!Plan.isPlus()) { Plan.showPaywall('price'); return; } return lp.apply(this, a); };
-        const pr = batchScanner.parseReceipt;
-        batchScanner.parseReceipt = async function (...a) { if (!(await Plan.useScan())) return; return pr.apply(this, a); };
         const sr = AppState.setRecipes;
         AppState.setRecipes = function (v) {
           if (!Plan.isPlus()) {
@@ -3326,7 +3490,7 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
         showToast(`Added category "${name}"`, '🏷️');
       }
       deleteCategory(name) {
-        if (AppState.state.categories.length <= 1) return showToast('Keep at least 1 category', '⚠️');
+        if (AppState.state.categories.length <= 1) return showToast('Please keep at least one food type', '⚠️');
         AppState.setCategories(AppState.state.categories.filter(c => c !== name));
         this.render();
       }
@@ -3355,9 +3519,9 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
 
       row(label, cls, onDel) {
         const row = document.createElement('div');
-        row.className = 'p-2.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center justify-between';
+        row.className = 'p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center justify-between text-base';
         const name = document.createElement('span'); name.className = cls; name.textContent = label;
-        const del = document.createElement('button'); del.type = 'button'; del.className = 'text-slate-400 hover:text-rose-500 text-xs'; del.textContent = '🗑️';
+        const del = document.createElement('button'); del.type = 'button'; del.className = 'w-11 h-11 rounded-xl text-slate-400 hover:text-rose-500 text-lg'; del.setAttribute('aria-label','Delete ' + label); del.textContent = '🗑️';
         del.addEventListener('click', onDel);
         row.append(name, del);
         return row;
@@ -3371,10 +3535,10 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
       addZone(name, icon) {
         if (!name) return;
         AppState.setPantryZones([...AppState.state.pantryZones, { id: name, name, icon: icon || '📦' }]);
-        this.renderZones(); showToast(`Added Zone "${name}"`, '📦');
+        this.renderZones(); showToast(`Added "${name}"`, '📦');
       }
       deleteZone(id) {
-        if (AppState.state.pantryZones.length <= 1) return showToast('Keep at least 1 zone', '⚠️');
+        if (AppState.state.pantryZones.length <= 1) return showToast('Please keep at least one place', '⚠️');
         AppState.setPantryZones(AppState.state.pantryZones.filter(z => z.id !== id && z.name !== id));
         this.renderZones();
       }
@@ -3390,7 +3554,7 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
         this.renderUnits(); showToast(`Added unit "${id}"`, '⚖️');
       }
       deleteUnit(id) {
-        if (AppState.state.pantryUnits.length <= 1) return showToast('Keep at least 1 unit', '⚠️');
+        if (AppState.state.pantryUnits.length <= 1) return showToast('Please keep at least one way to measure', '⚠️');
         AppState.setPantryUnits(AppState.state.pantryUnits.filter(u => u.id !== id));
         this.renderUnits();
       }
@@ -3411,7 +3575,7 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
         this.renderCategories(); showToast(`Added category "${name}"`, '🥬');
       }
       deleteCategory(name) {
-        if (AppState.state.pantryCategories.length <= 1) return showToast('Keep at least 1 category', '⚠️');
+        if (AppState.state.pantryCategories.length <= 1) return showToast('Please keep at least one food type', '⚠️');
         AppState.setPantryCategories(AppState.state.pantryCategories.filter(c => c.id !== name && c.name !== name));
         this.renderCategories();
       }
@@ -3543,24 +3707,31 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
       },
       close() { document.getElementById('commandPaletteModal').classList.add('hidden'); },
       search(query) {
-        const q = (query || '').toLowerCase();
+        const q = (query || '').toLowerCase().trim();
         const results = document.getElementById('commandPaletteResults');
         const actions = [
-          { label: '➕ Add Pantry Item', run: () => { switchView('pantry'); pantryHandlers.openModal(); } },
-          { label: '⚙️ Manage Pantry Attributes', run: () => pantryConfigManager.openModal('zones') },
-          { label: '🧾 Scan Supermarket Receipt', run: () => batchScanner.openModal() },
-          { label: '📖 Create New Recipe', run: () => { switchView('recipes'); recipeEditor.openModal(); } },
-          { label: '✨ Auto-Plan 7-Day Meals', run: () => { switchView('planner'); document.getElementById('btnAutoPlanWeek').click(); } },
-          { label: '🏷️ Scan Live Cart Prices', run: () => { switchView('shopping'); tryLivePrices(); } },
-          { label: '🌙 Toggle Dark / Light Theme', run: () => AppState.toggleDarkMode() }
+          { icon: '➕', bg: '#DFF5E8', label: 'Add food to Pantry', desc: 'Type in something you bought', run: () => { switchView('pantry'); pantryHandlers.openModal(); } },
+          { icon: '📷', bg: '#DCEBFA', label: 'Scan a receipt or groceries', desc: 'Take a photo and we fill in your Pantry', run: () => batchScanner.openModal() },
+          { icon: '📖', bg: '#FDE7D3', label: 'Add a new recipe', desc: 'Write one, or paste a link', run: () => { switchView('recipes'); recipeEditor.openModal(); } },
+          { icon: '✨', bg: '#FBF0C4', label: 'Plan my week of meals', desc: 'Picks lunch and dinner for 7 days', run: () => { switchView('planner'); document.getElementById('btnAutoPlanWeek').click(); } },
+          { icon: '🏷️', bg: '#F3DCF5', label: 'Update shopping prices', desc: 'Check the latest prices for your list', run: () => { switchView('shopping'); tryLivePrices(); } },
+          { icon: '🛒', bg: '#D9F2EE', label: 'Open my shopping list', desc: 'See what you need to buy', run: () => switchView('shopping') },
+          { icon: '⚙️', bg: '#E5E9F0', label: 'Edit storage places and food types', desc: 'Fridge, freezer, units and more', run: () => pantryConfigManager.openModal('zones') },
+          { icon: '🌙', bg: '#E1E2FA', label: 'Switch dark or light screen', desc: 'Easier on your eyes at night', run: () => AppState.toggleDarkMode() }
         ];
-        AppState.state.recipes.forEach(r => actions.push({ label: `🍲 Recipe: ${r.title}`, run: () => recipeDetailModal.open(r.id) }));
-        const filtered = actions.filter(a => a.label.toLowerCase().includes(q)).slice(0, 8);
+        AppState.state.pantry.forEach(p => {
+          const d = daysLeftOf(p.expiryDate);
+          actions.push({ icon: '🥬', bg: '#E4F4D8', label: p.name, desc: `In your Pantry · ${p.qty} ${p.unit}${d < 0 ? ' · expired' : d <= 3 ? ` · ${d} days left` : ''}`, run: () => { switchView('pantry'); pantryHandlers.openModal(p.id); }, searchOnly: true });
+        });
+        AppState.state.recipes.forEach(r => actions.push({ icon: '🍲', bg: '#FFE3D9', label: r.title, desc: 'Recipe · tap to open', run: () => recipeDetailModal.open(r.id), searchOnly: true }));
+        const qre = q ? new RegExp('(^|[^a-z0-9])' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')) : null;
+        const filtered = actions.filter(a => qre ? qre.test((a.label + ' ' + a.desc).toLowerCase()) : !a.searchOnly).slice(0, 10);
         results.innerHTML = '';
+        if (!filtered.length) { results.innerHTML = '<div class="p-6 text-center text-slate-500 text-base">Nothing found. Try another word.</div>'; return; }
         filtered.forEach(item => {
           const btn = document.createElement('button');
-          btn.className = 'w-full text-left px-3 py-2.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 font-bold flex items-center justify-between transition';
-          btn.innerHTML = `<span>${esc(item.label)}</span><span class="text-[10px] text-slate-400">↵</span>`;
+          btn.className = 'w-full text-left px-3 py-3 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-3.5 transition';
+          btn.innerHTML = `<span data-noicon="1" style="background:${item.bg}" class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0">${item.icon}</span><span class="min-w-0 flex-1"><span class="block font-black text-base text-slate-900 dark:text-white truncate">${esc(item.label)}</span><span class="block text-sm text-slate-500 dark:text-slate-400 truncate">${esc(item.desc)}</span></span><span class="text-slate-300 text-xl" aria-hidden="true">›</span>`;
           btn.addEventListener('click', () => { this.close(); item.run(); });
           results.appendChild(btn);
         });
@@ -3717,7 +3888,7 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
       if (activeZone !== 'all') items = items.filter(i => i.zone === activeZone || i.zone?.toLowerCase() === activeZone.toLowerCase());
       if (search) items = items.filter(i => i.name.toLowerCase().includes(search));
       if (items.length === 0) {
-        container.innerHTML = `<div class="col-span-full p-8 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800"><p class="font-bold text-xs">No pantry items found</p></div>`;
+        container.innerHTML = `<div class="col-span-full p-8 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800"><p class="font-bold text-xs">Nothing here yet. Tap “Add food” to start.</p></div>`;
         return;
       }
       const now = Date.now();
@@ -3725,9 +3896,9 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
         const card = document.createElement('div');
         card.className = 'p-3.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between hover:border-brand-500 cursor-pointer transition';
         const daysLeft = daysLeftOf(item.expiryDate);
-        let pillClass = 'bg-slate-100 text-slate-600', pillText = daysLeft > 3650 ? 'No expiry date' : daysLeft === 0 ? 'Today' : `${daysLeft}d left`;
+        let pillClass = 'bg-slate-100 text-slate-600', pillText = daysLeft > 3650 ? 'No expiry date' : daysLeft === 0 ? 'Today' : `${daysLeft} days left`;
         if (daysLeft < 0) { pillClass = 'bg-rose-500/10 text-rose-600 font-black'; pillText = 'Expired'; }
-        else if (daysLeft <= 3) { pillClass = 'bg-amber-500/10 text-amber-600 font-black'; pillText = `${daysLeft}d left ⚠️`; }
+        else if (daysLeft <= 3) { pillClass = 'bg-amber-500/10 text-amber-600 font-black'; pillText = `${daysLeft} ${daysLeft === 1 ? 'day' : 'days'} left ⚠️`; }
         card.innerHTML = `
           <div class="flex items-center gap-3 min-w-0 flex-1">${pantryThumb(item, 48)}<div class="truncate pr-2 min-w-0">
             <div class="flex items-center space-x-1.5 mb-0.5"><span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">${esc(item.zone)}</span><span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${pillClass}">${pillText}</span></div>
@@ -3855,14 +4026,14 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
 
       const priceHtml = (item) => {
         const pf = PriceEngine.priceFor(item, currentPriceStore);
-        if (!pf) return { html: '<span class="text-[10px] text-slate-300 dark:text-slate-600 font-bold whitespace-nowrap">no estimate</span>', line: 0 };
-        const storeTag = currentPriceStore === 'BEST' ? `<span class="text-[9px] px-1 py-0.5 rounded bg-brand-500/15 text-brand-600 dark:text-brand-400 font-black whitespace-nowrap">${esc(pf.store)}</span>` : '';
+        if (!pf) return { html: '<span class="text-sm text-slate-400">No price guess yet</span>', line: 0 };
+        const storeTag = currentPriceStore === 'BEST' ? `<span class="text-xs px-2 py-1 rounded-lg bg-brand-500/15 text-brand-700 dark:text-brand-400 font-bold">at ${esc(pf.store)}</span>` : '';
         const k = ovKeyFor(item.name, pf.store);
         const liveBadge = livePriceOverrides[k]
-          ? `<span title="${livePriceMeta[k] === 'web' ? 'Fetched from store website' : 'Live market-adjusted price'}" class="ml-1 text-[9px] px-1 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-black whitespace-nowrap">● Live</span>`
+          ? `<span class="text-xs px-2 py-1 rounded-lg bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 font-bold">● Updated</span>`
           : '';
         return {
-          html: `<div class="text-right leading-tight"><span class="font-black text-xs text-slate-900 dark:text-white">${money(pf.line)}</span> ${storeTag}${liveBadge}<span class="block text-[9px] text-slate-400">${pf.packs}× ${money(pf.unit)}/${pf.packQty}${esc(pf.packUnit)}</span></div>`,
+          html: `<div class="flex flex-wrap items-center gap-2"><span class="font-black text-lg text-slate-900 dark:text-white">${money(pf.line)}</span>${storeTag}${liveBadge}</div><div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${pf.packs} × ${money(pf.unit)} per ${pf.packQty}${esc(pf.packUnit)}</div>`,
           line: pf.line
         };
       };
@@ -3871,11 +4042,11 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
         const rows = ['FairPrice', 'Sheng Siong', 'Cold Storage'].map(st => { const pf = PriceEngine.priceFor(item, st); return pf ? [st, pf.line] : null; }).filter(Boolean);
         if (!rows.length) return '';
         const min = Math.min(...rows.map(r => r[1]));
-        return `<div class="basis-full flex flex-wrap gap-1.5 pl-6">${rows.map(([st, p]) => `<span class="text-[10px] px-2 py-0.5 rounded-md ${p === min ? 'bg-[#DCEBE1] text-[#145238] font-black' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}">${esc(st)} ${money(p)}</span>`).join('')}</div>`;
+        return `<div class="mt-2 pt-2 border-t border-slate-200/70 dark:border-slate-700"><div class="text-xs font-bold text-slate-500 mb-1.5">Price at each shop:</div><div class="flex flex-wrap gap-1.5">${rows.map(([st, p]) => `<span class="text-xs px-2.5 py-1.5 rounded-lg ${p === min ? 'bg-[#DCEBE1] text-[#145238] font-black' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300'}">${p === min ? '✓ ' : ''}${esc(st)} ${money(p)}</span>`).join('')}</div></div>`;
       };
 
       if (list.length === 0) {
-        container.innerHTML = `<div class="p-8 text-center bg-white dark:bg-slate-900 rounded-3xl border"><p class="font-bold text-xs">Your shopping cart is empty</p></div>`;
+        container.innerHTML = `<div class="p-8 text-center bg-white dark:bg-slate-900 rounded-3xl border"><p class="font-bold text-base">Your shopping list is empty</p><p class="text-sm text-slate-500 mt-1">Add something above, or add missing ingredients from a recipe.</p></div>`;
         if (badge) badge.textContent = 'Total: —';
         return;
       }
@@ -3890,26 +4061,28 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
           if (pf && !item.checked) subtotal += pf.line;
           const pl = priceHtml(item);
           return `
-            <div class="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 flex flex-wrap items-center justify-between gap-2">
-              <label class="flex items-center space-x-2.5 cursor-pointer flex-1 min-w-0">
-                <input type="checkbox" data-id="${esc(item.id)}" ${item.checked ? 'checked' : ''} class="shop-check w-4 h-4 rounded accent-brand-500">
-                <span class="font-bold text-xs ${item.checked ? 'line-through text-slate-400' : ''}">${esc(item.name)}</span>
-              </label>
-              <div class="flex items-center space-x-2.5 flex-shrink-0">
-                <span class="font-black text-xs text-brand-600">${item.qty} ${esc(item.unit)}</span>
-                ${pl.html}
-                <button data-del="${esc(item.id)}" class="shop-del text-slate-400 hover:text-rose-500 text-xs">✕</button>
+            <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70">
+              <div class="flex items-start gap-3">
+                <label class="flex items-start gap-3 cursor-pointer flex-1 min-w-0">
+                  <input type="checkbox" data-id="${esc(item.id)}" ${item.checked ? 'checked' : ''} class="shop-check w-6 h-6 mt-0.5 flex-shrink-0 rounded accent-brand-500">
+                  <span class="min-w-0">
+                    <span class="block font-bold text-base leading-snug break-words ${item.checked ? 'line-through text-slate-400' : 'text-slate-900 dark:text-white'}">${esc(item.name)}</span>
+                    <span class="block text-sm font-bold text-brand-600 mt-0.5">${item.qty} ${esc(item.unit)}</span>
+                  </span>
+                </label>
+                <button data-del="${esc(item.id)}" aria-label="Remove ${esc(item.name)}" class="shop-del w-10 h-10 flex-shrink-0 rounded-xl bg-white dark:bg-slate-800 text-slate-400 hover:text-rose-500 text-base">✕</button>
               </div>
+              <div class="mt-2 pl-9">${pl.html}</div>
               ${cmp(item)}
             </div>`;
         }).join('');
         return `
           <div class="p-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-            <div class="flex items-center justify-between"><span class="font-black text-xs text-brand-600 uppercase tracking-wider">🏪 ${esc(store)}</span><span class="text-[10px] text-slate-400">${items.length} item(s)</span></div>
+            <div class="flex items-center justify-between"><span class="font-black text-base text-brand-700 dark:text-brand-400">🏪 ${esc(store)}</span><span class="text-sm text-slate-500">${items.length} ${items.length === 1 ? 'item' : 'items'}</span></div>
             <div class="space-y-1.5">${rows}</div>
             <div class="flex items-center justify-between pt-1.5 border-t border-slate-100 dark:border-slate-800">
-              <span class="text-[10px] font-bold text-slate-400">Subtotal ${currentPriceStore === 'BEST' ? '(best deal)' : `@ ${esc(currentPriceStore)}`}</span>
-              <span class="text-xs font-black text-slate-900 dark:text-white">${money(subtotal)}</span>
+              <span class="text-sm font-bold text-slate-500">Shop total ${currentPriceStore === 'BEST' ? '(cheapest prices)' : `(${esc(currentPriceStore)} prices)`}</span>
+              <span class="text-lg font-black text-slate-900 dark:text-white">${money(subtotal)}</span>
             </div>
           </div>`;
       }).join('');
@@ -3917,7 +4090,7 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
       const unchecked = list.filter(i => !i.checked);
       const grand = unchecked.reduce((s, i) => { const pf = PriceEngine.priceFor(i, currentPriceStore); return s + (pf ? pf.line : 0); }, 0);
       try { renderDashboard(); } catch (e) {}
-      if (badge) badge.textContent = unchecked.length ? `Est. total: ${money(grand)}${currentPriceStore === 'BEST' ? ' · best deal' : ' · ' + currentPriceStore}` : 'Total: —';
+      if (badge) badge.textContent = unchecked.length ? `Estimated total: ${money(grand)}${currentPriceStore === 'BEST' ? ' (cheapest mix)' : ' at ' + currentPriceStore}` : 'Total: —';
 
       container.querySelectorAll('.shop-check').forEach(chk => chk.addEventListener('change', (e) => {
         AppState.setShoppingList(AppState.state.shoppingList.map(i => i.id === e.target.dataset.id ? { ...i, checked: e.target.checked } : i));
@@ -4079,8 +4252,8 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
       currentPriceStore = mode;
       document.querySelectorAll('.pstore-btn').forEach(b => {
         b.className = b.dataset.pstore === mode
-          ? 'pstore-btn px-2.5 py-1.5 rounded-xl text-[11px] font-black bg-slate-900 dark:bg-white text-white dark:text-slate-950'
-          : 'pstore-btn px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300';
+          ? 'pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-black bg-slate-900 dark:bg-white text-white dark:text-slate-950'
+          : 'pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300';
       });
       renderShoppingList();
     }
@@ -4267,6 +4440,8 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
       });
 
       on('btnOpenBatchPantryModal', 'click', () => batchScanner.openModal());
+      ['inputBatchPhotoCam', 'inputBatchPhotoFile'].forEach(id => $(id)?.addEventListener('change', (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) batchScanner.scanFile(f); }));
+      ['inputPantryScanCam', 'inputPantryScanFile'].forEach(id => $(id)?.addEventListener('change', (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) pantryHandlers.fillFromPhoto(f); }));
       on('closeBatchPantryModalBtn', 'click', () => batchScanner.closeModal());
       on('btnParseReceiptText', 'click', () => batchScanner.parseReceipt());
       on('btnSaveBatchToPantry', 'click', () => batchScanner.saveAll());
