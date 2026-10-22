@@ -319,55 +319,57 @@
     </section>
 
     <!-- SHOPPING -->
-    <section id="view-shopping" class="hidden p-4 space-y-4 max-w-4xl mx-auto animate-fade-in">
-      <form id="addShoppingItemForm" class="p-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-        <div>
-          <h2 class="font-black text-xl text-slate-900 dark:text-white">🛒 Shopping List</h2>
-          <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Write down what you need to buy. We show you which shop is cheapest.</p>
+    <section id="view-shopping" class="hidden p-4 pb-40 space-y-4 max-w-4xl mx-auto animate-fade-in">
+      <div class="flex items-start justify-between gap-3 pt-1">
+        <div class="min-w-0">
+          <h2 class="font-display font-extrabold text-2xl text-slate-900 dark:text-white">Shopping list</h2>
+          <p id="cartSummary" class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Nothing here yet</p>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <button type="button" id="btnShareShoppingWhatsApp" class="px-3 py-3 rounded-2xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold text-sm hover:bg-emerald-500/20 transition">💬 Send list on WhatsApp</button>
-          <button type="button" id="btnCheckoutCartToPantry" class="px-3 py-3 rounded-2xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-sm shadow-sm transition">📦 Move ticked items to Pantry</button>
-          <button type="button" id="btnClearCheckedShopping" class="px-3 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-rose-500 font-bold text-sm transition">🧹 Remove ticked items</button>
+        <div class="relative flex-shrink-0">
+          <button type="button" id="cartMenuBtn" aria-label="More options" class="w-11 h-11 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xl font-black text-slate-600 dark:text-slate-300">⋯</button>
+          <div id="cartMenu" class="hidden absolute right-0 mt-2 w-[19rem] max-w-[calc(100vw-2rem)] z-30 rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200 dark:border-slate-700 p-3.5 space-y-3">
+            <button type="button" id="btnShareShoppingWhatsApp" class="w-full py-3 rounded-xl bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 font-black text-sm">💬 Send list on WhatsApp</button>
+            <div>
+              <div class="text-xs font-black text-slate-500 mb-1.5">Show prices from</div>
+              <div class="flex flex-wrap gap-1.5"><button data-pstore="BEST" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-black bg-slate-900 dark:bg-white text-white dark:text-slate-950">🏆 Cheapest</button><button data-pstore="FairPrice" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">FairPrice</button><button data-pstore="Sheng Siong" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Sheng Siong</button><button data-pstore="Cold Storage" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Cold Storage</button><button data-pstore="RedMart" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">RedMart</button><button data-pstore="Suzy Ameer" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Suzy Ameer</button><button data-pstore="Toko Warisan" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Toko Warisan</button></div>
+              <div id="priceTotalBadge" class="text-sm font-black text-brand-700 dark:text-brand-400 mt-2">Total: —</div>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">These are <b>estimates</b>, not today's shelf prices. Please check before you buy. "~" means our guess.</p>
+          </div>
         </div>
-        <div class="space-y-2.5 pt-1">
-          <button type="button" id="btnFindProduct" class="w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-lg shadow-sm active:scale-95 transition">🔎 Find the exact product and its shop prices</button>
-          <div class="text-center text-xs font-bold text-slate-400">or just write what you need</div>
-          <label class="block text-sm font-bold text-slate-700 dark:text-slate-200" for="inputNewShoppingItem">Add something to buy</label>
-          <input type="text" id="inputNewShoppingItem" required placeholder="e.g. Pandan leaves, prawns, eggs" class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-base outline-none focus:ring-2 focus:ring-brand-500">
-          <div class="grid grid-cols-2 gap-2.5">
+      </div>
+
+      <form id="addShoppingItemForm" class="space-y-2.5">
+        <div class="flex gap-2">
+          <input type="text" id="inputNewShoppingItem" required aria-label="Add something to buy" placeholder="Add something… eggs, prawns, milk" class="flex-1 min-w-0 w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-base outline-none focus:ring-2 focus:ring-brand-500">
+          <button type="submit" class="px-5 rounded-2xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-base">Add</button>
+        </div>
+        <details class="text-sm">
+          <summary class="font-bold text-slate-500 cursor-pointer">More options (how many, type)</summary>
+          <div class="grid grid-cols-2 gap-2.5 mt-2">
             <div><label class="block text-xs font-bold text-slate-500 mb-1" for="inputNewShoppingQty">How many?</label>
-              <input type="number" id="inputNewShoppingQty" step="any" min="0.1" value="1" required class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-base outline-none focus:ring-2 focus:ring-brand-500"></div>
+              <input type="number" id="inputNewShoppingQty" step="any" min="0.1" value="1" required class="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-base outline-none focus:ring-2 focus:ring-brand-500"></div>
             <div><label class="block text-xs font-bold text-slate-500 mb-1" for="inputNewShoppingUnit">Type</label>
-              <select id="inputNewShoppingUnit" class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-base outline-none focus:ring-2 focus:ring-brand-500">
+              <select id="inputNewShoppingUnit" class="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-base outline-none focus:ring-2 focus:ring-brand-500">
                 <option value="pcs">pieces</option><option value="g">grams (g)</option><option value="kg">kilograms (kg)</option><option value="ml">millilitres (ml)</option><option value="pkt">packets</option>
               </select></div>
           </div>
-          <button type="submit" class="w-full py-3.5 rounded-2xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-base shadow-sm">➕ Add to list</button>
+        </details>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" id="btnFindProduct" class="py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-sm">🔎 Find exact product</button>
+          <button type="button" id="btnScanPrices" class="py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-sm">📷 Scan prices</button>
         </div>
       </form>
 
-      <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-        <div class="flex flex-wrap items-center gap-1.5">
-          <button type="button" id="btnScanPrices" class="w-full mb-1 px-4 py-3.5 rounded-2xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-800 dark:text-sky-300 font-black text-base transition">📷 Add shop prices from a photo or screenshot</button>
-          <span class="text-sm font-black text-slate-500 mr-1 w-full">🏷️ Show prices from:</span>
-          <button data-pstore="BEST" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-black bg-slate-900 dark:bg-white text-white dark:text-slate-950">🏆 Cheapest</button>
-          <button data-pstore="FairPrice" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">FairPrice</button>
-          <button data-pstore="Sheng Siong" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Sheng Siong</button>
-          <button data-pstore="RedMart" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">RedMart</button>
-          <button data-pstore="Suzy Ameer" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Suzy Ameer</button>
-          <button data-pstore="Toko Warisan" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Toko Warisan</button>
-          <button data-pstore="Cold Storage" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Cold Storage</button>
-          <span id="priceTotalBadge" class="w-full text-lg font-black text-brand-600 dark:text-brand-400 pt-1">Total: —</span>
-          
-        </div>
-        <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">These are <b>estimates</b> from our Singapore price guide, not today's shelf prices. Real prices in the shop can be different, so please check before you buy. Our guess for RedMart, Suzy Ameer and Toko Warisan is rougher than for the others. Tap “Compare shops” on an item to open each shop and see its real price. Suzy Ameer and Toko Warisan are only shown for dry goods, spices and sauces.</p>
-      </div>
-
-      <div id="cartAdvisor" class="hidden dash-card bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6"></div>
+      <div id="cartAdvisor" class="hidden dash-card bg-white dark:bg-slate-900 rounded-2xl px-4 py-3.5"></div>
       <div id="shoppingListContainer" class="space-y-3"></div>
     </section>
   </main>
+  <div id="cartTickBar" class="hidden fixed inset-x-3 bottom-20 md:bottom-6 z-30 max-w-xl mx-auto p-2.5 pl-4 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-2xl flex items-center gap-2">
+    <span id="cartTickCount" class="font-black text-sm flex-1">0 ticked</span>
+    <button type="button" id="btnCheckoutCartToPantry" class="px-4 py-2.5 rounded-xl bg-brand-500 text-slate-950 font-black text-sm">📦 Move to Pantry</button>
+    <button type="button" id="btnClearCheckedShopping" class="px-3 py-2.5 rounded-xl bg-white/15 dark:bg-slate-900/10 font-bold text-sm">Remove</button>
+  </div>
 
   <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-2 py-1.5 flex items-center justify-around">
     <button data-nav="dashboard" class="nav-tab-btn flex flex-col items-center py-1 px-3 rounded-xl text-brand-600 dark:text-brand-400 font-black text-[10px]"><span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></span><span>Home</span></button>
@@ -1089,6 +1091,7 @@
         const el = document.getElementById(`view-${v}`);
         if (el) el.classList.toggle('hidden', v !== viewName);
       });
+      try { updateTickBar(); } catch (e) {}
       document.querySelectorAll('.nav-tab-btn').forEach(btn => {
         const isTarget = btn.dataset.nav === viewName;
         if (btn.closest('header')) {
@@ -4292,6 +4295,7 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
       }
     };
     const CartAdvisor = {
+      open: false,
       isReal(src) { return src === 'shop' || src === 'mine' || src === 'community'; },
       compute() {
         const open = AppState.state.shoppingList.filter(i => !i.checked);
@@ -4357,7 +4361,12 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
         const acts = full
           ? `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4"><button type="button" data-adv-wa="${esc(c.best.st)}" class="py-3 rounded-2xl bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 font-black text-base hover:bg-emerald-500/25">💬 Send my list for ${esc(c.best.st)}</button><button type="button" data-adv-open="${esc(c.best.st)}" class="py-3 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-black text-base">🛍️ Open ${esc(c.best.st)}</button></div>`
           : `<button type="button" onclick="switchView('shopping')" class="mt-3 w-full py-3 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-black text-base">See the full comparison</button>`;
-        return `${head('Where to shop')}${toggle}${headline}<div class="mt-2">${list}</div>${conf}${nudge}${sale}${moved}${acts}${fine}${poll}`;
+        if (full && !this.open) {
+          const bits = [c.saving >= 0.05 && c.stores.length > 1 ? `Save ${money(c.saving)}` : '', c.sale && c.sale.length ? `${c.sale.length} on sale` : '', c.moved && c.moved.length ? `${c.moved.length} price ${c.moved.length === 1 ? 'change' : 'changes'}` : ''].filter(Boolean).join(' · ');
+          return `<button type="button" data-adv-toggle class="w-full flex items-center gap-3 text-left"><span class="dash-ico tn-blue !w-10 !h-10 !text-xl flex-shrink-0" data-noicon="1" aria-hidden="true">🧭</span><span class="min-w-0 flex-1"><span class="block text-xs font-bold text-slate-500">Cheapest${advMode.get() === 'deliver' ? ' with delivery' : ''}</span><span class="block font-black text-base text-slate-900 dark:text-white truncate">${esc(c.best.st)} · ${money(c.best.total)}</span>${bits ? `<span class="block text-xs font-bold text-emerald-700 dark:text-emerald-400">${bits}</span>` : ''}</span><span class="text-slate-400 text-sm flex-shrink-0">Details ▾</span></button>`;
+        }
+        const closeBtn = full ? `<button type="button" data-adv-toggle class="w-full text-right text-sm font-bold text-slate-400 mb-1">Hide ▴</button>` : '';
+        return `${closeBtn}${head('Where to shop')}${toggle}${headline}<div class="mt-2">${list}</div>${conf}${nudge}${sale}${moved}${acts}${fine}${poll}`;
       },
       render() {
         const full = document.getElementById('cartAdvisor'), dash = document.getElementById('dashboardCartCompare');
@@ -4375,6 +4384,12 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
       }
     };
     document.addEventListener('click', (e) => {
+      const menu = document.getElementById('cartMenu');
+      if (menu) {
+        if (e.target.closest('#cartMenuBtn')) menu.classList.toggle('hidden');
+        else if (!menu.classList.contains('hidden') && (!e.target.closest('#cartMenu') || e.target.closest('#cartMenu button'))) menu.classList.add('hidden');
+      }
+      if (e.target.closest('[data-adv-toggle]')) { CartAdvisor.open = !CartAdvisor.open; CartAdvisor.render(); return; }
       const md = e.target.closest('[data-adv-mode]'); if (md) { advMode.set(md.dataset.advMode); CartAdvisor.render(); return; }
       const pl = e.target.closest('[data-adv-poll]'); if (pl) { advPoll.set(pl.dataset.advPoll); CartAdvisor.render(); showToast('Thank you!', '🙏'); return; }
       const w = e.target.closest('[data-adv-wa]'); if (w) { CartAdvisor.whatsapp(w.dataset.advWa); return; }
@@ -4603,6 +4618,14 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
     }
 
     const openPriceIds = new Set();
+    const openItemIds = new Set();
+    function updateTickBar() {
+      const bar = document.getElementById('cartTickBar'); if (!bar) return;
+      const v = document.getElementById('view-shopping');
+      const n = AppState.state.shoppingList.filter(i => i.checked).length;
+      bar.classList.toggle('hidden', !(n > 0 && v && !v.classList.contains('hidden')));
+      const c = document.getElementById('cartTickCount'); if (c) c.textContent = `${n} ticked`;
+    }
     // Links to each shop's own search page, so you can see the real price (opens in the browser)
     const SHOP_SEARCH = {
       'FairPrice': (q) => 'https://www.fairprice.com.sg/search?query=' + q,
@@ -4696,8 +4719,10 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
       };
 
       if (list.length === 0) {
-        container.innerHTML = `<div class="p-8 text-center bg-white dark:bg-slate-900 rounded-3xl border"><p class="font-bold text-base">Your shopping list is empty</p><p class="text-sm text-slate-500 mt-1">Add something above, or add missing ingredients from a recipe.</p></div>`;
+        container.innerHTML = `<div class="p-8 text-center"><div class="text-4xl mb-2" data-noicon="1">🛒</div><p class="font-bold text-base text-slate-800 dark:text-slate-100">Your list is empty</p><p class="text-sm text-slate-500 mt-1">Type above to add something, or add the missing ingredients from a recipe.</p></div>`;
         if (badge) badge.textContent = 'Total: —';
+        const sm0 = document.getElementById('cartSummary'); if (sm0) sm0.textContent = 'Nothing here yet';
+        updateTickBar();
         return;
       }
 
@@ -4712,36 +4737,45 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
 
       container.innerHTML = order.map(store => {
         const entries = grouped[store];
+        const none = /^(No price|Not sold)/.test(store);
         let subtotal = 0;
         const rows = entries.map(({ item, pf }) => {
           if (pf && !pf.unavailable && !item.checked) subtotal += pf.line;
-          const nm = item.prod ? { title: item.name, sub: 'Exact product' } : cartName(item.name);
+          const nm = item.prod ? { title: item.name, sub: '' } : cartName(item.name);
+          const open = openItemIds.has(item.id);
+          const has = pf && !pf.unavailable;
+          const real = has && (pf.src === 'shop' || pf.src === 'mine' || pf.src === 'community');
+          const mark = !has ? '' : (pf.was ? '<span class="text-rose-600">🏷️ sale</span>' : real ? '<span class="text-emerald-600">✓ real</span>' : '<span class="text-slate-400">~ guess</span>');
           return `
-            <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70">
-              <div class="flex items-start gap-3">
-                <label class="flex items-start gap-3 cursor-pointer flex-1 min-w-0">
-                  <input type="checkbox" data-id="${esc(item.id)}" ${item.checked ? 'checked' : ''} class="shop-check w-6 h-6 mt-0.5 flex-shrink-0 rounded accent-brand-500">
-                  <span class="min-w-0">
+            <div class="py-3 border-t first:border-t-0 border-slate-100 dark:border-slate-800">
+              <div class="flex items-center gap-3">
+                <input type="checkbox" data-id="${esc(item.id)}" ${item.checked ? 'checked' : ''} aria-label="Tick ${esc(nm.title)}" class="shop-check w-6 h-6 flex-shrink-0 rounded accent-brand-500">
+                <button type="button" data-expand="${esc(item.id)}" aria-expanded="${open}" class="flex-1 min-w-0 flex items-center gap-2 text-left">
+                  <span class="min-w-0 flex-1">
                     <span class="block font-bold text-base leading-snug break-words ${item.checked ? 'line-through text-slate-400' : 'text-slate-900 dark:text-white'}">${esc(nm.title)}</span>
-                    ${nm.sub ? `<span class="block text-xs text-slate-400 break-words">${esc(nm.sub)}</span>` : ''}
-                    <span class="block text-sm font-bold text-brand-600 mt-0.5">${esc(item.qty)} ${unitWord(item)}</span>
+                    <span class="block text-xs text-slate-500">${esc(item.qty)} ${unitWord(item)}${nm.sub ? ' · ' + esc(nm.sub) : ''}</span>
                   </span>
-                </label>
-                <button data-del="${esc(item.id)}" aria-label="Remove ${esc(nm.title)}" class="shop-del w-10 h-10 flex-shrink-0 rounded-xl bg-white dark:bg-slate-800 text-slate-400 hover:text-rose-500 text-base">✕</button>
+                  <span class="text-right flex-shrink-0">
+                    <span class="block font-black text-base ${item.checked ? 'text-slate-400' : 'text-slate-900 dark:text-white'}">${has ? money(pf.line) : '—'}</span>
+                    <span class="block text-[11px] font-bold">${mark}</span>
+                  </span>
+                  <span class="text-slate-400 text-xs flex-shrink-0" data-chev>${open ? '▴' : '▾'}</span>
+                </button>
               </div>
-              <div class="mt-2 pl-9">${priceHtml(pf, item)}</div>
-              <div class="pl-9">${cmp(item)}</div>
+              <div data-more="${esc(item.id)}" class="${open ? '' : 'hidden'} mt-3 ml-9 space-y-2">
+                <div>${priceHtml(pf, item)}</div>
+                ${cmp(item)}
+                <button data-del="${esc(item.id)}" class="shop-del text-sm font-bold text-rose-600 py-1.5">Remove from list</button>
+              </div>
             </div>`;
         }).join('');
         return `
-          <div class="p-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-            <div class="flex items-center justify-between"><span class="font-black text-base text-brand-700 dark:text-brand-400">🏪 ${esc(store)}</span><span class="text-sm text-slate-500">${entries.length} ${entries.length === 1 ? 'item' : 'items'}</span></div>
-            ${currentPriceStore === 'BEST' && !/^(No price|Not sold)/.test(store) ? '<div class="text-sm text-slate-500 -mt-1">Buy these here. It is the cheapest for them.</div>' : ''}
-            <div class="space-y-2">${rows}</div>
-            ${/^(No price|Not sold)/.test(store) ? '<div class="text-sm text-slate-500">These are not in the total.</div>' : `<div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
-              <span class="text-sm font-bold text-slate-500">Estimated total for this shop</span>
-              <span class="text-lg font-black text-slate-900 dark:text-white">${money(subtotal)}</span>
-            </div>`}
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 px-4 pt-3 pb-1">
+            <div class="flex items-center justify-between gap-2 pb-2">
+              <span class="flex items-center gap-2 min-w-0"><i class="macro-dot !mr-0 flex-shrink-0" style="background:${SHOP_DOT[store] || '#94A3B8'}"></i><span class="font-black text-base text-slate-900 dark:text-white truncate">${esc(store)}</span><span class="text-xs text-slate-400 flex-shrink-0">${entries.length}</span></span>
+              ${none ? '<span class="text-xs text-slate-400">not in total</span>' : `<span class="font-black text-base text-slate-700 dark:text-slate-200">${money(subtotal)}</span>`}
+            </div>
+            ${rows}
           </div>`;
       }).join('');
 
@@ -4749,10 +4783,19 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
       const grand = unchecked.reduce((s, i) => { const pf = PriceEngine.priceFor(i, currentPriceStore); return s + (pf && !pf.unavailable ? pf.line : 0); }, 0);
       const shops = new Set(unchecked.map(i => { const pf = PriceEngine.priceFor(i, currentPriceStore); return pf && !pf.unavailable ? pf.store : null; }).filter(Boolean)).size;
       try { renderDashboard(); } catch (e) {}
+      { const sm = document.getElementById('cartSummary'); if (sm) sm.textContent = unchecked.length ? `${unchecked.length} ${unchecked.length === 1 ? 'item' : 'items'} to buy · about ${money(grand)}` + (list.length > unchecked.length ? ` · ${list.length - unchecked.length} ticked` : '') : 'Everything is ticked'; }
+      updateTickBar();
       if (badge) badge.textContent = unchecked.length ? `Estimated total: about ${money(grand)}${currentPriceStore === 'BEST' ? ` (cheapest, ${shops} ${shops === 1 ? 'shop' : 'shops'})` : ' at ' + currentPriceStore}` : 'Total: —';
 
       if (!container._priceWired) {
         container._priceWired = true;
+        container.addEventListener('click', (e) => {
+          const x = e.target.closest('[data-expand]'); if (!x) return;
+          const id = x.dataset.expand, more = container.querySelector('[data-more="' + CSS.escape(id) + '"]'); if (!more) return;
+          const open = more.classList.toggle('hidden') === false;
+          if (open) openItemIds.add(id); else openItemIds.delete(id);
+          x.setAttribute('aria-expanded', open); const ch = x.querySelector('[data-chev]'); if (ch) ch.textContent = open ? '▴' : '▾';
+        });
         container.addEventListener('toggle', (e) => { const d = e.target; if (d && d.dataset && d.dataset.pid) { if (d.open) openPriceIds.add(d.dataset.pid); else openPriceIds.delete(d.dataset.pid); } }, true);
         container.addEventListener('click', async (e) => {
           const btn = e.target.closest('[data-save-price]'); if (!btn) return;
@@ -5131,6 +5174,8 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
           checked: false
         }]);
         $('inputNewShoppingItem').value = '';
+        if ($('inputNewShoppingQty')) $('inputNewShoppingQty').value = 1;
+        if ($('inputNewShoppingUnit')) $('inputNewShoppingUnit').value = 'pcs';
       });
 
       on('btnOpenBatchPantryModal', 'click', () => batchScanner.openModal());
