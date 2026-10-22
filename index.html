@@ -297,6 +297,8 @@
           <button type="button" id="btnClearCheckedShopping" class="px-3 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-rose-500 font-bold text-sm transition">🧹 Remove ticked items</button>
         </div>
         <div class="space-y-2.5 pt-1">
+          <button type="button" id="btnFindProduct" class="w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-lg shadow-sm active:scale-95 transition">🔎 Find the exact product and its shop prices</button>
+          <div class="text-center text-xs font-bold text-slate-400">or just write what you need</div>
           <label class="block text-sm font-bold text-slate-700 dark:text-slate-200" for="inputNewShoppingItem">Add something to buy</label>
           <input type="text" id="inputNewShoppingItem" required placeholder="e.g. Pandan leaves, prawns, eggs" class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-base outline-none focus:ring-2 focus:ring-brand-500">
           <div class="grid grid-cols-2 gap-2.5">
@@ -307,25 +309,25 @@
                 <option value="pcs">pieces</option><option value="g">grams (g)</option><option value="kg">kilograms (kg)</option><option value="ml">millilitres (ml)</option><option value="pkt">packets</option>
               </select></div>
           </div>
-          <div><label class="block text-xs font-bold text-slate-500 mb-1" for="inputNewShoppingStore">Where will you buy it?</label>
-            <select id="inputNewShoppingStore" class="w-full px-4 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-base outline-none focus:ring-2 focus:ring-brand-500">
-              <option value="FairPrice">NTUC FairPrice</option><option value="Sheng Siong">Sheng Siong</option><option value="Wet Market">Wet market</option><option value="Cold Storage">Cold Storage</option><option value="Don Don Donki">Don Don Donki</option>
-            </select></div>
           <button type="submit" class="w-full py-3.5 rounded-2xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-base shadow-sm">➕ Add to list</button>
         </div>
       </form>
 
       <div class="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
         <div class="flex flex-wrap items-center gap-1.5">
+          <button type="button" id="btnScanPrices" class="w-full mb-1 px-4 py-3.5 rounded-2xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-800 dark:text-sky-300 font-black text-base transition">📷 Add shop prices from a photo or screenshot</button>
           <span class="text-sm font-black text-slate-500 mr-1 w-full">🏷️ Show prices from:</span>
           <button data-pstore="BEST" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-black bg-slate-900 dark:bg-white text-white dark:text-slate-950">🏆 Cheapest</button>
           <button data-pstore="FairPrice" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">FairPrice</button>
           <button data-pstore="Sheng Siong" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Sheng Siong</button>
+          <button data-pstore="RedMart" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">RedMart</button>
+          <button data-pstore="Suzy Ameer" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Suzy Ameer</button>
+          <button data-pstore="Toko Warisan" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Toko Warisan</button>
           <button data-pstore="Cold Storage" class="pstore-btn px-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Cold Storage</button>
-          <span id="priceTotalBadge" class="w-full text-base font-black text-brand-600 dark:text-brand-400 pt-1">Total: —</span>
-          <button id="btnTryLivePrices" title="Check the latest prices" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-sm hover:text-brand-600 transition">↻ Update prices</button>
+          <span id="priceTotalBadge" class="w-full text-lg font-black text-brand-600 dark:text-brand-400 pt-1">Total: —</span>
+          
         </div>
-        <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">These prices are estimates. Tap <b>Update prices</b> to check for newer ones. A green <span class="font-black text-emerald-600 dark:text-emerald-400">● Updated</span> tag means the price was refreshed.</p>
+        <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">These are <b>estimates</b> from our Singapore price guide, not today's shelf prices. Real prices in the shop can be different, so please check before you buy. Our guess for RedMart, Suzy Ameer and Toko Warisan is rougher than for the others. Tap “Compare shops” on an item to open each shop and see its real price. Suzy Ameer and Toko Warisan are only shown for dry goods, spices and sauces.</p>
       </div>
 
       <div id="shoppingListContainer" class="space-y-3"></div>
@@ -460,8 +462,76 @@
         </div>
       </details>
       <div id="batchParsedHeader" class="hidden text-base font-black text-slate-800 dark:text-slate-100">Please check these items. You can change anything.</div>
+      <div id="batchPriceBox" class="hidden p-4 rounded-2xl bg-sky-50 dark:bg-sky-500/10 border border-sky-200 dark:border-sky-500/30 space-y-2.5">
+        <div class="font-black text-slate-800 dark:text-slate-100">💰 We found prices on this receipt (<span id="batchPriceCount">0</span> items)</div>
+        <div class="text-sm text-slate-600 dark:text-slate-300">We can save them to compare shops later. Which shop is this receipt from?</div>
+        <select id="batchPriceShop" class="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-base text-slate-900 dark:text-white"></select>
+        <label class="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300"><input id="batchPriceShare" type="checkbox" class="mt-0.5 w-5 h-5 accent-brand-500"><span>Share these prices anonymously so other shoppers can compare. We never share your name, email or photo. (Sign in to turn this on.)</span></label>
+      </div>
       <div id="batchParsedPreviewList" class="space-y-2.5 max-h-[45vh] overflow-y-auto"></div>
       <button type="button" id="btnSaveBatchToPantry" class="hidden w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-lg shadow-md">➕ Add all to my Pantry</button>
+    </div>
+  </div>
+
+  <div id="productFinderModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="w-full sm:max-w-2xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-7 space-y-4 text-base">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h3 class="font-black text-2xl text-slate-900 dark:text-white">🔎 Find the exact product</h3>
+          <p class="text-base text-slate-500 dark:text-slate-400 mt-1">Type what you buy, like "Meiji milk" or "Royal Umbrella rice". We show the real price in each shop.</p>
+        </div>
+        <button id="closeProductFinderBtn" aria-label="Close" class="w-11 h-11 flex-shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 text-lg">✕</button>
+      </div>
+      <div>
+        <label class="sr-only" for="pfSearch">Search for a product</label>
+        <input id="pfSearch" type="search" autocomplete="off" placeholder="Type a product name..." class="w-full px-4 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-lg text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
+      </div>
+      <div id="pfStatus" class="text-sm text-slate-500 dark:text-slate-400" aria-live="polite"></div>
+      <div id="pfResults" class="space-y-3"></div>
+      <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+        <button type="button" id="pfShowAdd" class="w-full py-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-black text-base">➕ I can't find it. Add my own product</button>
+        <div id="pfAddBox" class="hidden mt-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 space-y-3">
+          <div class="font-black text-slate-800 dark:text-slate-100">Add a product to our list</div>
+          <p class="text-sm text-slate-500 dark:text-slate-400">Type it the way it is written on the pack. Other shoppers will be able to find it too. We never share your name or email.</p>
+          <div><label class="block text-sm font-bold text-slate-500 mb-1" for="pfName">Product name</label><input id="pfName" type="text" maxlength="120" placeholder="e.g. Brand Chicken Sausage 500g" class="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-base text-slate-900 dark:text-white"></div>
+          <div class="grid grid-cols-2 gap-2.5">
+            <div><label class="block text-sm font-bold text-slate-500 mb-1" for="pfShop">Which shop?</label><select id="pfShop" class="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-base text-slate-900 dark:text-white"></select></div>
+            <div><label class="block text-sm font-bold text-slate-500 mb-1" for="pfPrice">Price (S$)</label><input id="pfPrice" type="number" inputmode="decimal" step="0.01" min="0.05" placeholder="e.g. 4.50" class="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-base text-slate-900 dark:text-white"></div>
+            <div><label class="block text-sm font-bold text-slate-500 mb-1" for="pfQty">Pack size</label><input id="pfQty" type="number" step="any" min="0.1" placeholder="e.g. 500" class="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-base text-slate-900 dark:text-white"></div>
+            <div><label class="block text-sm font-bold text-slate-500 mb-1" for="pfUnit">Measured in</label><select id="pfUnit" class="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-base text-slate-900 dark:text-white"><option value="g">grams (g)</option><option value="kg">kilograms (kg)</option><option value="ml">millilitres (ml)</option><option value="l">litres (L)</option><option value="pcs">pieces</option></select></div>
+          </div>
+          <button type="button" id="pfSaveOwn" class="w-full py-3.5 rounded-2xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-base shadow-sm">✅ Save and add to my list</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="priceScanModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="w-full sm:max-w-2xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-7 space-y-5 text-base">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h3 class="font-black text-2xl text-slate-900 dark:text-white">🏷️ Add shop prices from a photo</h3>
+          <p class="text-base text-slate-500 dark:text-slate-400 mt-1">Take a photo of price tags on the shelf, or choose screenshots of a shop's website or app. We read the products and prices for you.</p>
+        </div>
+        <button id="closePriceScanModalBtn" aria-label="Close" class="w-11 h-11 flex-shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 text-lg">✕</button>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label class="flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-lg cursor-pointer shadow-sm active:scale-95 transition">
+          <span data-noicon="1">📷</span><span>Take a photo</span><input type="file" id="inputPriceScanCam" accept="image/*" capture="environment" class="hidden">
+        </label>
+        <label class="flex items-center justify-center gap-2 px-4 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100 font-bold text-lg cursor-pointer active:scale-95 transition border border-slate-200 dark:border-slate-700">
+          <span data-noicon="1">🖼️</span><span>Choose screenshots</span><input type="file" id="inputPriceScanFile" accept="image/*" multiple class="hidden">
+        </label>
+      </div>
+      <p class="text-sm text-slate-500 dark:text-slate-400 -mt-2">You can choose up to 6 screenshots at once. Each one uses one photo scan. You need to be signed in (cloud icon at the top).</p>
+      <div id="priceScanBox" class="hidden space-y-3">
+        <div class="font-black text-slate-800 dark:text-slate-100">Found <span id="priceScanCount">0</span> prices. Please check them. You can change anything.</div>
+        <label class="block text-sm font-bold text-slate-500" for="priceScanShop">Which shop are these prices from?</label>
+        <select id="priceScanShop" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-base text-slate-900 dark:text-white"></select>
+        <div id="priceScanList" class="space-y-2.5 max-h-[40vh] overflow-y-auto"></div>
+        <label class="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300"><input id="priceScanShare" type="checkbox" class="mt-0.5 w-5 h-5 accent-brand-500"><span>Share these prices anonymously so other shoppers can compare. We never share your name, email or photo. (Sign in to turn this on.)</span></label>
+        <button type="button" id="btnSavePriceScan" class="w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black text-lg shadow-md">✅ Save these prices</button>
+      </div>
     </div>
   </div>
 
@@ -725,7 +795,7 @@
       <h4 class="font-display font-bold text-xl">What PantryChef SG is</h4>
       <p>PantryChef SG helps you track your kitchen, plan meals and keep recipes. It is provided as it is, and we work to keep it running well but cannot promise it will always be available or error free.</p>
       <h4 class="font-display font-bold text-xl">What we keep</h4>
-      <p>Your email address, the pantry, recipes, meal plan and cart you sync, your plan and how many video imports and receipt scans you have used, and the links or text you submit to import a recipe. If you do not sign in, your data stays on your own device.</p>
+      <p>Your email address, the pantry, recipes, meal plan and cart you sync, your plan and how many video imports and receipt scans you have used, and the links or text you submit to import a recipe. If you choose to share a price (for example from a receipt, or by typing what you paid), we also keep the shop, the food, the size, the price and the date. Other shoppers only see the middle price for each food and shop, never your name, email or photo. If you do not sign in, your data stays on your own device.</p>
       <h4 class="font-display font-bold text-xl">How we use it</h4>
       <p>To run the app, sync your devices, read recipes from links you share, and manage your plan. We do not sell your information and we do not show ads.</p>
       <h4 class="font-display font-bold text-xl">Who helps us</h4>
@@ -755,7 +825,7 @@
       <ul class="space-y-3 text-lg">
         <li class="flex items-start gap-3">✨ <span><b>Recipes from videos:</b> 40 credits a month (YouTube 1, Instagram or TikTok 2)</span></li>
         <li class="flex items-start gap-3">📅 <span><b>7-day meal plan</b> and send missing items to your cart</span></li>
-        <li class="flex items-start gap-3">🏷️ <span><b>Live prices</b> from supermarkets</span></li>
+        <li class="flex items-start gap-3">🏷️ <span><b>Cheapest shop</b> guide for your shopping list</span></li>
         <li class="flex items-start gap-3">🧾 <span><b>Unlimited</b> receipt scans</span></li>
         <li class="flex items-start gap-3">📖 <span><b>Unlimited</b> saved recipes</span></li>
       </ul>
@@ -1226,7 +1296,11 @@
 
     // ===== SG PRICE GUIDE + LIVE LOOKUP =====
     let currentPriceStore = 'BEST';
-    const STORE_KEY = { 'FairPrice': 'fp', 'Sheng Siong': 'ss', 'Cold Storage': 'cs' };
+    const STORE_KEY = { 'FairPrice': 'fp', 'Sheng Siong': 'ss', 'Cold Storage': 'cs', 'RedMart': 'rm', 'Suzy Ameer': 'sa', 'Toko Warisan': 'tw' };
+    const SPECIALTY_ONLY = /^(bumbu rendang|bumbu nasi goreng|indomie mi goreng|kerupuk|kemiri|daun salam|bakso|sirup ros|cincau)$/;
+    const ALL_STORES = ['FairPrice', 'Sheng Siong', 'Cold Storage', 'RedMart', 'Suzy Ameer', 'Toko Warisan'];
+    // Suzy Ameer (Malay / halal) and Toko Warisan (Indonesian) sell dry goods, spices, sauces and specialty items, not fresh meat or veg
+    const SPECIALTY_RE = /sambal|belacan|santan|coconut|rempah|spice|curry|turmeric|kunyit|lemongrass|galangal|lengkuas|pandan|anchov|bilis|tempeh|tempe|kicap|kecap|soy|tamarind|asam|vermicelli|noodle|rice|flour|sugar|gula|palm|cracker|krupuk|kerupuk|dried|paste|laksa|rendang|sauce|oil|ghee|lentil|dal|chickpea|peanut|sesame|cumin|coriander seed|cardamom|clove|cinnamon|star anise|pepper|salt|stock|cube|tofu|tahu|egg roll|cincau|jelly|syrup|milo|tea|coffee|biscuit|chilli powder|chili powder|curry powder|fenugreek|mustard seed|fennel/i;
     const SG_PRICE_DB = {
       'jasmine rice': { fp: 9.50, ss: 8.90, cs: 12.90, pack: 5000 },
       'rice vermicelli': { fp: 2.20, ss: 1.95, cs: 2.60, pack: 400 },
@@ -1446,7 +1520,32 @@ peanuts|kacang tanah;花生|3.2|400|g|567|26|16|49|8.5|18||0.6
 cashew nuts|gajus;腰果|6|200|g|553|18|30|44|3.3|12||0.6
 sesame seeds|bijan;芝麻|2.8|100|g|573|18|23|50|12|11||0.6
 bread crumbs|serbuk roti;面包糠|2.5|200|g|395|13|72|5|4.5|732||0.45
-baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`;
+baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9
+frozen mixed vegetables|sayur campur beku;冷冻杂菜;冷冻什锦蔬菜|2.9|500|g|65|3.5|11|0.4|4|40||
+frozen peas|kacang pis beku;冷冻青豆|2.5|500|g|81|5.4|14|0.4|5.1|5||
+frozen corn|jagung beku;冷冻玉米粒|2.6|500|g|86|3.3|19|1.4|2.7|15||
+frozen french fries|kentang goreng beku;冷冻薯条;french fries|3.9|1000|g|150|2.5|24|5|2.5|40||
+frozen chicken nuggets|nugget ayam;鸡块;冷冻鸡块|6.5|500|g|250|13|16|15|1|480|20|
+frozen fish fillet|fillet ikan beku;冷冻鱼片;dory fillet;basa fillet|6.9|500|g|90|16|0|2.5|0|70|150|
+frozen dumplings|ladu beku;冷冻饺子;饺子;dumplings|5.5|500|g|220|9|30|7|1.5|550|25|
+frozen spring rolls|popiah goreng beku;冷冻春卷;spring roll|5.2|400|g|240|5|30|11|2|480|30|
+frozen curry puff|karipap beku;冷冻咖喱角;karipap|5.9|400|g|310|5|33|17|2|420|45|
+roti prata|roti canai;roti prata beku;冷冻印度煎饼;frozen prata;frozen roti|4.5|5|pc|300|7|45|11|2|500|70|
+frozen beef patty|patti daging beku;冷冻牛肉饼;beef burger patty|7.9|400|g|250|17|0|20|0|75|110|
+frozen chicken sausage|sosej ayam beku;chicken sausages;sosej ayam|4.8|300|g|230|12|4|18|0|800|40|
+frozen meatballs|bebola daging beku;冷冻肉丸;meatball|6.5|500|g|240|12|8|18|0.5|600|20|
+frozen edamame|edamame beku;毛豆;edamame|3.9|400|g|121|12|9|5|5|6|5|
+crab stick|batang ketam;蟹柳;蟹棒;surimi|3.2|250|g|95|8|13|0.5|0|700|15|
+otah|otak-otak;otak otak;乌达|4.5|300|g|150|10|6|9|0|550|60|
+bumbu rendang|rendang paste;rempah rendang;琅当酱料|2.5|200|g|150|3|15|9|2|1800||
+bumbu nasi goreng|nasi goreng paste;rempah nasi goreng;炒饭酱料|1.8|80|g|180|3|25|8|2|2500||
+indomie mi goreng|indomie;mi goreng instant;印尼捞面;mi goreng|0.95|1|pc|450|9|60|19|2|1700|85|
+kerupuk|keropok;krupuk;kerupuk udang;虾饼;虾片|2.8|200|g|520|4|60|30|1|900|2|
+kemiri|candlenut;石栗;buah keras|2.5|100|g|620|19|8|57|5|20|3|
+daun salam|indonesian bay leaf;salam leaf;印尼月桂叶|1.5|20|g|313|7.6|75|8.4|26|23|0.3|
+bakso|indonesian meatball;印尼肉丸;bakso sapi|6.5|500|g|180|10|12|10|0.5|600|25|
+sirup ros|rose syrup;sirap bandung;玫瑰糖浆|3.5|1000|g|260|0|65|0|0|10||1.3
+cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
     const Lex = (() => {
       const num = (v) => { const n = parseFloat(v); return isFinite(n) ? n : null; };
       const entries = [];
@@ -1513,7 +1612,11 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
     const PRICE_ENTRIES = (() => {
       const map = new Map();
       Lex.entries.forEach(e => { if (e.price != null && e.pack) map.set(e.key, { key: e.key, fp: e.price, ss: roundNickel(e.price * 0.94), cs: roundNickel(e.price * 1.28), pack: e.pack, pu: e.pu, pcG: e.pcG }); });
+      const extra = (o) => { const sp = SPECIALTY_RE.test(o.key) || /^frozen |^roti prata|^otah|^crab stick/.test(o.key); o.rm = roundNickel(o.fp * 0.97); o.sa = sp ? roundNickel(o.fp * 1.06) : null; o.tw = sp ? roundNickel(o.fp * 1.02) : null; return o; };
       Object.keys(SG_PRICE_DB).forEach(k => { const o = SG_PRICE_DB[k], ex = map.get(k) || {}; map.set(k, { key: k, fp: o.fp, ss: o.ss, cs: o.cs, pack: o.pack, pu: o.pack <= 12 ? 'pc' : 'g', pcG: ex.pcG || (o.pack <= 12 ? 300 : null) }); });
+      map.forEach(extra);
+      // Indonesian / Malay specialty items: our guess is that only Suzy Ameer and Toko Warisan sell them (real prices from shoppers override this)
+      map.forEach((o) => { if (SPECIALTY_ONLY.test(o.key)) { const base = o.fp; o.fp = null; o.ss = null; o.cs = null; o.rm = null; o.sa = roundNickel(base * 1.04); o.tw = roundNickel(base); } });
       return map;
     })();
 
@@ -1557,6 +1660,59 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
     const livePriceMeta = {};
     const ovKeyFor = (name, store) => String(name).toLowerCase().trim() + '|' + store;
 
+    // Real prices: yours (saved on your phone and synced) and other shoppers' (shared, anonymous, from the database).
+    // Order of trust: your own price > shoppers' price > our guess.
+    const PriceBook = {
+      community: {}, fetched: {},
+      mine() { return (AppState.state && Array.isArray(AppState.state.priceBook)) ? AppState.state.priceBook : []; },
+      baseOf(qty, unit) {
+        const b = UnitNormalizer.toBase(qty, unit);
+        return { base: b.type === 'mass' ? 'g' : b.type === 'vol' ? 'ml' : 'pc', val: b.val };
+      },
+      lookup(key, shop) {
+        let best = null;
+        for (const r of this.mine()) if (r.k === key && r.s === shop && (!best || r.d >= best.d)) best = r;
+        if (best) return { src: 'mine', base: best.b, packQty: best.q, unitPrice: best.p / best.q, packPrice: best.p, date: best.d, n: 1 };
+        const c = this.community[key + '|' + shop];
+        return c ? { src: 'community', base: c.base, packQty: c.packQty, unitPrice: c.unitPrice, packPrice: c.unitPrice * c.packQty, date: c.last, n: c.n } : null;
+      },
+      // Save one price: "I paid S$price for qty unit of name at shop"
+      async add({ name, qty, unit, price, shop, share, source }) {
+        const key = priceKey(name), pb = this.baseOf(qty, unit), p = Math.round(Number(price) * 100) / 100;
+        if (!key || !(pb.val > 0) || !(p >= 0.05 && p <= 2000)) return false;
+        const rec = { k: key, n: String(name).slice(0, 80), s: shop, b: pb.base, q: Math.round(pb.val * 1000) / 1000, p, d: localDay(), sh: !!share };
+        let list = this.mine().filter(r => !(r.k === rec.k && r.s === rec.s && r.q === rec.q));
+        list.unshift(rec);
+        list = list.slice(0, 600);
+        AppState.state.priceBook = list; db.set('priceBook', list);
+        if (share) this.upload([{ shop, key, name: rec.n, base: rec.b, packQty: rec.q, price: p, source: source || 'manual' }]);
+        return true;
+      },
+      async upload(rows) {
+        try {
+          if (typeof Sync === 'undefined' || !Sync.user || !Sync.sb || !rows.length) return false;
+          const { data, error } = await Sync.sb.rpc('report_prices', { p_rows: rows });
+          return !error && data && data.ok;
+        } catch (e) { return false; }
+      },
+      async fetchFor(keys) {
+        try {
+          if (typeof Sync === 'undefined' || !Sync.user || !Sync.sb) return false;
+          const now = Date.now();
+          const need = [...new Set(keys)].filter(k => k && !(this.fetched[k] && now - this.fetched[k] < 600000)).slice(0, 80);
+          if (!need.length) return false;
+          need.forEach(k => this.fetched[k] = now);
+          const { data, error } = await Sync.sb.rpc('get_prices', { p_keys: need });
+          if (error || !Array.isArray(data)) { need.forEach(k => delete this.fetched[k]); return false; }
+          data.forEach(r => {
+            if (!r || !r.key || !r.shop || !(Number(r.unit_price) > 0)) return;
+            this.community[r.key + '|' + r.shop] = { base: r.base, unitPrice: Number(r.unit_price), packQty: Number(r.pack_qty) || 1, n: Number(r.n) || 1, last: String(r.last || '').slice(0, 10) };
+          });
+          return data.length > 0;
+        } catch (e) { return false; }
+      }
+    };
+
     const PriceEngine = {
       lookup(name) {
         const e = Lex.find(name);
@@ -1567,28 +1723,50 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
         for (const k of PRICE_ENTRIES.keys()) if (n.includes(k) || k.includes(n)) { if (!best || k.length > best.length) best = k; }
         return best ? PRICE_ENTRIES.get(best) : null;
       },
+      // Fresh things you buy by weight or by the piece (meat, fish, vegetables, fruit, herbs): priced for the amount you need.
+      // Packaged things (sauce, rice, noodles, milk...): you must buy the whole pack, so we round up to full packs.
+      LOOSE: /chicken|beef|pork|mutton|lamb|duck|fish|salmon|prawn|shrimp|squid|sotong|crab|clam|cockle|mince|thigh|breast|wing|drumstick|fillet|onion|shallot|garlic|ginger|galangal|lemongrass|chilli|chili|cili|tomato|potato|carrot|cabbage|cai|kailan|kang kong|spinach|bayam|cucumber|brinjal|eggplant|okra|bean|sprout|mushroom|corn|pumpkin|apple|banana|orange|lime|lemon|calamansi|pandan|curry leaves|coriander|mint|basil|celery|broccoli|capsicum|turmeric|kunyit|herb|leaf|leaves|vegetable|fruit|papaya|mango|melon|grape|durian|spinach|lettuce|radish|daikon|yam|taro|sweet potato|tapioca|kangkong|choy/i,
+      PACKED: /ketchup|sauce|paste|puree|canned|sambal|dried|powder|oil|juice|soup|stock|cube|vinegar|milk|noodle|vermicelli|rice|bread|flour|sugar|salt|tofu|egg|chips|curry paste|tamarind/i,
       priceFor(item, mode) {
+        if (item.prod && item.prod.snap) { const r = ProductDB.priceFor(item, mode); if (r) return r; }
         const m = this.lookup(item.name);
-        if (!m) return null;
-        let store, unit;
-        if (mode === 'BEST') {
-          const ranked = [['FairPrice', m.fp], ['Sheng Siong', m.ss], ['Cold Storage', m.cs]]
-            .map(([s, p]) => { const o = livePriceOverrides[ovKeyFor(item.name, s)]; return [s, o || p]; })
-            .sort((a, b) => a[1] - b[1]);
-          store = ranked[0][0]; unit = ranked[0][1];
-        } else {
-          store = mode; unit = m[STORE_KEY[mode]] != null ? m[STORE_KEY[mode]] : m.fp;
-          const o = livePriceOverrides[ovKeyFor(item.name, store)];
-          if (o) unit = o;
-        }
-        // work out how many packs are needed, whatever unit the item is in (g, kg, ml, pcs, spoons...)
+        const key = priceKey(item.name);
         const b = UnitNormalizer.toBase(parseFloat(item.qty) || 1, item.unit);
-        const pack = m.pack || 1;
-        let need;
-        if (m.pu === 'pc') need = (b.type === 'count' ? b.val : b.val / (m.pcG || 100)) / pack;
-        else need = (b.type === 'count' ? b.val * (m.pcG && m.pcG < 1000 ? m.pcG : 1) : b.val) / pack;
-        const packs = Math.max(1, Math.ceil(need - 1e-9));
-        return { line: Math.round(unit * packs * 100) / 100, unit, store, packQty: pack, packUnit: m.pu === 'pc' ? 'pcs' : 'g', packs, match: m.key };
+        const loose = !!(m ? this.LOOSE.test(m.key) : this.LOOSE.test(key)) && !this.PACKED.test(m ? m.key : key);
+        // 1) real prices (yours or other shoppers'), 2) our guess
+        const cand = {};
+        ALL_STORES.forEach(st => {
+          const r = PriceBook.lookup(key, st);
+          if (r) {
+            const pcG = (m && m.pcG) || 100;
+            let need = null;
+            if (r.base === 'g' && (b.type === 'mass' || b.type === 'vol')) need = b.val;
+            else if (r.base === 'ml' && (b.type === 'vol' || b.type === 'mass')) need = b.val;
+            else if (r.base === 'pc' && b.type === 'count') need = b.val;
+            else if (r.base === 'pc' && b.type !== 'count') need = b.val / pcG;
+            else if (r.base !== 'pc' && b.type === 'count') need = b.val * pcG;
+            if (need != null && need > 0) {
+              const line = loose ? Math.max(0.2, Math.round(r.unitPrice * need * 20) / 20) : Math.round(r.packPrice * Math.max(1, Math.ceil(need / r.packQty - 1e-9)) * 100) / 100;
+              cand[st] = { line, unit: r.packPrice, packQty: r.packQty, packUnit: r.base === 'pc' ? 'pcs' : r.base, packs: Math.max(1, Math.ceil(need / r.packQty - 1e-9)), src: r.src, n: r.n, date: r.date, perKg: r.base === 'g' ? r.unitPrice * 1000 : null, perL: r.base === 'ml' ? r.unitPrice * 1000 : null, perPc: r.base === 'pc' ? r.unitPrice : null };
+            }
+          }
+          if (!cand[st] && m && m[STORE_KEY[st]] != null) {
+            const pack = m.pack || 1, price = m[STORE_KEY[st]];
+            const pcG = m.pcG || (m.pu === 'pc' ? 100 : (pack <= 100 ? Math.max(5, Math.round(pack / 3)) : 100));
+            let need;
+            if (m.pu === 'pc') need = b.type === 'count' ? b.val : b.val / pcG;
+            else need = b.type === 'count' ? b.val * (loose ? pcG : 1) : b.val;
+            const packs = Math.max(1, Math.ceil(need / pack - 1e-9));
+            const line = loose ? Math.max(0.2, Math.round(price * (need / pack) * 20) / 20) : Math.round(price * packs * 100) / 100;
+            cand[st] = { line, unit: price, packQty: pack, packUnit: m.pu === 'pc' ? 'pcs' : 'g', packs, src: 'guess', perKg: m.pu === 'pc' ? null : price / pack * 1000, perPc: m.pu === 'pc' ? price / pack : null };
+          }
+        });
+        if (!Object.keys(cand).length) return (mode !== 'BEST' && m) ? { unavailable: true, store: mode, line: 0, unit: 0, packs: 0, packQty: 0, packUnit: 'g', loose: false, match: key } : null;
+        let store;
+        if (mode === 'BEST') store = Object.keys(cand).sort((x, y) => cand[x].line - cand[y].line)[0];
+        else if (cand[mode]) store = mode;
+        else return { unavailable: true, store: mode, line: 0, unit: 0, packs: 0, packQty: 0, packUnit: 'g', loose: false, match: key };
+        return Object.assign({ store, loose, match: key }, cand[store]);
       }
     };
 
@@ -1683,7 +1861,7 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
     // ===== CLOUD SYNC (Supabase) =====
     const SUPABASE_URL = 'https://dpsrjqbnelwdqztdslxt.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_NiKqNF6hbH1E7ug3tq3RtQ_KeTzkneO';
-    const SYNC_KEYS = ['pantry','pantryZones','pantryUnits','pantryCategories','recipes','categories','planner','shoppingList','dailyIntake','settings','livePrices'];
+    const SYNC_KEYS = ['pantry','pantryZones','pantryUnits','pantryCategories','recipes','categories','planner','shoppingList','dailyIntake','settings','priceBook'];
     const Sync = {
       sb: null, user: null, ready: false, applying: false, timer: null,
       enabled() { return !SUPABASE_URL.includes('PASTE') && !!window.supabase; },
@@ -1865,9 +2043,22 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
           zone: this.str(p.zone, 60), category: this.str(p.category, 60), expiryDate: /^\d{4}-\d{2}-\d{2}/.test(String(p.expiryDate || '')) ? String(p.expiryDate).slice(0, 10) : ''
         }));
       },
+      priceBook(a) {
+        if (!Array.isArray(a)) return undefined;
+        return a.filter(this.isObj).map(r => ({ k: this.str(r.k, 80).toLowerCase(), n: this.str(r.n, 80), s: this.str(r.s, 30), b: ['g', 'ml', 'pc'].includes(r.b) ? r.b : 'pc', q: this.num(r.q, 1), p: this.num(r.p, 0), d: /^\d{4}-\d{2}-\d{2}$/.test(String(r.d)) ? String(r.d) : '', sh: !!r.sh }))
+          .filter(r => r.k && r.s && r.q > 0 && r.p >= 0.05 && r.p <= 2000).slice(0, 600);
+      },
       shopping(a) {
         if (!Array.isArray(a)) return null;
-        return a.filter(this.isObj).map(s => ({ ...s, id: this.id(s.id, 'shop_'), name: this.str(s.name, 120) || 'Item', qty: this.num(s.qty, 1), unit: this.str(s.unit, 20) || 'pcs', checked: !!s.checked }));
+        return a.filter(this.isObj).map(s => {
+          const o = { ...s, id: this.id(s.id, 'shop_'), name: this.str(s.name, 160) || 'Item', qty: this.num(s.qty, 1), unit: this.str(s.unit, 20) || 'pcs', checked: !!s.checked };
+          if (this.isObj(s.prod) && s.prod.shop && s.prod.nn) {
+            const snap = {};
+            if (this.isObj(s.prod.snap)) Object.keys(s.prod.snap).slice(0, 12).forEach(k => { const r = s.prod.snap[k]; if (this.isObj(r) && Number(r.p) > 0) snap[this.str(k, 40)] = { p: Number(r.p), w: Number(r.w) > 0 ? Number(r.w) : null, d: this.str(r.d, 10), nm: this.str(r.nm, 160), q: Number(r.q) > 0 ? Number(r.q) : null, b: ['g', 'ml', 'pc'].includes(r.b) ? r.b : null, s: r.s ? 1 : 0 }; });
+            o.prod = { shop: this.str(s.prod.shop, 40), nn: this.str(s.prod.nn, 200), name: this.str(s.prod.name, 160), q: Number(s.prod.q) > 0 ? Number(s.prod.q) : null, b: ['g', 'ml', 'pc'].includes(s.prod.b) ? s.prod.b : null, snap };
+          } else delete o.prod;
+          return o;
+        });
       },
       planner(o) {
         if (!this.isObj(o)) return null;
@@ -1883,7 +2074,9 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
         if (key === 'shoppingList') return this.shopping(v) ?? undefined;
         if (key === 'planner') return this.planner(v) ?? undefined;
         if (arrKeys.includes(key)) return Array.isArray(v) ? v : undefined;
-        if (['dailyIntake', 'settings', 'livePrices'].includes(key)) return this.isObj(v) ? v : undefined;
+        if (['dailyIntake', 'settings'].includes(key)) return this.isObj(v) ? v : undefined;
+        if (key === 'priceBook') return this.priceBook(v);
+        if (key === 'livePrices') return undefined;
         return undefined;
       }
     };
@@ -1988,16 +2181,9 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
         if (!Safe.isObj(settings)) settings = { darkMode: false };
         { const ids = SEED_RECIPES.map(s => s.id); if (!Array.isArray(settings.seedsGiven) || ids.some(i => !settings.seedsGiven.includes(i))) { settings.seedsGiven = [...new Set([...(settings.seedsGiven || []), ...ids])]; await db.set('settings', settings); } }
 
-        // Hydrate persisted live prices into the shared override maps (mutate in place; they are const)
-        const lp = await db.get('livePrices', null);
-        if (lp && typeof lp === 'object') {
-          Object.keys(livePriceOverrides).forEach(k => delete livePriceOverrides[k]);
-          Object.keys(livePriceMeta).forEach(k => delete livePriceMeta[k]);
-          Object.assign(livePriceOverrides, lp.overrides && typeof lp.overrides === 'object' ? lp.overrides : {});
-          Object.assign(livePriceMeta, lp.meta && typeof lp.meta === 'object' ? lp.meta : {});
-        }
+        const priceBook = Safe.priceBook(await db.get('priceBook', [])) || [];
 
-        this.state = { pantry, pantryZones, pantryUnits, pantryCategories, recipes, categories, planner, shoppingList, activeTimers: [], dailyIntake, settings };
+        this.state = { pantry, pantryZones, pantryUnits, pantryCategories, recipes, categories, planner, shoppingList, priceBook, activeTimers: [], dailyIntake, settings };
         this.applyTheme(settings.darkMode);
       }
 
@@ -2269,7 +2455,7 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
         el.classList.toggle('hidden', !on);
       },
       // Returns an array of pantry-ready items, or null (a message has already been shown)
-      async scan(file) {
+      async scan(file, purpose) {
         if (this.busy) return null;
         if (typeof Sync === 'undefined' || !Sync.user || !Sync.sb) { showToast('Please sign in first. Tap the cloud icon at the top.', '⚠️'); return null; }
         this.busy = true; this.busyUI(true, 'Reading your photo...');
@@ -2286,7 +2472,7 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
             res = await fetch(SUPABASE_URL + '/functions/v1/scan-photo', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token, apikey: SUPABASE_ANON_KEY },
-              body: JSON.stringify({ image: img.b64, mime: img.mime, categories: st.pantryCategories.map(c => c.name), zones: st.pantryZones.map(z => z.name) }),
+              body: JSON.stringify({ purpose: purpose === 'prices' ? 'prices' : 'pantry', image: img.b64, mime: img.mime, categories: st.pantryCategories.map(c => c.name), zones: st.pantryZones.map(z => z.name) }),
               signal: ctrl.signal
             });
           } finally { clearTimeout(timer); }
@@ -2294,10 +2480,11 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
           if (res.status === 404 || j.error === 'not_configured') { showToast('Photo scanning is not switched on yet. Please try again later.', '⚠️'); return null; }
           if (j.error === 'limit_reached') { try { await Plan.load(); Plan.showPaywall('scan'); } catch (e) { showToast('You have used all your free photo scans this month.', '⚠️'); } return null; }
           if (j.error === 'sign_in_required') { showToast('Please sign in first. Tap the cloud icon at the top.', '⚠️'); return null; }
-          if (j.error === 'nothing_found') { showToast('We could not find any food in that photo. Try a closer, clearer photo.', '🔎'); return null; }
+          if (j.error === 'nothing_found') { showToast(purpose === 'prices' ? 'We could not read any prices in that photo. Try a closer, clearer photo.' : 'We could not find any food in that photo. Try a closer, clearer photo.', '🔎'); return null; }
           if (j.error === 'busy') { showToast('Our reader is busy. Please try again in a minute.', '⏳'); return null; }
           if (!res.ok || !j.ok || !Array.isArray(j.items)) { showToast('Sorry, that did not work. Please try again.', '⚠️'); return null; }
           try { Plan.load(); } catch (e) {}
+          this.lastShop = typeof j.shop === 'string' ? j.shop : '';
           return this.normalize(j.items);
         } catch (e) {
           showToast(e && e.name === 'AbortError' ? 'That took too long. Please try again.' : 'No internet connection. Please try again.', '⚠️');
@@ -2309,20 +2496,236 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
         const units = st.pantryUnits.map(u => u.id);
         return items.map(it => {
           const name = String(it.name || '').trim().slice(0, 60);
+          const pq = Number(it.packQty), pp = Number(it.packPrice);
           if (!name) return null;
           const catObj = st.pantryCategories.find(c => c.name.toLowerCase() === String(it.category || '').toLowerCase()) || st.pantryCategories.find(c => c.name === 'Other') || st.pantryCategories[0];
           const zoneObj = st.pantryZones.find(z => z.name.toLowerCase() === String(it.zone || '').toLowerCase());
           const zone = zoneObj ? zoneObj.name : (catObj && catObj.defaultZone) || (st.pantryZones[0] && st.pantryZones[0].name) || 'Fridge';
           const days = Number(it.shelfLifeDays) > 0 ? Number(it.shelfLifeDays) : (Number(catObj && catObj.defaultDays) || 7);
           const unit = units.includes(it.unit) ? it.unit : (units.includes('pcs') ? 'pcs' : units[0] || 'pcs');
-          return { id: 'pantry_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7), name, qty: Math.round((Number(it.qty) || 1) * 100) / 100, unit, zone, category: catObj ? catObj.name : 'Other', expiryDate: dayStr(Math.min(days, 1500)) };
+          return { id: 'pantry_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7), name, qty: Math.round((Number(it.qty) || 1) * 100) / 100, unit, zone, category: catObj ? catObj.name : 'Other', expiryDate: dayStr(Math.min(days, 1500)), packQty: pq > 0 ? pq : null, packPrice: pp >= 0.05 && pp <= 2000 ? pp : null };
         }).filter(Boolean);
+      }
+    };
+
+    // ===== Exact products: search the shops' real product lists, and add your own =====
+    const ProductDB = {
+      fetched: {},
+      signed() { return !!(typeof Sync !== 'undefined' && Sync.user && Sync.sb); },
+      async rpc(fn, args) { try { const { data, error } = await Sync.sb.rpc(fn, args); return error ? null : data; } catch (e) { return null; } },
+      fmtSize(q, b) {
+        q = Number(q); if (!(q > 0) || !b) return '';
+        if (b === 'g') return q >= 1000 ? `${+(q / 1000).toFixed(2)} kg` : `${q} g`;
+        if (b === 'ml') return q >= 1000 ? `${+(q / 1000).toFixed(2)} L` : `${q} ml`;
+        return `${q} ${q === 1 ? 'piece' : 'pieces'}`;
+      },
+      snapFrom(rows) {
+        const snap = {};
+        (rows || []).forEach(r => {
+          if (!r || !r.shop || !(Number(r.p) > 0)) return;
+          const cur = snap[r.shop];
+          if (cur && cur.p <= Number(r.p)) return;
+          snap[r.shop] = { p: Number(r.p), w: Number(r.w) > Number(r.p) ? Number(r.w) : null, d: String(r.d || '').slice(0, 10), nm: String(r.nm || r.name || '').slice(0, 160), q: Number(r.q) > 0 ? Number(r.q) : null, b: ['g', 'ml', 'pc'].includes(r.b) ? r.b : null, s: r.src === 'shoppers' ? 1 : 0 };
+        });
+        return snap;
+      },
+      priceFor(item, mode) {
+        const sn = item.prod && item.prod.snap; if (!sn) return null;
+        const packs = Math.max(1, Math.round(parseFloat(item.qty) || 1)), cand = {};
+        Object.keys(sn).forEach(s => {
+          const r = sn[s]; if (!r || !(r.p > 0)) return;
+          cand[s] = { line: Math.round(r.p * packs * 100) / 100, unit: r.p, packQty: r.q || 0, packUnit: r.b === 'pc' ? 'pcs' : (r.b || 'g'), packs, src: 'shop', n: 1, date: r.d, was: r.w, note: r.nm, byShopper: !!r.s,
+            perKg: r.b === 'g' && r.q ? r.p / r.q * 1000 : null, perL: r.b === 'ml' && r.q ? r.p / r.q * 1000 : null, perPc: r.b === 'pc' && r.q ? r.p / r.q : null };
+        });
+        const miss = { unavailable: true, store: mode, line: 0, unit: 0, packs: 0, packQty: 0, packUnit: 'g', loose: false, match: item.prod.nn };
+        if (!Object.keys(cand).length) return mode === 'BEST' ? null : miss;
+        let store;
+        if (mode === 'BEST') store = Object.keys(cand).sort((x, y) => cand[x].line - cand[y].line)[0];
+        else if (cand[mode]) store = mode; else return miss;
+        return Object.assign({ store, loose: false, match: item.prod.nn }, cand[store]);
+      },
+      async refresh(list) {
+        try {
+          if (!this.signed()) return false;
+          const now = Date.now(), keys = new Map();
+          list.forEach(i => { if (i.prod && i.prod.shop && i.prod.nn) { const k = i.prod.shop + '|' + i.prod.nn; if (!keys.has(k) && !(this.fetched[k] && now - this.fetched[k] < 600000)) keys.set(k, i.prod); } });
+          const todo = [...keys.entries()].slice(0, 30);
+          if (!todo.length) return false;
+          todo.forEach(([k]) => this.fetched[k] = now);
+          const got = await Promise.all(todo.map(([k, p]) => this.rpc('product_prices', { p_shop: p.shop, p_nn: p.nn }).then(d => [k, d])));
+          let changed = false;
+          got.forEach(([k, d]) => {
+            if (!d || !d.ok || !Array.isArray(d.rows) || !d.rows.length) return;
+            const snap = this.snapFrom(d.rows);
+            list.forEach(x => { if (x.prod && x.prod.shop + '|' + x.prod.nn === k && JSON.stringify(x.prod.snap) !== JSON.stringify(snap)) { x.prod.snap = snap; changed = true; } });
+          });
+          if (changed) AppState.setShoppingList(list.slice());
+          return changed;
+        } catch (e) { return false; }
+      }
+    };
+
+    const productFinder = {
+      cards: [], seq: 0, timer: null,
+      openModal(prefill) {
+        const m = document.getElementById('productFinderModal'); m.classList.remove('hidden');
+        document.getElementById('pfShop').innerHTML = ALL_STORES.concat(['Other']).map(s => `<option>${esc(s)}</option>`).join('');
+        document.getElementById('pfAddBox').classList.add('hidden');
+        const inp = document.getElementById('pfSearch');
+        if (typeof prefill === 'string') inp.value = prefill;
+        if (!ProductDB.signed()) this.status('Please sign in first (tap the cloud icon at the top). Then you can search the shops\' real products.', true);
+        else if (!inp.value.trim()) this.status('Type at least 2 letters to start.');
+        if (inp.value.trim().length >= 2) this.run(); else document.getElementById('pfResults').innerHTML = '';
+        setTimeout(() => inp.focus(), 50);
+      },
+      closeModal() { document.getElementById('productFinderModal').classList.add('hidden'); },
+      status(t, signin) {
+        const el = document.getElementById('pfStatus');
+        el.innerHTML = esc(t) + (signin ? ' <button type="button" id="pfSignIn" class="underline font-bold text-brand-700 dark:text-brand-400">Sign in</button>' : '');
+        const b = document.getElementById('pfSignIn'); if (b) b.onclick = () => { this.closeModal(); document.getElementById('btnOpenDataBackupModal')?.click(); };
+      },
+      async run() {
+        const q = document.getElementById('pfSearch').value.trim(), my = ++this.seq;
+        if (q.length < 2) { document.getElementById('pfResults').innerHTML = ''; this.status('Type at least 2 letters to start.'); return; }
+        if (!ProductDB.signed()) { this.status('Please sign in first (tap the cloud icon at the top).', true); return; }
+        this.status('Searching...');
+        const d = await ProductDB.rpc('search_products', { p_q: q, p_limit: 80 });
+        if (my !== this.seq) return;
+        if (!d || !d.ok) { this.status(d && d.reason === 'sign_in' ? 'Please sign in first.' : 'Could not search right now. Please check your internet and try again.', d && d.reason === 'sign_in'); return; }
+        this.show(d.rows || [], q);
+      },
+      show(rows, q) {
+        const groups = new Map();
+        rows.forEach(r => { const k = r.g ? 'g:' + r.g : 's:' + r.shop + '|' + r.nn; if (!groups.has(k)) groups.set(k, []); groups.get(k).push(r); });
+        this.cards = [...groups.values()].slice(0, 40).map(rs => {
+          const cheapest = rs.slice().sort((a, b) => a.p - b.p)[0];
+          const title = rs.map(r => r.name).sort((a, b) => a.length - b.length)[0];
+          return { rows: rs, title, cheapest, size: ProductDB.fmtSize(cheapest.q, cheapest.b), snap: ProductDB.snapFrom(rs.map(r => Object.assign({}, r, { nm: r.name }))) };
+        });
+        const box = document.getElementById('pfResults');
+        if (!this.cards.length) { box.innerHTML = ''; this.status(`We could not find "${q}". Try fewer words, or add it yourself below.`); return; }
+        this.status(`Found ${this.cards.length} ${this.cards.length === 1 ? 'product' : 'products'}. Tap "Add to my list" on the one you buy.`);
+        const money = (n) => 'S$' + Number(n).toFixed(2);
+        box.innerHTML = this.cards.map((c, i) => {
+          const min = Math.min(...Object.values(c.snap).map(x => x.p));
+          const lines = Object.entries(c.snap).sort((a, b) => a[1].p - b[1].p).map(([s, x]) => `<div class="flex items-center justify-between gap-2 px-3 py-2 rounded-xl ${x.p === min && Object.keys(c.snap).length > 1 ? 'bg-[#DCEBE1] text-[#145238]' : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200'}">
+              <span class="font-bold text-sm">${esc(s)}${x.s ? ' <span class="text-xs font-normal text-slate-500">(added by a shopper)</span>' : ''}</span>
+              <span class="text-right"><span class="font-black">${money(x.p)}</span>${x.w ? ` <span class="text-xs line-through text-slate-400">${money(x.w)}</span> <span class="text-xs font-bold text-rose-600">on sale</span>` : ''}</span></div>`).join('');
+          return `<div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2">
+              <div class="font-bold text-base leading-snug text-slate-900 dark:text-white">${esc(c.title)}</div>
+              ${c.size ? `<div class="text-xs text-slate-500">Pack size: ${esc(c.size)}</div>` : ''}
+              <div class="space-y-1.5">${lines}</div>
+              <button type="button" data-pf-add="${i}" class="w-full py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">➕ Add to my list</button>
+            </div>`;
+        }).join('');
+      },
+      addToList(card, snapOverride) {
+        const c = card, ch = c.cheapest, st = AppState.state;
+        const dup = st.shoppingList.find(i => i.prod && i.prod.shop === ch.shop && i.prod.nn === ch.nn);
+        if (dup) { showToast('That product is already on your list.', 'ℹ️'); return false; }
+        AppState.setShoppingList([...st.shoppingList, { id: 'shop_' + Date.now(), name: c.title, qty: 1, unit: 'pkt', store: ch.shop, checked: false,
+          prod: { shop: ch.shop, nn: ch.nn, name: c.title, q: ch.q || null, b: ch.b || null, snap: snapOverride || c.snap } }]);
+        return true;
+      },
+      async saveOwn() {
+        const name = document.getElementById('pfName').value.trim(), shop = document.getElementById('pfShop').value;
+        const price = parseFloat(document.getElementById('pfPrice').value), qty = parseFloat(document.getElementById('pfQty').value) || null, unit = document.getElementById('pfUnit').value;
+        if (name.length < 3) return showToast('Please type the product name.', '⚠️');
+        if (!(price >= 0.05 && price <= 2000)) return showToast('Please type the price you see in the shop.', '⚠️');
+        if (!ProductDB.signed()) { this.status('Please sign in first, so we can save your product.', true); return; }
+        const b = qty ? UnitNormalizer.toBase(qty, unit) : null, base = b ? (b.type === 'mass' ? 'g' : b.type === 'vol' ? 'ml' : 'pc') : null, q = b ? Math.round(b.val * 1000) / 1000 : null;
+        const d = await ProductDB.rpc('add_user_product', { p_shop: shop, p_name: name, p_qty: q, p_base: base, p_price: Math.round(price * 100) / 100 });
+        if (!d || !d.ok) return showToast(d && d.reason === 'daily_limit' ? 'You have added a lot today. Please try again tomorrow.' : 'Could not save. Please check the details and your internet.', '⚠️');
+        const snap = { [shop]: { p: Math.round(price * 100) / 100, w: null, d: localDay(), nm: name, q, b: base, s: 0 } };
+        const card = { title: name, cheapest: { shop, nn: d.nn, q, b: base }, snap };
+        this.addToList(card, snap);
+        showToast('Saved! It is now in our list and on your shopping list.', '✅');
+        ['pfName', 'pfPrice', 'pfQty'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('pfAddBox').classList.add('hidden');
+        this.closeModal();
+      }
+    };
+
+    // ===== Price tags / shop screenshots -> prices (saved to your price list, optionally shared) =====
+    const priceScanner = {
+      items: [], shop: '',
+      openModal() { this.items = []; this.shop = ''; this.show(); document.getElementById('priceScanModal').classList.remove('hidden'); },
+      closeModal() { document.getElementById('priceScanModal').classList.add('hidden'); },
+      async scanFiles(files) {
+        const list = Array.from(files || []).slice(0, 6);
+        let got = [];
+        for (const f of list) {
+          const res = await PhotoScan.scan(f, 'prices');
+          if (res && res.length) {
+            got = got.concat(res);
+            if (!this.shop && PhotoScan.lastShop) this.shop = ALL_STORES.concat(['Other']).includes(PhotoScan.lastShop) ? PhotoScan.lastShop : 'Other';
+          }
+        }
+        if (!got.length) return;
+        const seen = new Set();
+        this.items = this.items.concat(got.filter(i => i.packPrice && i.packQty).map(i => ({ id: i.id, name: i.name, qty: i.packQty, unit: i.unit, price: i.packPrice })))
+          .filter(i => { const k = priceKey(i.name) + '|' + i.qty + i.unit + '|' + i.price; if (seen.has(k)) return false; seen.add(k); return true; });
+        this.show();
+        showToast(`Found ${this.items.length} price${this.items.length === 1 ? '' : 's'}. Please check them.`, '✅');
+      },
+      show() {
+        const st = AppState.state, box = document.getElementById('priceScanBox'), list = document.getElementById('priceScanList');
+        box.classList.toggle('hidden', this.items.length === 0);
+        if (!this.items.length) { list.innerHTML = ''; return; }
+        document.getElementById('priceScanCount').textContent = this.items.length;
+        document.getElementById('priceScanShop').innerHTML = '<option value="">Choose the shop...</option>' + ALL_STORES.concat(['Other']).map(s => `<option ${s === this.shop ? 'selected' : ''}>${esc(s)}</option>`).join('');
+        const signed = typeof Sync !== 'undefined' && Sync.user, sh = document.getElementById('priceScanShare');
+        sh.disabled = !signed; if (!sh._set) { sh._set = true; sh.checked = signed && st.settings.sharePrices !== false; }
+        const fld = 'w-full px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-base text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500';
+        list.innerHTML = this.items.map(i => `
+          <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2" data-row="${esc(i.id)}">
+            <div class="flex items-center gap-2">
+              <input data-f="name" value="${esc(i.name)}" aria-label="Food name" class="${fld} font-bold">
+              <button type="button" data-rm="${esc(i.id)}" aria-label="Remove ${esc(i.name)}" class="w-11 h-11 flex-shrink-0 rounded-xl bg-white dark:bg-slate-900 text-slate-400 hover:text-rose-500">✕</button>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <div><label class="block text-xs font-bold text-slate-500 mb-0.5">Size</label><input data-f="qty" type="number" step="any" min="0.1" value="${esc(i.qty)}" class="${fld}"></div>
+              <div><label class="block text-xs font-bold text-slate-500 mb-0.5">Measured in</label><select data-f="unit" class="${fld}">${st.pantryUnits.map(u => `<option value="${esc(u.id)}" ${u.id === i.unit ? 'selected' : ''}>${esc(u.id)}</option>`).join('')}</select></div>
+              <div><label class="block text-xs font-bold text-slate-500 mb-0.5">Price (S$)</label><input data-f="price" type="number" step="0.01" min="0.05" value="${esc(i.price)}" class="${fld}"></div>
+            </div>
+          </div>`).join('');
+        if (!list._wired) {
+          list._wired = true;
+          list.addEventListener('input', (e) => {
+            const row = e.target.closest('[data-row]'); if (!row) return;
+            const it = this.items.find(x => x.id === row.dataset.row); if (!it) return;
+            const f = e.target.dataset.f;
+            if (f === 'qty' || f === 'price') it[f] = parseFloat(e.target.value) || 0; else if (f) it[f] = e.target.value;
+          });
+          list.addEventListener('click', (e) => { const b = e.target.closest('[data-rm]'); if (!b) return; this.items = this.items.filter(x => x.id !== b.dataset.rm); this.show(); });
+        }
+      },
+      save() {
+        const shop = document.getElementById('priceScanShop').value;
+        if (!shop) { showToast('Please choose which shop these prices are from.', '⚠️'); document.getElementById('priceScanShop').focus(); return; }
+        const share = !!document.getElementById('priceScanShare').checked;
+        if (!document.getElementById('priceScanShare').disabled) { AppState.state.settings.sharePrices = share; db.set('settings', AppState.state.settings); }
+        const rows = []; let list = PriceBook.mine().slice();
+        this.items.forEach(i => {
+          const pb = PriceBook.baseOf(i.qty, i.unit), key = priceKey(i.name), p = Math.round(Number(i.price) * 100) / 100;
+          if (!key || !(pb.val > 0) || !(p >= 0.05 && p <= 2000)) return;
+          const rec = { k: key, n: String(i.name).slice(0, 80), s: shop, b: pb.base, q: Math.round(pb.val * 1000) / 1000, p, d: localDay(), sh: share };
+          list = [rec, ...list.filter(r => !(r.k === rec.k && r.s === rec.s && r.q === rec.q))];
+          rows.push({ shop, key, name: rec.n, base: rec.b, packQty: rec.q, price: p, source: 'receipt' });
+        });
+        if (!rows.length) { showToast('Nothing to save. Please check the sizes and prices.', '⚠️'); return; }
+        AppState.state.priceBook = list.slice(0, 600); db.set('priceBook', AppState.state.priceBook);
+        if (share) PriceBook.upload(rows);
+        showToast(`Saved ${rows.length} price${rows.length === 1 ? '' : 's'} for ${shop}!`, '🏷️');
+        this.closeModal(); renderShoppingList();
       }
     };
 
     const batchScanner = {
       parsedItems: [],
+      shop: '',
       openModal() {
+        this.shop = '';
         this.show([]);
         document.getElementById('inputBatchReceiptText').value = '';
         document.getElementById('batchPantryModal').classList.remove('hidden');
@@ -2330,7 +2733,12 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
       closeModal() { document.getElementById('batchPantryModal').classList.add('hidden'); },
       async scanFile(file) {
         const items = await PhotoScan.scan(file);
-        if (items && items.length) { this.show(items); showToast(`Found ${items.length} item${items.length === 1 ? '' : 's'}. Please check them.`, '✅'); }
+        if (items && items.length) {
+          const known = ALL_STORES.concat(['Other']);
+          this.shop = known.includes(PhotoScan.lastShop) ? PhotoScan.lastShop : (PhotoScan.lastShop ? 'Other' : '');
+          this.show(items);
+          showToast(`Found ${items.length} item${items.length === 1 ? '' : 's'}. Please check them.`, '✅');
+        }
       },
       show(items) {
         this.parsedItems = items;
@@ -2351,6 +2759,18 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
             <div class="text-sm text-slate-500">Use by ${esc(i.expiryDate)}</div>
           </div>`).join('');
         document.getElementById('batchParsedHeader').classList.toggle('hidden', items.length === 0);
+        const priced = items.filter(i => i.packPrice);
+        const pbox = document.getElementById('batchPriceBox');
+        if (pbox) {
+          pbox.classList.toggle('hidden', priced.length === 0);
+          if (priced.length) {
+            const signed = typeof Sync !== 'undefined' && Sync.user;
+            document.getElementById('batchPriceShop').innerHTML = '<option value="">Choose the shop...</option>' + ALL_STORES.concat(['Other']).map(st => `<option ${st === this.shop ? 'selected' : ''}>${esc(st)}</option>`).join('');
+            const sh = document.getElementById('batchPriceShare');
+            sh.disabled = !signed; sh.checked = signed && AppState.state.settings.sharePrices !== false;
+            document.getElementById('batchPriceCount').textContent = priced.length;
+          }
+        }
         document.getElementById('btnSaveBatchToPantry').classList.toggle('hidden', items.length === 0);
         if (!list._wired) {
           list._wired = true;
@@ -2387,7 +2807,26 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
       saveAll() {
         const items = this.parsedItems.filter(i => String(i.name || '').trim());
         if (items.length === 0) return;
-        AppState.setPantry([...items, ...AppState.state.pantry]);
+        // Prices that were read from the receipt: keep them for comparing shops
+        const priced = items.filter(i => i.packPrice && i.packQty);
+        const shopSel = document.getElementById('batchPriceShop');
+        const shop = shopSel && !document.getElementById('batchPriceBox').classList.contains('hidden') ? shopSel.value : '';
+        if (priced.length && !shop) { showToast('Please choose which shop this receipt is from, so we can save the prices.', '⚠️'); shopSel && shopSel.focus(); return; }
+        if (priced.length && shop) {
+          const share = !!document.getElementById('batchPriceShare').checked;
+          if (!document.getElementById('batchPriceShare').disabled) { AppState.state.settings.sharePrices = share; db.set('settings', AppState.state.settings); }
+          const rows = [];
+          priced.forEach(i => {
+            const pb = PriceBook.baseOf(i.packQty, i.unit), key = priceKey(i.name), p = Math.round(i.packPrice * 100) / 100;
+            if (!key || !(pb.val > 0)) return;
+            const rec = { k: key, n: String(i.name).slice(0, 80), s: shop, b: pb.base, q: Math.round(pb.val * 1000) / 1000, p, d: localDay(), sh: share };
+            AppState.state.priceBook = [rec, ...PriceBook.mine().filter(r => !(r.k === rec.k && r.s === rec.s && r.q === rec.q))].slice(0, 600);
+            rows.push({ shop, key, name: rec.n, base: rec.b, packQty: rec.q, price: p, source: 'receipt' });
+          });
+          db.set('priceBook', AppState.state.priceBook);
+          if (share && rows.length) PriceBook.upload(rows);
+        }
+        AppState.setPantry([...items.map(({ packQty, packPrice, ...rest }) => rest), ...AppState.state.pantry]);
         soundEngine.playChime();
         showToast(`Added ${items.length} item${items.length === 1 ? '' : 's'} to your Pantry!`, '🧾');
         this.closeModal();
@@ -3714,7 +4153,8 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
           { icon: '📷', bg: '#DCEBFA', label: 'Scan a receipt or groceries', desc: 'Take a photo and we fill in your Pantry', run: () => batchScanner.openModal() },
           { icon: '📖', bg: '#FDE7D3', label: 'Add a new recipe', desc: 'Write one, or paste a link', run: () => { switchView('recipes'); recipeEditor.openModal(); } },
           { icon: '✨', bg: '#FBF0C4', label: 'Plan my week of meals', desc: 'Picks lunch and dinner for 7 days', run: () => { switchView('planner'); document.getElementById('btnAutoPlanWeek').click(); } },
-          { icon: '🏷️', bg: '#F3DCF5', label: 'Update shopping prices', desc: 'Check the latest prices for your list', run: () => { switchView('shopping'); tryLivePrices(); } },
+          { icon: '🔎', bg: '#DDEBFA', label: 'Find an exact product and its prices', desc: 'Search what each shop sells', run: () => { switchView('shopping'); productFinder.openModal(); } },
+          { icon: '🏷️', bg: '#F3DCF5', label: 'Add shop prices from a photo', desc: 'Price tags or screenshots of a shop page', run: () => { switchView('shopping'); priceScanner.openModal(); } },
           { icon: '🛒', bg: '#D9F2EE', label: 'Open my shopping list', desc: 'See what you need to buy', run: () => switchView('shopping') },
           { icon: '⚙️', bg: '#E5E9F0', label: 'Edit storage places and food types', desc: 'Fridge, freezer, units and more', run: () => pantryConfigManager.openModal('zones') },
           { icon: '🌙', bg: '#E1E2FA', label: 'Switch dark or light screen', desc: 'Easier on your eyes at night', run: () => AppState.toggleDarkMode() }
@@ -3868,8 +4308,8 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
         if (!first) {
           cc.innerHTML = `<h2 class="font-bold text-lg">Cart prices</h2><p class="text-sm text-slate-500 mt-2">Add items to your cart to compare prices at FairPrice, Sheng Siong and Cold Storage.</p>`;
         } else {
-          const rows = ['FairPrice', 'Sheng Siong', 'Cold Storage'].map(st => { const pf = PriceEngine.priceFor(first, st); return pf ? [st, pf.line] : null; }).filter(Boolean).sort((x, y) => x[1] - y[1]);
-          cc.innerHTML = `<h2 class="font-bold text-lg">${esc(first.name)}</h2>
+          const rows = ALL_STORES.map(st => { const pf = PriceEngine.priceFor(first, st); return pf && !pf.unavailable ? [st, pf.line] : null; }).filter(Boolean).sort((x, y) => x[1] - y[1]);
+          cc.innerHTML = `<h2 class="font-bold text-lg">${esc(cartName(first.name).title)}</h2>
             <p class="text-xs text-slate-500 mb-2">${rows.length ? `Cheapest at ${esc(rows[0][0])} for ${first.qty} ${esc(first.unit)}.` : 'No price estimate for this item yet.'}</p>
             ${rows.map((r, n) => `<div class="flex items-center justify-between py-3 ${n === 0 ? 'px-3 -mx-3 rounded-xl bg-[#DCEBE1] dark:bg-brand-900/60' : 'border-b last:border-0 border-slate-200 dark:border-slate-800'}"><span class="${n === 0 ? 'font-bold' : ''}">${esc(r[0])}</span><span class="${n === 0 ? 'font-bold text-lg' : ''}">${money(r[1])}</span></div>`).join('')}
             <button onclick="switchView('shopping')" class="mt-3 text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline">See all ${open.length} item${open.length > 1 ? 's' : ''} in cart</button>`;
@@ -4017,32 +4457,96 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
       });
     }
 
+    const openPriceIds = new Set();
+    // Links to each shop's own search page, so you can see the real price (opens in the browser)
+    const SHOP_SEARCH = {
+      'FairPrice': (q) => 'https://www.fairprice.com.sg/search?query=' + q,
+      'Sheng Siong': (q) => 'https://shengsiong.com.sg/search/' + q,
+      'Cold Storage': (q) => 'https://coldstorage.com.sg/en/search?q=' + q,
+      'RedMart': (q) => 'https://www.lazada.sg/shop/redmart/?q=' + q,
+      'Suzy Ameer': (q) => 'https://suzyameeronline.com.sg/search?controller=search&s=' + q,
+      'Toko Warisan': (q) => 'https://tokowarisan.sg/?post_type=product&s=' + q,
+      'Other': (q) => 'https://www.google.com/search?q=' + q + '%20price%20Singapore'
+    };
+
+    // Shopping-list names: English first, no cooking notes ("sliced thinly"), original name underneath
+    function cleanItemName(raw) {
+      let n = String(raw || '').trim();
+      n = n.replace(/\s*[\(\[][^\)\]]*[\)\]]/g, '');                                   // (dihiris nipis), [optional]
+      n = n.replace(/,\s*(cut|sliced|diced|chopped|minced|optional|halved|crushed|grated|peeled|washed|to taste|for|dihiris|dipotong|dicincang|opsyenal).*$/i, '');
+      return n.replace(/^(sudu\s+(makan|besar|teh)|cawan)\s+/i, '').replace(/\s{2,}/g, ' ').trim() || String(raw || '').trim();
+    }
+    // The name we share prices under: the English dictionary name when we know the food, else the cleaned name
+    function priceKey(raw) {
+      const n = cleanItemName(raw), e = Lex.find(n);
+      if (e) return e.key;
+      return n.toLowerCase().replace(/\b\d+(\.\d+)?\s*(kg|g|ml|l|pcs|pc|x|s)\b/g, ' ').replace(/[^a-z0-9\u4e00-\u9fff ]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 60);
+    }
+    function cartName(raw) {
+      const n = cleanItemName(raw);
+      const e = Lex.find(n);
+      const eng = e ? e.key.charAt(0).toUpperCase() + e.key.slice(1) : '';
+      const same = (x, y) => x.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]/g, '') === y.toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]/g, '');
+      if (eng && !same(eng, n)) return { title: eng, sub: n.charAt(0).toUpperCase() + n.slice(1) };
+      return { title: n.charAt(0).toUpperCase() + n.slice(1), sub: '' };
+    }
+
     function renderShoppingList() {
       const container = document.getElementById('shoppingListContainer');
       const badge = document.getElementById('priceTotalBadge');
       if (!container) return;
       const list = AppState.state.shoppingList;
       const money = (n) => `S$${n.toFixed(2)}`;
+      const unitWord = (item) => item.unit === 'pcs' ? (Number(item.qty) === 1 ? 'piece' : 'pieces') : item.unit === 'pkt' ? (Number(item.qty) === 1 ? 'pack' : 'packs') : esc(item.unit);
 
-      const priceHtml = (item) => {
-        const pf = PriceEngine.priceFor(item, currentPriceStore);
-        if (!pf) return { html: '<span class="text-sm text-slate-400">No price guess yet</span>', line: 0 };
-        const storeTag = currentPriceStore === 'BEST' ? `<span class="text-xs px-2 py-1 rounded-lg bg-brand-500/15 text-brand-700 dark:text-brand-400 font-bold">at ${esc(pf.store)}</span>` : '';
-        const k = ovKeyFor(item.name, pf.store);
-        const liveBadge = livePriceOverrides[k]
-          ? `<span class="text-xs px-2 py-1 rounded-lg bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 font-bold">● Updated</span>`
-          : '';
-        return {
-          html: `<div class="flex flex-wrap items-center gap-2"><span class="font-black text-lg text-slate-900 dark:text-white">${money(pf.line)}</span>${storeTag}${liveBadge}</div><div class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${pf.packs} × ${money(pf.unit)} per ${pf.packQty}${esc(pf.packUnit)}</div>`,
-          line: pf.line
-        };
+      const fmtSize = (n, vol) => vol ? (n >= 1000 ? `${n / 1000} L` : `${n} ml`) : (n >= 1000 ? `${n / 1000} kg` : `${n} g`);
+      const ago = (d) => { if (!d) return ''; const n = Math.round((new Date(localDay()) - new Date(d)) / 86400000); return n <= 0 ? 'today' : n === 1 ? 'yesterday' : n < 60 ? `${n} days ago` : `${Math.round(n / 30)} months ago`; };
+      const priceHtml = (pf, item) => {
+        if (!pf) return '<span class="text-sm text-slate-400">No price yet. Add what you paid below.</span>';
+        if (pf.unavailable) return `<span class="text-sm text-slate-400">We have no price for ${esc(pf.store)}. If you know it, add it below.</span>`;
+        const vol = UnitNormalizer.toBase(1, item.unit).type === 'vol';
+        let how = '';
+        if (pf.src === 'shop') { const sz = ProductDB.fmtSize(pf.packQty, pf.packUnit === 'pcs' ? 'pc' : pf.packUnit); how = (pf.packs === 1 ? '1 pack' : `${pf.packs} packs`) + (sz ? ` (${sz}${pf.packs === 1 ? '' : ' each'})` : '') + ` at ${money(pf.unit)}`; }
+        else if (pf.loose && pf.perKg && pf.line >= 1) how = `about ${money(pf.perKg)} per kg`;
+        else if (pf.loose && pf.perL && pf.line >= 1) how = `about ${money(pf.perL)} per litre`;
+        else if (pf.loose && pf.perPc && pf.line >= 1) how = `about ${money(pf.perPc)} each`;
+        else if (!pf.loose) {
+          const size = pf.packUnit === 'pcs' ? (pf.packQty === 1 ? '1 piece' : `${pf.packQty} pieces`) : fmtSize(pf.packQty, vol || pf.packUnit === 'ml');
+          how = pf.packs === 1 ? `1 pack (${size}) at ${money(pf.unit)}` : `${pf.packs} packs (${size} each) at ${money(pf.unit)}`;
+        }
+        const tag = pf.src === 'shop' ? `<span class="text-xs px-2 py-1 rounded-lg bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 font-bold">${pf.byShopper ? '✓ Added by a shopper' : '✓ Shop price'} · ${esc(ago(pf.date))}</span>${pf.was ? ` <span class="text-xs px-2 py-1 rounded-lg bg-rose-500/10 text-rose-600 font-bold">On sale (was ${money(pf.was)})</span>` : ''}`
+          : pf.src === 'mine' ? `<span class="text-xs px-2 py-1 rounded-lg bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 font-bold">✓ Your price · ${esc(ago(pf.date))}</span>`
+          : pf.src === 'community' ? `<span class="text-xs px-2 py-1 rounded-lg bg-sky-500/15 text-sky-700 dark:text-sky-300 font-bold">✓ Shoppers' price · ${pf.n} ${pf.n === 1 ? 'report' : 'reports'} · ${esc(ago(pf.date))}</span>`
+          : '<span class="text-xs px-2 py-1 rounded-lg bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold">Our guess</span>';
+        return `<div class="flex flex-wrap items-center gap-2"><span class="font-black text-lg text-slate-900 dark:text-white">${pf.src === 'guess' ? 'about ' : ''}${money(pf.line)}</span>${tag}</div>${how ? `<div class="text-xs text-slate-500 dark:text-slate-400">${how}</div>` : ''}`;
       };
 
       const cmp = (item) => {
-        const rows = ['FairPrice', 'Sheng Siong', 'Cold Storage'].map(st => { const pf = PriceEngine.priceFor(item, st); return pf ? [st, pf.line] : null; }).filter(Boolean);
-        if (!rows.length) return '';
-        const min = Math.min(...rows.map(r => r[1]));
-        return `<div class="mt-2 pt-2 border-t border-slate-200/70 dark:border-slate-700"><div class="text-xs font-bold text-slate-500 mb-1.5">Price at each shop:</div><div class="flex flex-wrap gap-1.5">${rows.map(([st, p]) => `<span class="text-xs px-2.5 py-1.5 rounded-lg ${p === min ? 'bg-[#DCEBE1] text-[#145238] font-black' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300'}">${p === min ? '✓ ' : ''}${esc(st)} ${money(p)}</span>`).join('')}</div></div>`;
+        const rows = ALL_STORES.map(st => { const pf = PriceEngine.priceFor(item, st); return pf && !pf.unavailable ? [st, pf.line, pf.src] : null; }).filter(Boolean);
+        const min = rows.length ? Math.min(...rows.map(r => r[1])) : 0;
+        const best = (rows.slice().sort((x, y) => x[1] - y[1])[0] || [])[0];
+        const defShop = currentPriceStore !== 'BEST' ? currentPriceStore : (best || 'FairPrice');
+        const signed = typeof Sync !== 'undefined' && Sync.user;
+        const share = AppState.state.settings.sharePrices !== false;
+        const fld = 'w-full px-3 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-base text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500';
+        const chips = rows.length ? `<div class="flex flex-wrap gap-1.5 mt-2">${rows.map(([st, p, src]) => `<span class="text-xs px-2.5 py-1.5 rounded-lg ${p === min ? 'bg-[#DCEBE1] text-[#145238] font-black' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300'}">${p === min ? '✓ ' : ''}${esc(st)} ${src === 'guess' ? '~' : ''}${money(p)}</span>`).join('')}</div><div class="text-xs text-slate-500 mt-1">~ means our guess. No ~ means a real price from you or other shoppers.</div>` : '';
+        return `<details class="mt-2" data-pid="${esc(item.id)}" ${openPriceIds.has(item.id) ? 'open' : ''}><summary class="text-sm font-bold text-brand-700 dark:text-brand-400 cursor-pointer">${item.prod ? 'Compare shops' : 'Compare shops and add a real price'}</summary>
+          ${chips}
+          ${item.prod ? '<div class="text-xs text-slate-500 mt-3">These are the prices in each shop\'s own product list. A shop that is not shown does not have this exact product in our list. Prices change, so check the shelf too.</div>' : `
+          <div class="mt-3 p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 space-y-2" data-payform="${esc(item.id)}">
+            <div class="text-sm font-black text-slate-800 dark:text-slate-100">I paid a real price</div>
+            <div class="grid grid-cols-2 gap-2">
+              <div><label class="block text-xs font-bold text-slate-500 mb-1">Price paid (S$)</label><input data-p="price" type="number" inputmode="decimal" step="0.01" min="0.05" placeholder="e.g. 2.95" class="${fld}"></div>
+              <div><label class="block text-xs font-bold text-slate-500 mb-1">Shop</label><select data-p="shop" class="${fld}">${ALL_STORES.concat(['Other']).map(st => `<option ${st === defShop ? 'selected' : ''}>${esc(st)}</option>`).join('')}</select></div>
+              <div><label class="block text-xs font-bold text-slate-500 mb-1">For how much?</label><input data-p="qty" type="number" step="any" min="0.1" value="${esc(item.qty)}" class="${fld}"></div>
+              <div><label class="block text-xs font-bold text-slate-500 mb-1">Measured in</label><select data-p="unit" class="${fld}">${AppState.state.pantryUnits.map(u => `<option value="${esc(u.id)}" ${u.id === item.unit ? 'selected' : ''}>${esc(u.id)}</option>`).join('')}</select></div>
+            </div>
+            <label class="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300"><input data-p="share" type="checkbox" ${share && signed ? 'checked' : ''} ${signed ? '' : 'disabled'} class="mt-0.5 w-5 h-5 accent-brand-500"><span>${signed ? 'Share this price anonymously so other shoppers can compare' : 'Sign in (cloud icon) to share prices with other shoppers'}</span></label>
+            <button type="button" data-save-price="${esc(item.id)}" class="w-full py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">Save my price</button>
+          </div>
+          `}
+          <div class="text-xs font-bold text-slate-500 mt-3 mb-1.5">Look it up at the shop:</div>
+          <div class="flex flex-wrap gap-1.5">${ALL_STORES.map(st => `<a href="${esc(SHOP_SEARCH[st](encodeURIComponent(item.prod ? item.name : cartName(item.name).title)))}" target="_blank" rel="noopener noreferrer" class="text-xs px-2.5 py-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-brand-700 dark:text-brand-400 font-bold">${esc(st)} ↗</a>`).join('')}</div></details>`;
       };
 
       if (list.length === 0) {
@@ -4051,46 +4555,78 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
         return;
       }
 
+      // Group by the shop whose prices we are showing, so the list tells you where to buy what
       const grouped = {};
-      list.forEach(item => { const st = item.store || 'FairPrice'; (grouped[st] = grouped[st] || []).push(item); });
+      list.forEach(item => {
+        const pf = PriceEngine.priceFor(item, currentPriceStore);
+        const st = !pf ? 'No price guess yet' : (pf.unavailable ? 'Not sold at ' + currentPriceStore : pf.store);
+        (grouped[st] = grouped[st] || []).push({ item, pf });
+      });
+      const order = Object.keys(grouped).sort((x, y) => (/^(No price|Not sold)/.test(x)) - (/^(No price|Not sold)/.test(y)) || x.localeCompare(y));
 
-      container.innerHTML = Object.entries(grouped).map(([store, items]) => {
+      container.innerHTML = order.map(store => {
+        const entries = grouped[store];
         let subtotal = 0;
-        const rows = items.map(item => {
-          const pf = PriceEngine.priceFor(item, currentPriceStore);
-          if (pf && !item.checked) subtotal += pf.line;
-          const pl = priceHtml(item);
+        const rows = entries.map(({ item, pf }) => {
+          if (pf && !pf.unavailable && !item.checked) subtotal += pf.line;
+          const nm = item.prod ? { title: item.name, sub: 'Exact product' } : cartName(item.name);
           return `
             <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70">
               <div class="flex items-start gap-3">
                 <label class="flex items-start gap-3 cursor-pointer flex-1 min-w-0">
                   <input type="checkbox" data-id="${esc(item.id)}" ${item.checked ? 'checked' : ''} class="shop-check w-6 h-6 mt-0.5 flex-shrink-0 rounded accent-brand-500">
                   <span class="min-w-0">
-                    <span class="block font-bold text-base leading-snug break-words ${item.checked ? 'line-through text-slate-400' : 'text-slate-900 dark:text-white'}">${esc(item.name)}</span>
-                    <span class="block text-sm font-bold text-brand-600 mt-0.5">${item.qty} ${esc(item.unit)}</span>
+                    <span class="block font-bold text-base leading-snug break-words ${item.checked ? 'line-through text-slate-400' : 'text-slate-900 dark:text-white'}">${esc(nm.title)}</span>
+                    ${nm.sub ? `<span class="block text-xs text-slate-400 break-words">${esc(nm.sub)}</span>` : ''}
+                    <span class="block text-sm font-bold text-brand-600 mt-0.5">${esc(item.qty)} ${unitWord(item)}</span>
                   </span>
                 </label>
-                <button data-del="${esc(item.id)}" aria-label="Remove ${esc(item.name)}" class="shop-del w-10 h-10 flex-shrink-0 rounded-xl bg-white dark:bg-slate-800 text-slate-400 hover:text-rose-500 text-base">✕</button>
+                <button data-del="${esc(item.id)}" aria-label="Remove ${esc(nm.title)}" class="shop-del w-10 h-10 flex-shrink-0 rounded-xl bg-white dark:bg-slate-800 text-slate-400 hover:text-rose-500 text-base">✕</button>
               </div>
-              <div class="mt-2 pl-9">${pl.html}</div>
-              ${cmp(item)}
+              <div class="mt-2 pl-9">${priceHtml(pf, item)}</div>
+              <div class="pl-9">${cmp(item)}</div>
             </div>`;
         }).join('');
         return `
           <div class="p-4 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
-            <div class="flex items-center justify-between"><span class="font-black text-base text-brand-700 dark:text-brand-400">🏪 ${esc(store)}</span><span class="text-sm text-slate-500">${items.length} ${items.length === 1 ? 'item' : 'items'}</span></div>
-            <div class="space-y-1.5">${rows}</div>
-            <div class="flex items-center justify-between pt-1.5 border-t border-slate-100 dark:border-slate-800">
-              <span class="text-sm font-bold text-slate-500">Shop total ${currentPriceStore === 'BEST' ? '(cheapest prices)' : `(${esc(currentPriceStore)} prices)`}</span>
+            <div class="flex items-center justify-between"><span class="font-black text-base text-brand-700 dark:text-brand-400">🏪 ${esc(store)}</span><span class="text-sm text-slate-500">${entries.length} ${entries.length === 1 ? 'item' : 'items'}</span></div>
+            ${currentPriceStore === 'BEST' && !/^(No price|Not sold)/.test(store) ? '<div class="text-sm text-slate-500 -mt-1">Buy these here. It is the cheapest for them.</div>' : ''}
+            <div class="space-y-2">${rows}</div>
+            ${/^(No price|Not sold)/.test(store) ? '<div class="text-sm text-slate-500">These are not in the total.</div>' : `<div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
+              <span class="text-sm font-bold text-slate-500">Estimated total for this shop</span>
               <span class="text-lg font-black text-slate-900 dark:text-white">${money(subtotal)}</span>
-            </div>
+            </div>`}
           </div>`;
       }).join('');
 
       const unchecked = list.filter(i => !i.checked);
-      const grand = unchecked.reduce((s, i) => { const pf = PriceEngine.priceFor(i, currentPriceStore); return s + (pf ? pf.line : 0); }, 0);
+      const grand = unchecked.reduce((s, i) => { const pf = PriceEngine.priceFor(i, currentPriceStore); return s + (pf && !pf.unavailable ? pf.line : 0); }, 0);
+      const shops = new Set(unchecked.map(i => { const pf = PriceEngine.priceFor(i, currentPriceStore); return pf && !pf.unavailable ? pf.store : null; }).filter(Boolean)).size;
       try { renderDashboard(); } catch (e) {}
-      if (badge) badge.textContent = unchecked.length ? `Estimated total: ${money(grand)}${currentPriceStore === 'BEST' ? ' (cheapest mix)' : ' at ' + currentPriceStore}` : 'Total: —';
+      if (badge) badge.textContent = unchecked.length ? `Estimated total: about ${money(grand)}${currentPriceStore === 'BEST' ? ` (cheapest, ${shops} ${shops === 1 ? 'shop' : 'shops'})` : ' at ' + currentPriceStore}` : 'Total: —';
+
+      if (!container._priceWired) {
+        container._priceWired = true;
+        container.addEventListener('toggle', (e) => { const d = e.target; if (d && d.dataset && d.dataset.pid) { if (d.open) openPriceIds.add(d.dataset.pid); else openPriceIds.delete(d.dataset.pid); } }, true);
+        container.addEventListener('click', async (e) => {
+          const btn = e.target.closest('[data-save-price]'); if (!btn) return;
+          const id = btn.dataset.savePrice, form = btn.closest('[data-payform]');
+          const item = AppState.state.shoppingList.find(i => i.id === id); if (!item || !form) return;
+          const v = (k) => form.querySelector('[data-p="' + k + '"]');
+          const price = parseFloat(v('price').value), qty = parseFloat(v('qty').value);
+          if (!(price >= 0.05)) return showToast('Please type the price you paid', '⚠️');
+          if (!(qty > 0)) return showToast('Please type how much it was for', '⚠️');
+          const share = !!(v('share') && v('share').checked);
+          if (v('share') && !v('share').disabled) { AppState.state.settings.sharePrices = share; db.set('settings', AppState.state.settings); }
+          const ok = await PriceBook.add({ name: item.name, qty, unit: v('unit').value, price, shop: v('shop').value, share });
+          if (!ok) return showToast('That price does not look right. Please check it.', '⚠️');
+          openPriceIds.add(id);
+          showToast(share ? 'Saved. Thank you for sharing!' : 'Saved. We will use your price.', '✅');
+          renderShoppingList();
+        });
+      }
+      ProductDB.refresh(list);
+      PriceBook.fetchFor(list.filter(i => !i.prod).map(i => priceKey(i.name))).then((got) => { const v = document.getElementById('view-shopping'); if (got && v && !v.classList.contains('hidden')) renderShoppingList(); });
 
       container.querySelectorAll('.shop-check').forEach(chk => chk.addEventListener('change', (e) => {
         AppState.setShoppingList(AppState.state.shoppingList.map(i => i.id === e.target.dataset.id ? { ...i, checked: e.target.checked } : i));
@@ -4270,7 +4806,7 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
       on('btnOpenDataBackupModal', 'click', () => $('dataBackupModal').classList.remove('hidden'));
       on('closeDataBackupModalBtn', 'click', () => $('dataBackupModal').classList.add('hidden'));
       on('btnExportJsonBackup', 'click', () => {
-        const payload = { ...AppState.state, livePrices: { overrides: livePriceOverrides, meta: livePriceMeta } };
+        const payload = { ...AppState.state };
         const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
         a.download = `pantrychef_sg_backup_${localDay()}.json`;
@@ -4440,6 +4976,16 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
       });
 
       on('btnOpenBatchPantryModal', 'click', () => batchScanner.openModal());
+      on('btnScanPrices', 'click', () => priceScanner.openModal());
+      on('btnFindProduct', 'click', () => productFinder.openModal());
+      on('closeProductFinderBtn', 'click', () => productFinder.closeModal());
+      on('pfShowAdd', 'click', () => { const bx = $('pfAddBox'); bx.classList.toggle('hidden'); if (!bx.classList.contains('hidden')) { if (!$('pfName').value) $('pfName').value = $('pfSearch').value.trim(); $('pfName').focus(); } });
+      on('pfSaveOwn', 'click', () => productFinder.saveOwn());
+      $('pfSearch')?.addEventListener('input', () => { clearTimeout(productFinder.timer); productFinder.timer = setTimeout(() => productFinder.run(), 350); });
+      $('pfResults')?.addEventListener('click', (e) => { const b = e.target.closest('[data-pf-add]'); if (!b) return; const c = productFinder.cards[+b.dataset.pfAdd]; if (c && productFinder.addToList(c)) { showToast('Added to your shopping list', '✅'); productFinder.closeModal(); } });
+      on('closePriceScanModalBtn', 'click', () => priceScanner.closeModal());
+      on('btnSavePriceScan', 'click', () => priceScanner.save());
+      ['inputPriceScanCam', 'inputPriceScanFile'].forEach(id => $(id)?.addEventListener('change', (e) => { const fs = Array.from(e.target.files || []); e.target.value = ''; if (fs.length) priceScanner.scanFiles(fs); }));
       ['inputBatchPhotoCam', 'inputBatchPhotoFile'].forEach(id => $(id)?.addEventListener('change', (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) batchScanner.scanFile(f); }));
       ['inputPantryScanCam', 'inputPantryScanFile'].forEach(id => $(id)?.addEventListener('change', (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) pantryHandlers.fillFromPhoto(f); }));
       on('closeBatchPantryModalBtn', 'click', () => batchScanner.closeModal());
