@@ -642,6 +642,28 @@
 
 
 
+
+  <div id="deleteAccountModal" class="fixed inset-0 z-[70] bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-6">
+    <div class="w-full sm:max-w-xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-9 space-y-5 text-lg leading-relaxed text-slate-800 dark:text-slate-100">
+      <h3 class="font-display font-extrabold text-3xl text-rose-600">Delete my account</h3>
+      <p>This will permanently:</p>
+      <ul class="list-disc pl-6 space-y-1">
+        <li>delete your account and your synced pantry, recipes, plan and cart</li>
+        <li>cancel Plus straight away, with no refund for the rest of the period</li>
+      </ul>
+      <p>This cannot be undone.</p>
+      <label class="flex items-start gap-3 text-base"><input type="checkbox" id="deleteEraseDevice" class="mt-1.5 w-5 h-5"> <span>Also erase the pantry and recipes saved on this device</span></label>
+      <div>
+        <label for="deleteConfirmInput" class="block font-bold mb-2">Type <b>DELETE</b> to confirm</label>
+        <input id="deleteConfirmInput" type="text" autocomplete="off" class="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-lg outline-none focus:ring-2 focus:ring-rose-500">
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button type="button" id="btnDeleteCancel" class="flex-1 py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 font-bold text-lg">Keep my account</button>
+        <button type="button" id="btnDeleteConfirm" disabled class="flex-1 py-4 rounded-2xl bg-rose-600 text-white font-bold text-lg opacity-40">Delete forever</button>
+      </div>
+    </div>
+  </div>
+
   <div id="termsPrivacyModal" class="fixed inset-0 z-[70] bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-6">
     <div class="w-full sm:max-w-3xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-9 space-y-5 text-lg leading-relaxed text-slate-800 dark:text-slate-100">
       <div class="flex items-start justify-between gap-4">
@@ -660,7 +682,7 @@
       <h4 class="font-display font-bold text-xl">Who helps us</h4>
       <p>Supabase stores your account and synced data. Google's AI reads the recipe links, videos and text you submit. Apify helps read public Instagram posts. Stripe handles payments, and we never see or store your full card number. These providers may process your information on servers outside Singapore.</p>
       <h4 class="font-display font-bold text-xl">Keeping and deleting your data</h4>
-      <p>We keep your data while your account is active. You can ask us to see it, correct it, stop using it or delete it at any time using the contact below, in line with Singapore's Personal Data Protection Act.</p>
+      <p>We keep your data while your account is active. You can delete your account yourself in Backup &amp; Sync with <b>Delete my account</b>. This removes your account and synced data and cancels Plus straight away. Payment records stay with Stripe, as the law requires. You can also ask us to see, correct or stop using your data using the contact below, in line with Singapore's Personal Data Protection Act.</p>
       <h4 class="font-display font-bold text-xl">Plus subscription</h4>
       <p>Plus costs S$3.98 a month or S$29.90 a year. It renews automatically until you cancel. A free trial, if offered, turns into a paid plan unless you cancel before it ends. Cancel any time with Manage plan; you keep Plus until the end of the period you paid for. If you are not satisfied, contact us within 14 days of your first payment and we will review a refund.</p>
       <h4 class="font-display font-bold text-xl">Please check for yourself</h4>
@@ -847,6 +869,7 @@
             <button id="btnSyncNow" class="flex-1 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">Sync now</button>
             <button id="btnSyncSignOut" class="flex-1 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold">Sign out</button>
           </div>
+          <button id="btnOpenDeleteAccount" type="button" class="pt-2 text-sm text-rose-500 underline">Delete my account</button>
         </div>
       </div>
       <div class="space-y-2">
@@ -2355,7 +2378,7 @@
     // Paste your Stripe customer portal link here so Plus members can manage or cancel.
     const MANAGE_SUBSCRIPTION_URL = 'https://billing.stripe.com/p/login/test_fZu4gA1Fg80P5jt0TbfnO00';
     // Shown in the Terms & Privacy window. Add the email people should contact (leave empty to hide it).
-    const LEGAL_SUPPORT_EMAIL = '';
+    const LEGAL_SUPPORT_EMAIL = 'cook@pantrychefpro.app';
     const LEGAL_UPDATED = '22 October 2026';
     const FREE_RECIPE_LIMIT = 25;
     const Plan = {
@@ -2467,6 +2490,55 @@
         on('closeLegalBtn', () => document.getElementById('termsPrivacyModal')?.classList.add('hidden'));
         on('btnLegalDone', () => document.getElementById('termsPrivacyModal')?.classList.add('hidden'));
         this.paint();
+      }
+    };
+
+        // ===== Self-service account deletion =====
+    const AccountDelete = {
+      el(id) { return document.getElementById(id); },
+      open() {
+        if (typeof Sync === 'undefined' || !Sync.user) return;
+        this.el('deleteConfirmInput').value = ''; this.el('deleteEraseDevice').checked = false; this.check();
+        this.el('deleteAccountModal').classList.remove('hidden');
+      },
+      close() { this.el('deleteAccountModal').classList.add('hidden'); },
+      check() {
+        const ok = this.el('deleteConfirmInput').value.trim() === 'DELETE', b = this.el('btnDeleteConfirm');
+        b.disabled = !ok; b.classList.toggle('opacity-40', !ok);
+      },
+      async run() {
+        const b = this.el('btnDeleteConfirm'); b.disabled = true; b.textContent = 'Deleting...';
+        try {
+          const { data } = await Sync.sb.auth.getSession();
+          const token = data && data.session && data.session.access_token;
+          const res = await fetch(SUPABASE_URL + '/functions/v1/delete-account', {
+            method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token, apikey: SUPABASE_ANON_KEY }, body: '{}'
+          });
+          const j = await res.json().catch(() => ({}));
+          if (!res.ok || !j.ok) {
+            const msg = { owner_protected: 'The owner account cannot be deleted here.', stripe_failed: 'Could not cancel your subscription. Please try again, or email ' + LEGAL_SUPPORT_EMAIL + '.' }[j.error] || 'Could not delete the account. Please try again, or email ' + LEGAL_SUPPORT_EMAIL + '.';
+            showToast(msg, '⚠️'); return;
+          }
+          const erase = this.el('deleteEraseDevice').checked;
+          try { await Sync.sb.auth.signOut(); } catch (e) {}
+          Sync.user = null; Sync.ready = false;
+          Object.keys(localStorage).filter(k => k.startsWith('pcsg_synced_') || k === 'pcsg_dirty').forEach(k => localStorage.removeItem(k));
+          this.close(); document.getElementById('dataBackupModal')?.classList.add('hidden');
+          try { Sync.renderAuth(); Plan.load(); } catch (e) {}
+          showToast('Your account has been deleted.', '✨');
+          if (erase) {
+            Object.keys(localStorage).filter(k => k.startsWith('pcsg_')).forEach(k => localStorage.removeItem(k));
+            indexedDB.deleteDatabase('PantryChefSGProDB');
+            setTimeout(() => location.reload(), 1500);
+          }
+        } catch (e) { showToast('Could not reach the server. Check your internet and try again.', '⚠️'); }
+        finally { b.textContent = 'Delete forever'; this.check(); }
+      },
+      install() {
+        this.el('btnOpenDeleteAccount')?.addEventListener('click', () => this.open());
+        this.el('btnDeleteCancel')?.addEventListener('click', () => this.close());
+        this.el('deleteConfirmInput')?.addEventListener('input', () => this.check());
+        this.el('btnDeleteConfirm')?.addEventListener('click', () => this.run());
       }
     };
 
@@ -3575,6 +3647,7 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
       on('btnAutoInferExpiry', 'click', () => pantryHandlers.autoInferExpiry());
       PantryPics.init();
       Plan.install();
+      AccountDelete.install();
       setTimeout(() => SocialShare.handleLaunch(), 400);
       (function () {
         const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
