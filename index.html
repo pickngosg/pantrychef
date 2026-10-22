@@ -7,6 +7,7 @@
   <title>PantryChef SG Pro — Smart Kitchen, Expiry & Recipe OS</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#14211C" />
+  <meta name="description" content="PantryChef SG: track your pantry, cut food waste, plan meals and compare Singapore supermarket prices." />
   <link rel="icon" href="icon-192.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -14,6 +15,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script>
   <script>
+    window.tailwind = window.tailwind || {};
     tailwind.config = {
       darkMode: 'class',
       theme: { extend: { colors: { brand: { 50: '#EAF3ED', 100: '#DCEBE1', 200: '#BBD6C4', 300: '#8FBBA0', 400: '#5FAF86', 500: '#1F6B4A', 600: '#1A5C40', 700: '#145238', 800: '#0F4030', 900: '#0B3023', 950: '#14211C' } } } }
@@ -643,6 +645,17 @@
 
 
 
+  <div id="resetPwModal" class="fixed inset-0 z-[80] bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-6">
+    <div class="w-full sm:max-w-md bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 text-lg text-slate-700 dark:text-slate-200">
+      <h3 class="font-display font-extrabold text-2xl text-slate-900 dark:text-white">Choose a new password</h3>
+      <p class="text-base">Type a new password you will remember (at least 6 characters).</p>
+      <input id="resetPwInput" type="password" autocomplete="new-password" aria-label="New password" class="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-lg outline-none focus:ring-2 focus:ring-brand-500" />
+      <div class="flex gap-3">
+        <button type="button" id="btnResetPwCancel" class="flex-1 py-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800 font-bold">Not now</button>
+        <button type="button" id="btnResetPwSave" class="flex-1 py-3.5 rounded-2xl bg-brand-500 text-slate-950 font-black">Save password</button>
+      </div>
+    </div>
+  </div>
   <div id="deleteAccountModal" class="fixed inset-0 z-[70] bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-6">
     <div class="w-full sm:max-w-xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-9 space-y-5 text-lg leading-relaxed text-slate-800 dark:text-slate-100">
       <h3 class="font-display font-extrabold text-3xl text-rose-600">Delete my account</h3>
@@ -858,6 +871,7 @@
         <div id="syncSignedOut" class="space-y-2">
           <input id="syncEmail" type="email" placeholder="Email" class="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 outline-none" />
           <input id="syncPassword" type="password" placeholder="Password (min 6 characters)" class="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 outline-none" />
+          <button id="btnSyncForgot" type="button" class="text-sm font-bold text-brand-600 dark:text-brand-400 underline">Forgot my password</button>
           <div class="flex gap-2">
             <button id="btnSyncSignIn" class="flex-1 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">Sign in</button>
             <button id="btnSyncSignUp" class="flex-1 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold">Create account</button>
@@ -878,6 +892,10 @@
           <span>⬆️ Restore from Backup File (.json)</span>
           <input type="file" id="inputRestoreJsonBackup" accept=".json" class="hidden">
         </label>
+        <div id="safetyRow" class="hidden p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-sm">
+          <div id="safetyText" class="font-semibold text-amber-900 dark:text-amber-200"></div>
+          <button id="btnUndoSafety" type="button" class="mt-2 px-4 py-2 rounded-xl bg-amber-500 text-slate-950 font-black">↩️ Go back to my earlier data</button>
+        </div>
         <button id="btnLoadDemoKitchenData" class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold">🌱 Populate Sample SG Pantry Stock</button>
       </div>
     </div>
@@ -889,6 +907,13 @@
     // ===== 1. UTILITIES =====
     function haptic(pattern = [10]) { try { if (navigator.vibrate) navigator.vibrate(pattern); } catch (e) {} }
     const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const localDay = (n = 0) => { const d = new Date(); d.setDate(d.getDate() + n); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+    const daysLeftOf = (s) => {
+      const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(s || ''));
+      if (!m) return 9999;
+      const n = new Date();
+      return Math.round((new Date(+m[1], +m[2] - 1, +m[3]) - new Date(n.getFullYear(), n.getMonth(), n.getDate())) / 86400000);
+    };
 
     const soundEngine = {
       ctx: null,
@@ -965,7 +990,7 @@
       },
       async set(key, val) {
         Sync.markLocal(key);
-        try { localStorage.setItem(`pcsg_${key}`, JSON.stringify(val)); } catch (e) {}
+        if (key !== 'safety_backup') { try { localStorage.setItem(`pcsg_${key}`, JSON.stringify(val)); } catch (e) {} }
         try {
           if (this.idb) {
             return await new Promise((resolve) => {
@@ -999,7 +1024,7 @@
       { name: 'Sambal Belacan', qty: 180, unit: 'g', zone: 'Fridge', category: 'Sauces & Spices' }
     ];
 
-    const dayStr = (n) => new Date(Date.now() + n * 86400000).toISOString().split('T')[0];
+    const dayStr = (n) => localDay(n);
     const SEED_PANTRY = [
       { id: 'seed_p1', name: 'Eggs', qty: 8, unit: 'pcs', zone: 'Fridge', category: 'Eggs & Dairy', expiryDate: dayStr(5) },
       { id: 'seed_p2', name: 'Chicken Thigh', qty: 500, unit: 'g', zone: 'Fridge', category: 'Meat & Poultry', expiryDate: dayStr(2) },
@@ -1394,14 +1419,18 @@
         if (error) { this.status('⚠️ Offline – using saved data'); return; }
         const flag = 'pcsg_synced_' + this.user.id;
         const fresh = !localStorage.getItem(flag);
-        const dirty = this.dirty(); let changed = false;
+        const dirty = this.dirty(); let changed = false, snapped = false;
         this.applying = true;
         try {
           for (const r of data) {
             if (!SYNC_KEYS.includes(r.key) || r.value === null || r.value === undefined) continue;
             const rts = new Date(r.updated_at).getTime();
             if (fresh || (rts > this.ts(r.key) && !dirty.includes(r.key))) {
-              if (JSON.stringify(await db.get(r.key, null)) !== JSON.stringify(r.value)) { await db.set(r.key, r.value); changed = true; }
+              const cv = Safe.value(r.key, r.value); if (cv === undefined) continue;     // ignore wrongly shaped cloud data instead of crashing
+              if (JSON.stringify(await db.get(r.key, null)) !== JSON.stringify(cv)) {
+                if (fresh && !snapped) { snapped = true; await Safety.snapshot('before the first sync'); }
+                await db.set(r.key, cv); changed = true;
+              }
               localStorage.setItem('pcsg_ts_' + r.key, rts);
               this.setDirty(this.dirty().filter(k => k !== r.key));
             }
@@ -1440,7 +1469,26 @@
         try { Plan.load(); } catch (e) {}
         const e = document.getElementById('syncUserEmail'); if (e) e.textContent = this.user?.email || '';
       },
-      async afterLogin() { this.ready = false; await this.pull(); this.ready = true; await this.push(); },
+      async afterLogin() {
+        this.ready = false;
+        // A different person signing in on this device must never inherit (or upload) the previous person's kitchen
+        const last = localStorage.getItem('pcsg_owner_uid');
+        if (last && last !== this.user.id) {
+          await Safety.snapshot('before switching accounts');
+          this.applying = true;
+          try { for (const k of SYNC_KEYS) await db.set(k, null); } finally { this.applying = false; }
+          Object.keys(localStorage).filter(k => k.startsWith('pcsg_ts_') || k === 'pcsg_dirty' || k.startsWith('pcsg_synced_')).forEach(k => localStorage.removeItem(k));
+          await this.refreshUI();
+        }
+        try { localStorage.setItem('pcsg_owner_uid', this.user.id); } catch (e) {}
+        await this.pull(); this.ready = true; await this.push(); this.paintSafety();
+      },
+      async paintSafety() {
+        const sb = await Safety.info(); const row = document.getElementById('safetyRow'); if (!row) return;
+        if (!sb || !sb.data) { row.classList.add('hidden'); return; }
+        document.getElementById('safetyText').textContent = 'Earlier data saved ' + new Date(sb.at).toLocaleString() + ' (' + sb.label + ').';
+        row.classList.remove('hidden');
+      },
       async tick() { if (this.user && this.ready) { await this.push(); await this.pull(); } },
       async auth(mode) {
         if (!this.sb) return showToast('Cloud sync is not set up yet', '⚠️');
@@ -1455,11 +1503,31 @@
       },
       async start() {
         document.getElementById('btnSyncSignIn')?.addEventListener('click', () => this.auth('in'));
+        document.getElementById('btnSyncForgot')?.addEventListener('click', async () => {
+          if (!this.sb) return showToast('Cloud sync is not set up yet', '⚠️');
+          const email = document.getElementById('syncEmail').value.trim();
+          if (!email) return showToast('Type your email above first, then tap "Forgot my password"', '📧');
+          const { error } = await this.sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+          if (error) return showToast(/rate|seconds|limit/i.test(error.message) ? 'Please wait a minute, then try again' : 'Could not send the email. Try again later.', '⚠️');
+          showToast('If that email has an account, a reset link is on its way. Check your inbox and spam.', '📧');
+        });
+        const rpm = document.getElementById('resetPwModal');
+        document.getElementById('btnResetPwCancel')?.addEventListener('click', () => rpm.classList.add('hidden'));
+        document.getElementById('btnResetPwSave')?.addEventListener('click', async () => {
+          const pw = document.getElementById('resetPwInput').value;
+          if (pw.length < 6) return showToast('Use at least 6 characters', '⚠️');
+          const { error } = await this.sb.auth.updateUser({ password: pw });
+          if (error) return showToast(error.message, '⚠️');
+          document.getElementById('resetPwInput').value = ''; rpm.classList.add('hidden'); showToast('Password changed', '✅');
+        });
         document.getElementById('btnSyncSignUp')?.addEventListener('click', () => this.auth('up'));
+        document.getElementById('btnUndoSafety')?.addEventListener('click', async () => { if (await Safety.undo()) { showToast('Your earlier data is back', '↩️'); this.paintSafety(); } });
+        document.getElementById('btnOpenDataBackupModal')?.addEventListener('click', () => this.paintSafety());
         document.getElementById('btnSyncNow')?.addEventListener('click', async () => { await this.tick(); showToast('Synced', '☁️'); });
         document.getElementById('btnSyncSignOut')?.addEventListener('click', async () => { await this.sb.auth.signOut(); this.user = null; this.ready = false; this.renderAuth(); this.status('Signed out – data stays on this device'); });
         if (!this.enabled()) { this.status('Cloud sync not set up (works offline on this device only)'); this.renderAuth(); return; }
         this.sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        this.sb.auth.onAuthStateChange((ev) => { if (ev === 'PASSWORD_RECOVERY') document.getElementById('resetPwModal')?.classList.remove('hidden'); });
         const { data } = await this.sb.auth.getSession();
         this.user = data.session?.user || null;
         this.renderAuth();
@@ -1469,7 +1537,91 @@
         setInterval(() => { if (!document.hidden) this.tick(); }, 45000);
       }
     };
-    if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch((err) => console.warn('SW registration failed:', err)));
+    if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch((err) => console.warn('SW registration failed:', err)));
+
+
+    // ===== 5b. SAFETY HELPERS (clean data, local dates, undo, safety copy) =====
+    const Safe = {
+      isObj: (o) => o && typeof o === 'object' && !Array.isArray(o),
+      num(v, d = 0) { const n = parseFloat(v); return isFinite(n) ? n : d; },
+      str(v, max = 400) { return String(v ?? '').slice(0, max); },
+      id(v, p) { const s = String(v ?? '').replace(/[^\w.:-]/g, '').slice(0, 80); return s || (p + Date.now() + Math.random().toString(36).slice(2, 6)); },
+      img(v) { const s = String(v || ''); return /^(https?:\/\/|data:image\/)/i.test(s) ? s.slice(0, 600000) : ''; },
+      recipes(a) {
+        if (!Array.isArray(a)) return null;
+        return a.filter(this.isObj).map(r => ({
+          ...r, id: this.id(r.id, 'rec_'), title: this.str(r.title, 160) || 'Untitled recipe', category: this.str(r.category, 60),
+          prepTime: this.num(r.prepTime), cal: this.num(r.cal), pro: this.num(r.pro), carbs: this.num(r.carbs, 45), fat: this.num(r.fat, 15), fibre: this.num(r.fibre, 4), sodium: this.num(r.sodium),
+          image: this.img(r.image),
+          ingredients: (Array.isArray(r.ingredients) ? r.ingredients : []).filter(this.isObj).map(i => ({ ...i, name: this.str(i.name, 120), qty: this.num(i.qty), unit: this.str(i.unit, 20) || 'pcs' })),
+          steps: (Array.isArray(r.steps) ? r.steps : []).map(s => this.str(s, 1200)).filter(Boolean)
+        }));
+      },
+      pantry(a) {
+        if (!Array.isArray(a)) return null;
+        return a.filter(this.isObj).map(p => ({
+          ...p, id: this.id(p.id, 'pantry_'), name: this.str(p.name, 120) || 'Item', qty: this.num(p.qty), unit: this.str(p.unit, 20) || 'pcs',
+          zone: this.str(p.zone, 60), category: this.str(p.category, 60), expiryDate: /^\d{4}-\d{2}-\d{2}/.test(String(p.expiryDate || '')) ? String(p.expiryDate).slice(0, 10) : ''
+        }));
+      },
+      shopping(a) {
+        if (!Array.isArray(a)) return null;
+        return a.filter(this.isObj).map(s => ({ ...s, id: this.id(s.id, 'shop_'), name: this.str(s.name, 120) || 'Item', qty: this.num(s.qty, 1), unit: this.str(s.unit, 20) || 'pcs', checked: !!s.checked }));
+      },
+      planner(o) {
+        if (!this.isObj(o)) return null;
+        const out = {};
+        for (const [d, v] of Object.entries(o)) if (this.isObj(v)) out[d] = { lunch: this.str(v.lunch, 80), dinner: this.str(v.dinner, 80) };
+        return out;
+      },
+      // returns the cleaned value, or undefined when the value is the wrong shape (so it is skipped)
+      value(key, v) {
+        const arrKeys = ['pantryZones', 'pantryUnits', 'pantryCategories', 'categories'];
+        if (key === 'recipes') return this.recipes(v) ?? undefined;
+        if (key === 'pantry') return this.pantry(v) ?? undefined;
+        if (key === 'shoppingList') return this.shopping(v) ?? undefined;
+        if (key === 'planner') return this.planner(v) ?? undefined;
+        if (arrKeys.includes(key)) return Array.isArray(v) ? v : undefined;
+        if (['dailyIntake', 'settings', 'livePrices'].includes(key)) return this.isObj(v) ? v : undefined;
+        return undefined;
+      }
+    };
+    const Safety = {
+      async snapshot(label) {
+        try {
+          const data = {};
+          for (const k of SYNC_KEYS) data[k] = await db.get(k, null);
+          await db.set('safety_backup', { label, at: Date.now(), data });
+        } catch (e) {}
+      },
+      async info() { try { return await db.get('safety_backup', null); } catch (e) { return null; } },
+      async undo() {
+        const sb = await this.info(); if (!sb || !sb.data) return false;
+        Sync.applying = false;
+        for (const k of SYNC_KEYS) { const v = sb.data[k]; if (v !== null && v !== undefined) await db.set(k, v); }
+        await Sync.refreshUI();
+        return true;
+      }
+    };
+    // A toast with an Undo button (used for deletes)
+    function undoToast(message, onUndo) {
+      const c = document.getElementById('toastContainer'); if (!c) return;
+      const t = document.createElement('div');
+      t.className = 'px-4 py-3 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-sm font-bold shadow-xl flex items-center gap-3 animate-fade-in pointer-events-auto';
+      t.innerHTML = '<span>🗑️</span><span></span><button type="button" class="ml-2 px-3 py-1.5 rounded-xl bg-brand-500 text-slate-950 font-black">Undo</button>';
+      t.children[1].textContent = message;
+      let done = false;
+      t.querySelector('button').addEventListener('click', () => { if (done) return; done = true; try { onUndo(); } catch (e) {} t.remove(); });
+      c.appendChild(t);
+      setTimeout(() => { if (!done) { t.style.opacity = '0'; t.style.transition = 'opacity .25s'; setTimeout(() => t.remove(), 250); } }, 7000);
+    }
+    // One click handler for recipe cards (replaces inline onclick, which could be hijacked by a crafted recipe id)
+    document.addEventListener('click', (e) => {
+      const ed = e.target.closest && e.target.closest('[data-edit-recipe]');
+      if (ed) { e.stopPropagation(); recipeEditor.openModal(ed.dataset.editRecipe); return; }
+      const op = e.target.closest && e.target.closest('[data-open-recipe]');
+      if (op) recipeDetailModal.open(op.dataset.openRecipe);
+    });
 
     // ===== 6. APP STATE =====
     class AppStateStore {
@@ -1484,6 +1636,7 @@
       async init() {
         await db.init();
         let pantry = await db.get('pantry', null);
+        pantry = Safe.pantry(pantry);
         if (!Array.isArray(pantry) || pantry.length === 0) { pantry = SEED_PANTRY; await db.set('pantry', pantry); }
 
         const pick = async (key, dflt) => { const v = await db.get(key, null); return Array.isArray(v) && v.length > 0 ? v : dflt; };
@@ -1491,9 +1644,11 @@
         const pantryUnits = await pick('pantryUnits', DEFAULT_PANTRY_UNITS);
         const pantryCategories = await pick('pantryCategories', DEFAULT_PANTRY_CATEGORIES);
 
-        let storedRecipes = await db.get('recipes', null);
+        let storedRecipes = Safe.recipes(await db.get('recipes', null));
+        const stg0 = await db.get('settings', null);
+        const seedsGiven = new Set(Safe.isObj(stg0) && Array.isArray(stg0.seedsGiven) ? stg0.seedsGiven : []);
         let recipes = SEED_RECIPES;
-        if (Array.isArray(storedRecipes) && storedRecipes.length > 0) {
+        if (Array.isArray(storedRecipes)) {
           const seedMap = new Map(SEED_RECIPES.map(sr => [sr.id, sr]));
           let updatedExisting = false;
           const hydrated = storedRecipes.map(r => {
@@ -1513,7 +1668,7 @@
             return r;
           });
           const existingIds = new Set(hydrated.map(r => r.id));
-          const missingSeeds = SEED_RECIPES.filter(sr => !existingIds.has(sr.id));
+          const missingSeeds = SEED_RECIPES.filter(sr => !existingIds.has(sr.id) && !seedsGiven.has(sr.id));   // a built-in recipe you deleted stays deleted
           recipes = [...missingSeeds, ...hydrated];
           if (missingSeeds.length > 0 || updatedExisting) await db.set('recipes', recipes);
         } else {
@@ -1523,12 +1678,14 @@
         const storedCats = await db.get('categories', null);
         const categories = Array.isArray(storedCats) && storedCats.length > 0 ? Array.from(new Set([...DEFAULT_CATEGORIES, ...storedCats])) : DEFAULT_CATEGORIES;
 
-        const planner = await db.get('planner', {});
-        const shoppingList = await db.get('shoppingList', []);
-        const todayStr = new Date().toISOString().split('T')[0];
+        const planner = Safe.planner(await db.get('planner', {})) || {};
+        const shoppingList = Safe.shopping(await db.get('shoppingList', [])) || [];
+        const todayStr = localDay();
         let dailyIntake = await db.get('dailyIntake', null);
         if (!dailyIntake || dailyIntake.date !== todayStr) dailyIntake = { date: todayStr, cal: 0, pro: 0, fat: 0, carbs: 0, fibre: 0, sugar: 0, sodium: 0, meals: [] };
-        const settings = await db.get('settings', { darkMode: false });
+        let settings = await db.get('settings', { darkMode: false });
+        if (!Safe.isObj(settings)) settings = { darkMode: false };
+        { const ids = SEED_RECIPES.map(s => s.id); if (!Array.isArray(settings.seedsGiven) || ids.some(i => !settings.seedsGiven.includes(i))) { settings.seedsGiven = [...new Set([...(settings.seedsGiven || []), ...ids])]; await db.set('settings', settings); } }
 
         // Hydrate persisted live prices into the shared override maps (mutate in place; they are const)
         const lp = await db.get('livePrices', null);
@@ -1753,9 +1910,10 @@
       deleteItem() {
         const id = document.getElementById('inputPantryId').value;
         if (!id) return;
+        const gone = AppState.state.pantry.find(p => p.id === id);
         AppState.setPantry(AppState.state.pantry.filter(p => p.id !== id));
-        showToast('Removed item from pantry', '🗑️');
         this.closeModal();
+        if (gone) undoToast('Removed ' + gone.name, () => AppState.setPantry([gone, ...AppState.state.pantry]));
       }
     };
 
@@ -2030,8 +2188,9 @@
       deleteRecipe() {
         const id = document.getElementById('editorRecipeId').value;
         if (!id) return;
+        const goneR = AppState.state.recipes.find(r => r.id === id);
         AppState.setRecipes(AppState.state.recipes.filter(r => r.id !== id));
-        showToast('Deleted recipe', '🗑️');
+        if (goneR) undoToast('Deleted "' + String(goneR.title).slice(0, 30) + '"', () => AppState.setRecipes([goneR, ...AppState.state.recipes]));
         this.fromImport = false;
         this.closeModal();
         recipeDetailModal.close();
@@ -2522,7 +2681,7 @@
           const erase = this.el('deleteEraseDevice').checked;
           try { await Sync.sb.auth.signOut(); } catch (e) {}
           Sync.user = null; Sync.ready = false;
-          Object.keys(localStorage).filter(k => k.startsWith('pcsg_synced_') || k === 'pcsg_dirty').forEach(k => localStorage.removeItem(k));
+          Object.keys(localStorage).filter(k => k.startsWith('pcsg_synced_') || k === 'pcsg_dirty' || k === 'pcsg_owner_uid').forEach(k => localStorage.removeItem(k));
           this.close(); document.getElementById('dataBackupModal')?.classList.add('hidden');
           try { Sync.renderAuth(); Plan.load(); } catch (e) {}
           showToast('Your account has been deleted.', '✨');
@@ -3156,7 +3315,7 @@
         const p = findPantryItem(ing.name);
         if (p) {
           matched++;
-          if (Math.ceil((new Date(p.expiryDate).getTime() - now) / 86400000) <= 3) usesExpiring = true;
+          if (daysLeftOf(p.expiryDate) <= 3) usesExpiring = true;
         }
       });
       return { pct: Math.round((matched / ings.length) * 100), usesExpiring };
@@ -3171,7 +3330,7 @@
     function renderDashboard() {
       const now = Date.now();
       const pantry = AppState.state.pantry;
-      const expiring = pantry.filter(p => Math.ceil((new Date(p.expiryDate).getTime() - now) / 86400000) <= 3);
+      const expiring = pantry.filter(p => daysLeftOf(p.expiryDate) <= 3);
       const scored = AppState.state.recipes.map(r => ({ recipe: r, ...calculateRecipeMatch(r) })).sort((a, b) => b.pct - a.pct);
 
       document.getElementById('statTotalPantry').textContent = pantry.length;
@@ -3188,7 +3347,7 @@
 
       const expContainer = document.getElementById('dashboardExpiringList');
       if (expContainer) {
-        const urgent = expiring.map(i => ({ i, d: Math.ceil((new Date(i.expiryDate).getTime() - now) / 86400000) })).sort((x, y) => x.d - y.d).slice(0, 4);
+        const urgent = expiring.map(i => ({ i, d: daysLeftOf(i.expiryDate) })).sort((x, y) => x.d - y.d).slice(0, 4);
         expContainer.innerHTML = urgent.length === 0
           ? `<div class="col-span-full text-sm text-slate-500 py-2">All pantry items have more than 3 days left.</div>`
           : urgent.map(({ i: item, d: days }) => {
@@ -3224,7 +3383,7 @@
       const top = document.getElementById('dashboardTopRecipes');
       if (top) {
         top.innerHTML = scored.slice(0, 3).map(({ recipe, pct, usesExpiring }) => `
-          <div onclick="recipeDetailModal.open('${esc(recipe.id)}')" class="flex items-center justify-between gap-3 py-3.5 border-b last:border-0 border-slate-200 dark:border-slate-800 cursor-pointer">
+          <div data-open-recipe="${esc(recipe.id)}" class="flex items-center justify-between gap-3 py-3.5 border-b last:border-0 border-slate-200 dark:border-slate-800 cursor-pointer">
             <div class="min-w-0"><div class="font-bold truncate">${esc(recipe.title)}</div><div class="text-xs text-slate-500">${recipe.prepTime} min · ${recipe.cal} kcal${usesExpiring ? ' · Uses expiring items' : ''}</div></div>
             <span class="px-2.5 py-1 rounded-full font-bold text-xs whitespace-nowrap ${pct >= 75 ? 'bg-[#DCEBE1] text-[#145238]' : 'bg-[#F6E3A8] text-[#4F4420]'}">${pct}% match</span>
           </div>`).join('');
@@ -3265,8 +3424,8 @@
       items.forEach(item => {
         const card = document.createElement('div');
         card.className = 'p-3.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between hover:border-brand-500 cursor-pointer transition';
-        const daysLeft = Math.ceil((new Date(item.expiryDate).getTime() - now) / 86400000);
-        let pillClass = 'bg-slate-100 text-slate-600', pillText = `${daysLeft}d left`;
+        const daysLeft = daysLeftOf(item.expiryDate);
+        let pillClass = 'bg-slate-100 text-slate-600', pillText = daysLeft > 3650 ? 'No expiry date' : daysLeft === 0 ? 'Today' : `${daysLeft}d left`;
         if (daysLeft < 0) { pillClass = 'bg-rose-500/10 text-rose-600 font-black'; pillText = 'Expired'; }
         else if (daysLeft <= 3) { pillClass = 'bg-amber-500/10 text-amber-600 font-black'; pillText = `${daysLeft}d left ⚠️`; }
         card.innerHTML = `
@@ -3284,7 +3443,7 @@
         card.querySelector('.pantry-deduct-btn').addEventListener('click', (e) => {
           e.stopPropagation();
           const newQty = Math.max(0, item.qty - step);
-          if (newQty === 0) AppState.setPantry(AppState.state.pantry.filter(p => p.id !== item.id));
+          if (newQty === 0) { const was = { ...item }; AppState.setPantry(AppState.state.pantry.filter(p => p.id !== item.id)); undoToast(item.name + ' used up', () => AppState.setPantry([{ ...was, qty: step }, ...AppState.state.pantry])); }
           else { item.qty = newQty; AppState.setPantry([...AppState.state.pantry]); }
         });
         card.querySelector('.pantry-add-btn').addEventListener('click', (e) => {
@@ -3326,7 +3485,7 @@
       container.innerHTML = list.length === 0
         ? `<div class="col-span-full p-8 text-center bg-white dark:bg-slate-900 rounded-3xl border"><p class="font-bold text-xs">No matching recipes found</p></div>`
         : list.map(({ recipe, pct, usesExpiring }) => `
-            <div onclick="recipeDetailModal.open('${esc(recipe.id)}')" class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 cursor-pointer transition overflow-hidden flex flex-col group">
+            <div data-open-recipe="${esc(recipe.id)}" class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 cursor-pointer transition overflow-hidden flex flex-col group">
               <div class="relative h-48 w-full bg-slate-200 dark:bg-slate-800 overflow-hidden flex-shrink-0">
                 <img src="${esc(getRecipeImage(recipe))}" alt="${esc(recipe.title)}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null;this.src='https://placehold.co/600x400/064e3b/ecfdf5?text=PantryChef+SG';">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
@@ -3346,7 +3505,7 @@
                 </div>
                 <div class="flex items-center justify-between mt-auto pt-1">
                   <span class="text-[15px] text-slate-500 dark:text-slate-400">⏱️ ${recipe.prepTime} min</span>
-                  <button type="button" onclick="event.stopPropagation(); recipeEditor.openModal('${esc(recipe.id)}')" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-[15px] hover:bg-brand-500 hover:text-white transition inline-flex items-center gap-2">✏️ Edit</button>
+                  <button type="button" data-edit-recipe="${esc(recipe.id)}" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-[15px] hover:bg-brand-500 hover:text-white transition inline-flex items-center gap-2">✏️ Edit</button>
                 </div>
               </div>
             </div>`).join('');
@@ -3636,7 +3795,7 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
         const payload = { ...AppState.state, livePrices: { overrides: livePriceOverrides, meta: livePriceMeta } };
         const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-        a.download = `pantrychef_sg_backup_${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `pantrychef_sg_backup_${localDay()}.json`;
         a.click();
         showToast('Backup downloaded!', '⬇️');
       });
@@ -3812,7 +3971,7 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
       });
 
       on('btnResetDailyIntake', 'click', () => {
-        AppState.setDailyIntake({ date: new Date().toISOString().split('T')[0], cal: 0, pro: 0, fat: 0, carbs: 0, fibre: 0, sugar: 0, sodium: 0, meals: [] });
+        AppState.setDailyIntake({ date: localDay(), cal: 0, pro: 0, fat: 0, carbs: 0, fibre: 0, sugar: 0, sodium: 0, meals: [] });
         showToast("Reset today's nutrition tracking", '🔄');
       });
 
@@ -3857,11 +4016,12 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
           const parsed = JSON.parse(await file.text());
           const data = (parsed && typeof parsed === 'object' && parsed.state) ? parsed.state : parsed;
           let restored = 0;
-          for (const k of SYNC_KEYS) { if (data && data[k] !== undefined) { await db.set(k, data[k]); restored++; } }
+          await Safety.snapshot('before the file restore');
+          for (const k of SYNC_KEYS) { if (data && data[k] !== undefined) { const cv = Safe.value(k, data[k]); if (cv !== undefined) { await db.set(k, cv); restored++; } } }
           if (!restored) throw new Error('empty backup');
           await Sync.refreshUI();
           soundEngine.playChime();
-          showToast(`Restored ${restored} data section(s)`, '⬆️');
+          showToast(`Restored ${restored} data section(s). You can undo this in Backup & Sync.`, '⬆️'); Sync.paintSafety();
         } catch (err) { showToast('Invalid backup file', '⚠️'); }
         e.target.value = '';
       });
@@ -3941,6 +4101,55 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
     }).observe(document.body, { childList: true, subtree: true, characterData: true });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+</script>
+
+<script>
+/* Accessibility helper: screen-reader names, dialog roles, Esc to close, focus handling */
+(function () {
+  function label(el) {
+    if (el.getAttribute('aria-label') || el.closest('label')) return;
+    if (el.id && document.querySelector('label[for="' + el.id + '"]')) return;
+    var t = el.placeholder || el.title || '';
+    if (!t && el.dataset && el.dataset.day) t = el.dataset.day + ' ' + (el.dataset.slot || '');
+    if (!t) { var box = el.parentElement, n = 0; while (box && n++ < 3 && !t) { var l = box.querySelector('label,.font-bold,h3,h4,span,p'); if (l && l !== el && !l.contains(el)) t = l.textContent.trim(); box = box.parentElement; } }
+    if (t) el.setAttribute('aria-label', t.replace(/\s+/g, ' ').slice(0, 80));
+  }
+  function enhance() {
+    document.querySelectorAll('input:not([type=hidden]):not([type=file]),select,textarea').forEach(label);
+    document.querySelectorAll('button,[role=button]').forEach(function (b) {
+      if ((b.textContent || '').trim() || b.getAttribute('aria-label')) return;
+      b.setAttribute('aria-label', b.title || (b.id || 'button').replace(/^btn/, '').replace(/([A-Z])/g, ' $1').trim());
+    });
+    document.querySelectorAll('[id$="Modal"]').forEach(function (m) {
+      if (m.getAttribute('role')) return;
+      m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true');
+      var hd = m.querySelector('h1,h2,h3'); if (hd) { if (!hd.id) hd.id = m.id + 'Title'; m.setAttribute('aria-labelledby', hd.id); }
+    });
+  }
+  function topModal() {
+    var open = [].slice.call(document.querySelectorAll('[id$="Modal"]')).filter(function (m) { return !m.classList.contains('hidden') && m.offsetParent !== null || (!m.classList.contains('hidden') && getComputedStyle(m).display !== 'none'); });
+    return open[open.length - 1];
+  }
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var m = topModal(); if (!m) return;
+    var c = m.querySelector('button[id^="close"],button[id$="CloseBtn"],#btnLegalDone,#btnPaywallClose,#btnDeleteCancel');
+    if (c) c.click(); else m.classList.add('hidden');
+    e.preventDefault();
+  });
+  var last = null, wasOpen = {};
+  function watchFocus() {
+    document.querySelectorAll('[id$="Modal"]').forEach(function (m) {
+      var open = !m.classList.contains('hidden');
+      if (open && !wasOpen[m.id]) { last = document.activeElement; var f = m.querySelector('input:not([type=hidden]):not([type=file]),select,textarea,button'); setTimeout(function () { try { f && f.focus({ preventScroll: true }); } catch (e) {} }, 60); }
+      if (!open && wasOpen[m.id] && last && last.focus) { try { last.focus({ preventScroll: true }); } catch (e) {} }
+      wasOpen[m.id] = open;
+    });
+  }
+  var t;
+  new MutationObserver(function () { clearTimeout(t); t = setTimeout(function () { enhance(); watchFocus(); }, 200); }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+  window.addEventListener('load', function () { enhance(); watchFocus(); });
 })();
 </script>
 </body>
