@@ -3664,11 +3664,11 @@ baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`
       }
 
       const intake = AppState.state.dailyIntake;
-      document.getElementById('dailyCalValue').textContent = `${intake.cal || 0} / 2000`;
+      document.getElementById('dailyCalValue').textContent = `${intake.cal || 0} / ${getCalorieTarget()}`;
       document.getElementById('dailyProValue').textContent = `${intake.pro || 0}g`;
       document.getElementById('dailySodiumValue').textContent = `${intake.sodium || 0}mg`;
       const setBar = (id, v, max) => { const e = document.getElementById(id); if (e) e.style.width = Math.min(100, Math.round(((v || 0) / max) * 100)) + '%'; };
-      setBar('barCal', intake.cal, 2000); setBar('barPro', intake.pro, 60); setBar('barSod', intake.sodium, 2000);
+      setBar('barCal', intake.cal, getCalorieTarget()); setBar('barPro', intake.pro, 60); setBar('barSod', intake.sodium, 2000);
       document.getElementById('dailyCarbsValue').textContent = `${intake.carbs || 0}g`;
       document.getElementById('dailyFatValue').textContent = `${intake.fat || 0}g`;
       document.getElementById('dailyFibreValue').textContent = `${intake.fibre || 0}g`;
@@ -4037,37 +4037,42 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
     }
 
     // Picks a lunch+dinner pair per day whose combined kcal is closest to the daily target
+    function getCalorieTarget() {
+      const t = parseInt(AppState.state.settings && AppState.state.settings.calorieTarget, 10);
+      return (t >= 800 && t <= 6000) ? t : 2000;
+    }
+    function saveCalorieTarget(t) {
+      t = Math.min(6000, Math.max(800, parseInt(t, 10) || 2000));
+      AppState.state.settings.calorieTarget = t;
+      db.set('settings', AppState.state.settings);
+      renderDashboard();
+    }
     function buildCalorieTargetPlan(recipes, target) {
       const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      const n = recipes.length;
       const cals = recipes.map(r => Number(r.cal) || 450);
       const uses = recipes.map(() => 0);
-      const pairs = [];
-      let best = Infinity;
-      for (let i = 0; i < recipes.length; i++) {
-        for (let j = 0; j < recipes.length; j++) {
-          const diff = Math.abs(cals[i] + cals[j] - target);
-          if (diff < best) best = diff;
-          pairs.push({ i, j, diff });
-        }
-      }
-      const TOLERANCE = 75; // kcal slack allowed so the week isn't the same pair every day
-      const pool = pairs.filter(p => p.diff <= best + TOLERANCE);
+      const lastDay = new Set();
       const plan = {};
       let total = 0;
       days.forEach(day => {
-        let bestScore = Infinity, cands = [];
-        pool.forEach(p => {
-          const score = uses[p.i] + uses[p.j] + (p.i === p.j ? 1 : 0);
-          if (score < bestScore) { bestScore = score; cands = [p]; }
-          else if (score === bestScore) cands.push(p);
-        });
-        const pick = cands[Math.floor(Math.random() * cands.length)];
-        const [l, d] = cals[pick.i] <= cals[pick.j] ? [pick.i, pick.j] : [pick.j, pick.i];
+        let best = null, bestScore = Infinity;
+        for (let i = 0; i < n; i++) {
+          for (let j = 0; j < n; j++) {
+            if (n > 1 && i === j) continue;           // never the same recipe twice in one day
+            const diff = Math.abs(cals[i] + cals[j] - target);
+            // variety first: heavy penalty for recipes already used this week or yesterday
+            const score = diff * 0.5 + 250 * (uses[i] + uses[j]) + (lastDay.has(i) ? 400 : 0) + (lastDay.has(j) ? 400 : 0) + Math.random() * 40;
+            if (score < bestScore) { bestScore = score; best = [i, j]; }
+          }
+        }
+        const [l, d] = cals[best[0]] <= cals[best[1]] ? best : [best[1], best[0]];
         uses[l]++; uses[d]++;
+        lastDay.clear(); lastDay.add(l); lastDay.add(d);
         plan[day] = { lunch: recipes[l].id, dinner: recipes[d].id };
         total += cals[l] + cals[d];
       });
-      return { plan, avg: Math.round(total / days.length) };
+      return { plan, avg: Math.round(total / days.length), distinct: uses.filter(u => u > 0).length };
     }
 
     function setPriceStore(mode) {
@@ -4217,6 +4222,8 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
       on('btnCookSpeakStep', 'click', () => cookingEngine.speakCurrentStep());
       on('btnCookVoiceToggle', 'click', () => cookingEngine.toggleVoice());
 
+      { const ci = $('inputDailyCalorieTarget'); if (ci) ci.value = getCalorieTarget(); }
+      on('inputDailyCalorieTarget', 'change', (e) => { const v = Math.min(6000, Math.max(800, parseInt(e.target.value, 10) || 2000)); e.target.value = v; saveCalorieTarget(v); showToast(`Daily target set to ${v} kcal`, '🎯'); });
       on('btnAutoPlanWeek', 'click', () => {
         const recipes = AppState.state.recipes;
         if (recipes.length === 0) return showToast('No recipes available', '⚠️');
@@ -4225,9 +4232,10 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
         if (isNaN(target)) target = 2000;
         target = Math.min(6000, Math.max(800, target));
         if (input) input.value = target;
+        saveCalorieTarget(target);
         const result = buildCalorieTargetPlan(recipes, target);
         AppState.setPlanner(result.plan);
-        showToast(`Planned 7 days · avg ${result.avg} kcal/day (target ${target})`, '✨');
+        showToast(`Planned 7 days using ${result.distinct} recipes · avg ${result.avg} kcal/day (target ${target})` + (recipes.length < 8 ? ` — you only have ${recipes.length} recipes, so meals repeat. Add more recipes for more variety` : ''), '✨');
       });
 
       on('btnCheckoutCartToPantry', 'click', () => {
