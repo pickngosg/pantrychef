@@ -641,6 +641,37 @@
   </div>
 
 
+
+  <div id="termsPrivacyModal" class="fixed inset-0 z-[70] bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-6">
+    <div class="w-full sm:max-w-3xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-9 space-y-5 text-lg leading-relaxed text-slate-800 dark:text-slate-100">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h3 class="font-display font-extrabold text-3xl text-slate-900 dark:text-white">Terms &amp; Privacy</h3>
+          <p id="legalUpdated" class="text-base text-slate-500 mt-1"></p>
+        </div>
+        <button id="closeLegalBtn" type="button" aria-label="Close" class="w-12 h-12 flex-shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 text-xl font-bold">✕</button>
+      </div>
+      <h4 class="font-display font-bold text-xl">What PantryChef SG is</h4>
+      <p>PantryChef SG helps you track your kitchen, plan meals and keep recipes. It is provided as it is, and we work to keep it running well but cannot promise it will always be available or error free.</p>
+      <h4 class="font-display font-bold text-xl">What we keep</h4>
+      <p>Your email address, the pantry, recipes, meal plan and cart you sync, your plan and how many video imports and receipt scans you have used, and the links or text you submit to import a recipe. If you do not sign in, your data stays on your own device.</p>
+      <h4 class="font-display font-bold text-xl">How we use it</h4>
+      <p>To run the app, sync your devices, read recipes from links you share, and manage your plan. We do not sell your information and we do not show ads.</p>
+      <h4 class="font-display font-bold text-xl">Who helps us</h4>
+      <p>Supabase stores your account and synced data. Google's AI reads the recipe links, videos and text you submit. Apify helps read public Instagram posts. Stripe handles payments, and we never see or store your full card number. These providers may process your information on servers outside Singapore.</p>
+      <h4 class="font-display font-bold text-xl">Keeping and deleting your data</h4>
+      <p>We keep your data while your account is active. You can ask us to see it, correct it, stop using it or delete it at any time using the contact below, in line with Singapore's Personal Data Protection Act.</p>
+      <h4 class="font-display font-bold text-xl">Plus subscription</h4>
+      <p>Plus costs S$3.98 a month or S$29.90 a year. It renews automatically until you cancel. A free trial, if offered, turns into a paid plan unless you cancel before it ends. Cancel any time with Manage plan; you keep Plus until the end of the period you paid for. If you are not satisfied, contact us within 14 days of your first payment and we will review a refund.</p>
+      <h4 class="font-display font-bold text-xl">Please check for yourself</h4>
+      <p>The Halal check, nutrition numbers, prices and recipes read by AI are guides only and can be wrong. Always check ingredients, allergens and Halal certification yourself. This app is not medical or dietary advice.</p>
+      <h4 class="font-display font-bold text-xl">Changes</h4>
+      <p>We may update these terms. If you keep using the app after a change, you accept it.</p>
+      <p id="legalContact" class="font-bold hidden"></p>
+      <button type="button" id="btnLegalDone" class="w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-lg">Close</button>
+    </div>
+  </div>
+
   <div id="paywallModal" class="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-6">
     <div class="w-full sm:max-w-2xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-9 space-y-6 text-lg text-slate-800 dark:text-slate-100">
       <div class="flex items-start justify-between gap-4">
@@ -670,6 +701,7 @@
         </button>
       </div>
       <button type="button" id="btnPaywallClose" class="w-full py-4 rounded-2xl bg-slate-100 dark:bg-slate-800 font-bold text-lg">Maybe later</button>
+      <p class="text-center text-base text-slate-500">Renews automatically until cancelled. <button type="button" class="open-legal underline">Terms &amp; Privacy</button></p>
     </div>
   </div>
 
@@ -688,8 +720,12 @@
         <button type="button" id="tabScrapeBookmarklet" class="flex-1 py-4 rounded-2xl text-lg font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition inline-flex items-center justify-center gap-2">🔖 Bookmark</button>
       </div>
       <form id="recipeImportUrlForm" class="space-y-4">
-        <p class="flex items-start gap-3 p-4 rounded-2xl bg-[#DCEBE1] dark:bg-slate-800 text-[#145238] dark:text-brand-300 text-lg leading-snug">📤 <span><b>Easy way:</b> in TikTok, Instagram, YouTube or Facebook, tap <b>Share</b> and choose <b>PantryChef</b>.</span></p>
-        <label for="inputScrapeUrl" class="block font-bold text-lg">Or paste a link here</label>
+        <p id="shareTip" class="flex items-start gap-3 p-4 rounded-2xl bg-[#DCEBE1] dark:bg-slate-800 text-[#145238] dark:text-brand-300 text-lg leading-snug">📤 <span><b>Easy way:</b> in TikTok, Instagram, YouTube or Facebook, tap <b>Share</b> and choose <b>PantryChef</b>.</span></p>
+        <p id="iosShareHint" class="hidden flex items-start gap-3 p-4 rounded-2xl bg-[#DCEBE1] dark:bg-slate-800 text-[#145238] dark:text-brand-300 text-lg leading-snug">📱 <span><b>On iPhone:</b> open the post, tap <b>Share</b>, then <b>Copy Link</b>. Come back here and tap <b>Paste copied link</b>.</span></p>
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <label for="inputScrapeUrl" class="block font-bold text-lg">Or paste a link here</label>
+          <button type="button" id="btnPasteLink" class="px-4 py-2.5 rounded-xl bg-[#DCEBE1] dark:bg-slate-800 text-[#145238] dark:text-brand-300 font-bold text-base">📋 Paste copied link</button>
+        </div>
         <input type="url" id="inputScrapeUrl" required placeholder="Paste the recipe link" class="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-lg outline-none focus:ring-2 focus:ring-brand-500">
         <button type="submit" id="btnFetchScrapeUrl" class="w-full py-4 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-xl shadow-sm transition">Get Recipe</button>
       </form>
@@ -793,6 +829,7 @@
         </div>
         <p id="planUsage" class="text-sm leading-snug">Sign in to use video imports and receipt scans.</p>
       </div>
+      <p class="text-sm text-slate-500 dark:text-slate-400">By signing in you agree to the <button type="button" class="open-legal underline">Terms &amp; Privacy</button>.</p>
       <div class="rounded-2xl border border-slate-200 dark:border-slate-700 p-3 space-y-2">
         <p class="font-black text-slate-900 dark:text-white">🔄 Sync across phone &amp; browser</p>
         <p id="syncStatusLine" class="text-[10px] text-slate-400"></p>
@@ -2317,6 +2354,9 @@
     const UPGRADE_URL_ANNUAL = 'https://buy.stripe.com/test_eVq5kEdnY4OD9zJcBTfnO01';
     // Paste your Stripe customer portal link here so Plus members can manage or cancel.
     const MANAGE_SUBSCRIPTION_URL = 'https://billing.stripe.com/p/login/test_fZu4gA1Fg80P5jt0TbfnO00';
+    // Shown in the Terms & Privacy window. Add the email people should contact (leave empty to hide it).
+    const LEGAL_SUPPORT_EMAIL = '';
+    const LEGAL_UPDATED = '22 October 2026';
     const FREE_RECIPE_LIMIT = 25;
     const Plan = {
       info: { plan: 'free', signed_in: false, ai_used: 0, ai_limit: 3, scan_used: 0, scan_limit: 3 },
@@ -2362,6 +2402,14 @@
         if (typeof Sync === 'undefined' || !Sync.user) { showToast('Please sign in first (Backup & Sync).', '⚠️'); return; }
         window.open(base + (base.includes('?') ? '&' : '?') + 'client_reference_id=' + encodeURIComponent(Sync.user.id) + '&prefilled_email=' + encodeURIComponent(Sync.user.email || ''), '_blank');
       },
+      async afterCheckout() {
+        showToast('Thank you! Activating Plus...', '✨');
+        for (let n = 0; n < 15; n++) {
+          if (typeof Sync !== 'undefined' && Sync.user) { await this.load(); if (this.isPlus()) { showToast('PantryChef Plus is active!', '✨'); return; } }
+          await new Promise(r => setTimeout(r, 2000));
+        }
+        showToast('Payment received. If Plus does not show in a minute, close and reopen the app.', '✨');
+      },
       async useScan() {
         if (typeof Sync === 'undefined' || !Sync.user) { showToast('Please sign in (Backup & Sync) to scan receipts.', '⚠️'); return false; }
         if (this.isPlus()) return true;
@@ -2400,6 +2448,24 @@
           }
           return sr.apply(this, arguments);
         };
+        // Back from Stripe checkout (the payment link sends people to  ...?session=success)
+        if (new URLSearchParams(location.search).get('session') === 'success') {
+          try { history.replaceState(null, '', location.pathname); } catch (e) {}
+          this.afterCheckout();
+        }
+        // If the app was left open while paying in another tab, refresh the plan when coming back
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && typeof Sync !== 'undefined' && Sync.user) this.load(); });
+        // Terms & Privacy window
+        document.addEventListener('click', (e) => {
+          if (e.target.closest && e.target.closest('.open-legal')) {
+            const m = document.getElementById('legalContact');
+            if (m) { m.textContent = LEGAL_SUPPORT_EMAIL ? 'Contact: ' + LEGAL_SUPPORT_EMAIL : ''; m.classList.toggle('hidden', !LEGAL_SUPPORT_EMAIL); }
+            const u = document.getElementById('legalUpdated'); if (u) u.textContent = 'Last updated: ' + LEGAL_UPDATED;
+            document.getElementById('termsPrivacyModal')?.classList.remove('hidden');
+          }
+        });
+        on('closeLegalBtn', () => document.getElementById('termsPrivacyModal')?.classList.add('hidden'));
+        on('btnLegalDone', () => document.getElementById('termsPrivacyModal')?.classList.add('hidden'));
         this.paint();
       }
     };
@@ -3510,6 +3576,19 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
       PantryPics.init();
       Plan.install();
       setTimeout(() => SocialShare.handleLaunch(), 400);
+      (function () {
+        const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        if (ios) { document.getElementById('shareTip')?.classList.add('hidden'); document.getElementById('iosShareHint')?.classList.remove('hidden'); }
+        document.getElementById('btnPasteLink')?.addEventListener('click', async () => {
+          try {
+            const t = await navigator.clipboard.readText();
+            const m = String(t || '').match(/https?:\/\/[^\s"'<>]+/);
+            const inp = document.getElementById('inputScrapeUrl');
+            if (m && inp) { inp.value = m[0]; showToast('Link pasted. Tap Get Recipe.', '✨'); }
+            else showToast('No link found. Copy a post link first.', '⚠️');
+          } catch (e) { showToast('Please paste the link into the box.', '⚠️'); }
+        });
+      })();
       on('pantryItemForm', 'submit', (e) => { e.preventDefault(); pantryHandlers.saveItem(); });
       on('btnDeletePantryItem', 'click', () => pantryHandlers.deleteItem());
       on('searchPantryInput', 'input', () => renderPantry());
