@@ -592,6 +592,11 @@
             </div>
             <div>
               <div class="text-xs font-bold text-slate-600 dark:text-slate-300 mb-2">Nutrition per serving</div>
+              <div class="flex flex-wrap items-center gap-3 mb-3 p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900">
+                <label class="flex items-center gap-2 text-sm font-bold text-slate-700 dark:text-slate-200"><input type="checkbox" id="editorAutoNutrition" class="w-5 h-5 accent-brand-500"> Work it out from the ingredients</label>
+                <button type="button" id="btnEditorRecalcNutrition" class="px-3.5 py-2 rounded-xl bg-brand-500 text-slate-950 font-black text-sm">🧮 Calculate now</button>
+                <span id="editorNutritionNote" class="text-xs text-slate-500 dark:text-slate-400 w-full"></span>
+              </div>
               <div class="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60">
                 <div><label for="editorRecipeCal" class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5">Calories (kcal)</label><input type="number" id="editorRecipeCal" value="450" min="10" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500"></div>
                 <div><label for="editorRecipePro" class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1.5">Protein (g)</label><input type="number" id="editorRecipePro" value="28" min="0" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500"></div>
@@ -1094,20 +1099,23 @@
 
     // ===== 4. HALAL ENGINE =====
     const HalalEngine = {
-      nonHalalKeywords: ['pork', 'lard', 'bacon', 'ham', 'shaoxing', 'mirin', 'beer', 'gelatin'],
+      nonHalalKeywords: ['pork', 'lard', 'bacon', 'ham', 'shaoxing', 'mirin', 'beer', 'wine', 'gelatin'],
       substitutions: {
         'pork': 'Halal chicken or beef cuts',
         'lard': 'Shallot oil or vegetable ghee',
         'bacon': 'Halal beef bacon or smoked turkey rashers',
         'shaoxing': 'Apple cider vinegar with splash of brown sugar or halal stock',
-        'mirin': 'White grape juice + squeeze of lemon or halal cooking syrup'
+        'mirin': 'White grape juice + squeeze of lemon or halal cooking syrup',
+        'wine': 'Grape juice, apple juice or halal stock',
+        'beer': 'Halal stock or non-alcoholic malt drink'
       },
       checkRecipe(recipe) {
         const issues = [];
-        const text = (recipe.ingredients || []).map(i => i.name.toLowerCase()).join(' ');
+        const raw = (recipe.ingredients || []).map(i => String(i.name || '').toLowerCase()).join(' ');
+        const text = raw + ' ' + Lex.english(raw);     // also reads Malay and Chinese names (babi, arak, 猪肉, 料酒...)
         for (const word of this.nonHalalKeywords) {
           const re = new RegExp('\\b' + word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + 's?\\b', 'i');   // whole word only: 'ham' no longer matches 'graham'
-          if (re.test(text)) issues.push({ keyword: word, substitute: this.substitutions[word] || 'Halal certified alternative' });
+          if (re.test(text) && !(word === 'wine' && issues.some(x => x.keyword === 'shaoxing' || x.keyword === 'mirin'))) issues.push({ keyword: word, substitute: this.substitutions[word] || 'Halal certified alternative' });
         }
         return issues;
       }
@@ -1160,16 +1168,8 @@
     };
 
     // ===== TOKENIZED INGREDIENT NAME MATCHING =====
-    const NAME_STOP = new Set(['fresh', 'of', 'the', 'and', 'a', 'an', 'with', 'or']);
-    const stemWord = (w) => {
-      if (w.length > 3 && w.endsWith('ies')) return w.slice(0, -3) + 'y';
-      if (w.length > 4 && w.endsWith('oes')) return w.slice(0, -2);
-      if (w.length > 3 && w.endsWith('s') && !w.endsWith('ss')) return w.slice(0, -1);
-      return w;
-    };
-    function tokenizeName(name) {
-      return String(name || '').toLowerCase().replace(/\([^)]*\)/g, ' ').split(/[^a-z0-9]+/).filter(w => w && !NAME_STOP.has(w)).map(stemWord);
-    }
+    // Any language: "bawang putih", "大蒜" and "garlic" all become the same words
+    function tokenizeName(name) { return Lex.tokens(name); }
     function normalizeName(name) {
       const t = [...new Set(tokenizeName(name))].sort().join(' ');
       return t || String(name || '').toLowerCase().trim();
@@ -1257,20 +1257,284 @@
       'white pepper': { fp: 3.20, ss: 2.95, cs: 4.50, pack: 100 },
       'cornflour': { fp: 1.60, ss: 1.50, cs: 2.20, pack: 400 }
     };
+    // ===== MULTILINGUAL INGREDIENT CATALOG (English / Malay / Chinese): names, prices and nutrition =====
+    const CATALOG_TEXT = `chicken breast|ayam dada;鸡胸肉;鸡胸|4.95|300|g|165|31|0|3.6|0|74|200|
+chicken thigh|peha ayam;鸡腿肉;鸡腿;鸡大腿|4.75|300|g|209|26|0|11|0|84|150|
+chicken wings|kepak ayam;鸡翅;鸡翼|5.5|500|g|203|18|0|14|0|80|60|
+minced chicken|ayam cincang;鸡肉碎;鸡绞肉|4.9|400|g|143|17|0|8|0|60||
+whole chicken|ayam sepenuhnya;整鸡;全鸡|7.9|1000|g|215|18|0|15|0|70|1200|
+chicken|ayam;鸡肉;鸡;daging ayam|4.8|300|g|190|20|0|12|0|75|150|
+minced beef|daging cincang;daging lembu cincang;牛肉碎;牛绞肉|7.9|400|g|250|26|0|15|0|75||
+beef|daging lembu;daging;牛肉;lembu|9.5|300|g|250|26|0|15|0|72||
+mutton|kambing;daging kambing;羊肉|11.9|300|g|294|25|0|21|0|72||
+minced pork|babi cincang;猪肉碎;猪绞肉|5.8|400|g|263|17|0|21|0|60||
+pork belly|perut babi;五花肉;三层肉|8.9|500|g|518|9.3|0|53|0|32||
+pork ribs|tulang rusuk babi;排骨|9.5|500|g|277|23|0|20|0|70||
+pork|babi;daging babi;猪肉;猪|7.9|400|g|242|27|0|14|0|62||
+bacon|bekon;培根|5.9|200|g|541|37|1.4|42|0|1717|20|
+ham|火腿|4.2|200|g|145|21|1.5|6|0|1200|20|
+lard|lemak babi;猪油|3.5|250|g|902|0|0|100|0|0||0.92
+eggs|egg;telur;鸡蛋;蛋|3.85|10|pc|143|12.6|0.7|9.5|0|142|55|
+salted egg|telur masin;咸蛋|3.2|6|pc|190|13|1.5|14|0|1100|65|
+century egg|telur seribu tahun;皮蛋|3.5|6|pc|171|13.7|1.4|11.7|0|550|60|
+fish|ikan;鱼|6|300|g|120|22|0|3|0|70|300|
+salmon fillet|salmon;三文鱼;鲑鱼;ikan salmon|9.9|200|g|208|20|0|13|0|59|150|
+sea bass|siakap;ikan siakap;金目鲈|9|400|g|97|18|0|2|0|68|400|
+mackerel|ikan kembung;ikan tenggiri;鲭鱼;马鲛鱼|5.5|300|g|205|19|0|14|0|90|200|
+anchovies|ikan bilis;江鱼仔;小鱼干|4.5|100|g|270|50|0|7|0|3000||
+fish cake|kek ikan;鱼饼|2.6|200|g|120|12|10|3|0|600|30|
+fish ball|bebola ikan;鱼丸|3|250|g|100|10|8|3|0|500|15|
+prawns|fresh prawns;udang;虾;大虾;虾仁|8.9|300|g|99|24|0.2|0.3|0|111|15|
+squid|sotong;鱿鱼;墨鱼|7.5|300|g|92|15.6|3|1.4|0|44||
+crab|ketam;螃蟹;蟹|15|500|g|97|19|0|1.5|0|395||
+clams|lala;蛤蜊;花蛤|5.5|500|g|74|13|2.6|1|0|56||
+cockles|kerang;血蚶|6|500|g|79|13|5|1|0|100||
+dried shrimp|udang kering;虾米|4|100|g|270|50|0|4|0|1500||
+tofu|silken tofu;tauhu;tahu;豆腐|1.25|1|pc|76|8|1.9|4.8|0.3|7|300|
+firm tofu|tau kwa;tauhu keras;老豆腐;豆干|1.3|1|pc|144|17|3|9|2|14|300|
+tofu puffs|tau pok;tauhu goreng;豆卜|2.2|200|g|270|17|10|20|0|10|||
+tempeh|tempe;天贝|2.5|200|g|193|19|9|11|0|9||
+cooked rice|nasi;nasi putih;米饭;白饭;cooked rice;steamed rice|||g|130|2.7|28|0.3|0.4|1||
+jasmine rice|rice;beras;白米;香米;米|9.5|5000|g|365|7|80|0.7|1|5||
+glutinous rice|pulut;糯米|3|1000|g|370|7|81|0.6|1|5||
+rice vermicelli|bihun;mee hoon;米粉|2.2|400|g|360|6|80|0.1|1|10||
+flat rice noodles|kway teow;kuey teow;河粉;粿条;贵刁|2.5|400|g|109|1|25|0.2|0.5|10||
+yellow noodles|mee kuning;黄面;hokkien mee;福建面|2|500|g|138|4.5|27|1.5|1.5|300||
+noodles|mi;mee;面;面条|2|400|g|138|4.5|27|1.5|1.5|300||
+instant noodles|mi segera;方便面;快熟面|3.5|5|pc|450|10|60|18|2|1800|75|
+spaghetti|pasta;意大利面|2.5|500|g|371|13|75|1.5|3|6||
+bread|roti;面包|2.6|400|g|265|9|49|3.2|2.7|490|30|
+flour|plain flour;tepung gandum;tepung;面粉|1.9|1000|g|364|10|76|1|2.7|2||0.5
+rice flour|tepung beras;粘米粉;籼米粉|1.7|400|g|366|6|80|1.4|2|0||0.55
+cornflour|corn starch;cornstarch;tepung jagung;玉米淀粉;生粉;太白粉|1.6|400|g|381|0.3|91|0.1|0.9|9||0.5
+tapioca flour|tepung ubi kayu;木薯粉|1.6|400|g|358|0.2|88|0|0.9|1||0.5
+oats|oat;燕麦|4.2|500|g|389|17|66|7|11|2||0.4
+potato|kentang;土豆;马铃薯|3.2|1000|g|77|2|17|0.1|2.2|6|170|
+sweet potato|ubi keledek;keledek;地瓜;红薯|3|1000|g|86|1.6|20|0.1|3|55|200|
+yam|keladi;芋头|2.8|500|g|112|1.5|27|0.2|4|11|300|
+garlic|bawang putih;大蒜;蒜头;蒜|2.2|200|g|149|6.4|33|0.5|2.1|17|4|
+shallot|bawang merah;小葱头;红葱头;红葱|3.5|500|g|72|2.5|17|0.1|3.2|12|20|
+onion|bawang besar;bawang;洋葱|2.2|1000|g|40|1.1|9|0.1|1.7|4|150|
+spring onion|daun bawang;scallion;green onion;葱;青葱|1.5|200|g|32|1.8|7|0.2|2.6|16|15|
+ginger|halia;姜;生姜|2.8|300|g|80|1.8|18|0.8|2|13|20|
+galangal|lengkuas;南姜;高良姜;riang|3.5|200|g|71|1|15|0.8|2|10||
+lemongrass|serai;香茅|1.5|100|g|99|1.8|25|0.5|0|6|20|
+turmeric|kunyit;姜黄|3|200|g|80|1.9|18|0.5|2.1|5|20|
+red chilli|chilli;cili;cili merah;红辣椒;辣椒|2|100|g|40|1.9|9|0.4|1.5|9|15|
+bird's eye chilli|chilli padi;cili padi;小辣椒;指天椒|2.5|100|g|40|2|9|0.4|1.5|7|3|
+dried chilli|cili kering;干辣椒|2.5|100|g|282|12|50|14|35|30|2|0.4
+tomato|tomatoes;番茄;西红柿|3.2|500|g|18|0.9|3.9|0.2|1.2|5|120|
+carrot|lobak merah;胡萝卜|2|500|g|41|0.9|10|0.2|2.8|69|100|
+white radish|lobak putih;白萝卜;daikon;萝卜|1.8|500|g|18|0.6|4|0.1|1.6|21|400|
+cabbage|kobis;包菜;卷心菜;高丽菜|2.2|700|g|25|1.3|6|0.1|2.5|18|800|
+chinese cabbage|sawi putih;大白菜;白菜|2.2|600|g|16|1.2|3.2|0.2|1.2|9|600|
+xiao bai cai|bak choy;pak choy;小白菜;青江菜|1.8|300|g|13|1.5|2.2|0.2|1|65|100|
+choy sum|sawi;菜心;菜芯|1.8|300|g|13|1.5|2.2|0.2|1|40|100|
+kailan|kai lan;chinese broccoli;芥兰;芥蓝|2.2|300|g|26|1.2|4.7|0.7|2.6|7|100|
+spinach|bayam;菠菜|2.2|250|g|23|2.9|3.6|0.4|2.2|79||
+kangkong|kangkung;water spinach;ong choy;空心菜|1.8|300|g|19|2.6|3.1|0.2|2.1|113||
+broccoli|brokoli;西兰花;西蓝花|2.8|300|g|34|2.8|7|0.4|2.6|33|300|
+cauliflower|bunga kobis;花菜;花椰菜|3.2|400|g|25|1.9|5|0.3|2|30|500|
+cucumber|timun;黄瓜;青瓜|1.4|300|g|15|0.7|3.6|0.1|0.5|2|300|
+eggplant|terung;brinjal;aubergine;茄子|2|400|g|25|1|6|0.2|3|2|250|
+long beans|kacang panjang;豆角;长豆|1.8|300|g|47|2.8|8|0.4|3.4|4||
+okra|bendi;ladies finger;秋葵;羊角豆|2.2|250|g|33|1.9|7|0.2|3.2|7||
+bean sprouts|taugeh;tauge;豆芽|1.2|300|g|30|3|6|0.2|1.8|6||
+corn|jagung;玉米|1.2|1|pc|86|3.3|19|1.4|2|15|250|
+pumpkin|labu;南瓜|2|500|g|26|1|6.5|0.1|0.5|1||
+bitter gourd|peria;苦瓜|1.8|400|g|17|1|3.7|0.2|2.8|5|300|
+winter melon|kundur;冬瓜|1.8|500|g|13|0.4|3|0.2|2|8||
+peas|green peas;kacang polong;豌豆|1.8|500|g|81|5|14|0.4|5|5||
+mushroom|cendawan;蘑菇|2.8|200|g|22|3.1|3.3|0.3|1|5|20|
+shiitake mushroom|cendawan shiitake;香菇;冬菇|3.5|150|g|34|2.2|7|0.5|2.5|9|15|
+enoki mushroom|cendawan enoki;金针菇|1.8|150|g|37|2.7|7.8|0.3|2.7|3||
+celery|daun sup;西芹;芹菜|2.2|200|g|14|0.7|3|0.2|1.6|80||
+coriander|daun ketumbar;cilantro;香菜;芫荽|1|50|g|23|2.1|3.7|0.5|2.8|46||
+mint|pudina;daun pudina;薄荷|1.5|30|g|70|3.8|15|0.9|8|31||
+basil|selasih;daun selasih;罗勒;九层塔|1.8|30|g|23|3.2|2.7|0.6|1.6|4||
+pandan leaves|daun pandan;pandan;香兰叶;班兰叶|1|50|g|20|1|4|0.3|1|5|5|
+curry leaves|daun kari;咖喱叶|1|30|g|108|6|19|1|6|0||
+kaffir lime leaves|daun limau purut;柠檬叶;青柠叶|1.5|20|g|45|3|8|1|4|5||
+lime|limau nipis;limau;青柠|0.4|1|pc|30|0.7|10.5|0.2|2.8|2|60|
+lemon|lemon;柠檬|0.9|1|pc|29|1.1|9|0.3|2.8|2|100|
+tamarind|asam jawa;asam;罗望子;酸子|1.8|200|g|239|2.8|63|0.6|5.1|28||
+banana|pisang;香蕉|2.5|500|g|89|1.1|23|0.3|2.6|1|120|
+apple|epal;苹果|3|500|g|52|0.3|14|0.2|2.4|1|180|
+orange|oren;橙;橙子|3.5|500|g|47|0.9|12|0.1|2.4|0|150|
+pineapple|nanas;菠萝;黄梨|2.5|1|pc|50|0.5|13|0.1|1.4|1|800|
+coconut milk|santan;椰奶;椰浆|2.2|400|g|197|2.2|2.8|21|0|13||1
+coconut|kelapa;椰子;椰丝;kelapa parut;desiccated coconut|2.5|200|g|660|6.9|24|65|16|37||0.4
+salt|garam;盐|1|500|g|0|0|0|0|0|38758||1.2
+sugar|gula;糖;白砂糖|2|1000|g|387|0|100|0|0|0||0.85
+brown sugar|gula perang;红糖|2.3|500|g|380|0.1|98|0|0|28||0.8
+palm sugar|gula melaka;gula apong;椰糖|2.8|250|g|375|0|94|0|0|30||0.8
+honey|madu;蜂蜜|6.9|500|g|304|0.3|82|0|0.2|4||1.4
+light soy sauce|kicap cair;生抽|2.8|500|g|53|8|5|0|0.8|5500||1.15
+soy sauce|kicap;酱油|2.8|500|g|53|8|5|0|0.8|5500||1.15
+dark soy sauce|kicap pekat;老抽|2.8|500|g|60|5|10|0|0.8|4700||1.2
+sweet soy sauce|kicap manis;甜酱油|2.5|500|g|190|2.5|44|0|0|3500||1.3
+oyster sauce|sos tiram;蚝油|3.5|510|g|51|1.4|11|0.3|0.2|2733||1.2
+fish sauce|sos ikan;鱼露|2.8|300|g|35|5|3.6|0|0|7851||1.2
+chilli sauce|sos cili;辣椒酱|2.5|340|g|66|1.3|13|0.9|1.5|2200||1
+sambal|sambal belacan;sambal tumis;参巴;参峇|3|200|g|135|2|10|10|3|2000||1
+shrimp paste|belacan;虾膏;虾酱|2.8|200|g|190|30|5|4|0|6000||1
+tomato ketchup|sos tomato;番茄酱|2.8|500|g|101|1|27|0.1|0.3|907||1.1
+tomato paste|pes tomato;tomato puree;番茄膏|1.5|200|g|82|4.3|19|0.5|4|59||1
+bean paste|taucu;taucheo;豆酱;豆瓣酱|2.8|300|g|150|10|15|5|5|5000||1
+curry powder|serbuk kari;咖喱粉|2.4|100|g|325|14|58|14|53|52||0.5
+turmeric powder|serbuk kunyit;姜黄粉|2.2|100|g|354|8|65|10|21|38||0.6
+cumin|jintan putih;serbuk jintan;孜然|2.5|100|g|375|18|44|22|10|168||0.5
+coriander powder|serbuk ketumbar;芫荽粉|2.2|100|g|298|12|55|18|42|35||0.5
+star anise|bunga lawang;八角|3|50|g|337|18|50|16|15|16|2|
+cinnamon|kayu manis;肉桂;桂皮|2.8|50|g|247|4|81|1.2|53|10|5|
+cloves spice|cengkih;bunga cengkih;丁香|3|50|g|274|6|66|13|34|277||0.5
+cardamom|buah pelaga;豆蔻;小豆蔻|3.5|50|g|311|11|68|7|28|18||0.5
+nutmeg|buah pala;肉豆蔻|3|50|g|525|6|49|36|21|16||0.5
+mustard seeds|biji sawi;芥末籽|2|100|g|508|26|28|36|12|13||0.7
+black pepper|lada hitam;黑胡椒|3|100|g|251|10|64|3.3|25|20||0.5
+white pepper|lada putih;white pepper;胡椒;胡椒粉|3.2|100|g|296|10|69|2.1|26|5||0.5
+sesame oil|minyak bijan;麻油;香油|4.5|250|g|884|0|0|100|0|0||0.92
+cooking oil|vegetable oil;oil;minyak masak;minyak;食用油;油|5.5|1000|g|884|0|0|100|0|0||0.92
+olive oil|minyak zaitun;橄榄油|9.5|500|g|884|0|0|100|0|0||0.92
+butter|mentega;黄油;牛油|4.5|250|g|717|0.9|0.1|81|0|11||0.95
+milk|susu;susu segar;牛奶;fresh milk|3.2|1000|g|61|3.2|4.8|3.3|0|43||1.03
+evaporated milk|susu sejat;淡奶;奶水|1.8|390|g|134|6.8|10|7.6|0|106||1.05
+condensed milk|susu pekat manis;susu manis;炼乳|2.4|390|g|321|7.9|54|8.7|0|127||1.3
+cheese|keju;奶酪;芝士|4.5|200|g|350|22|2|28|0|700|20|
+yoghurt|yogurt;dadih;酸奶|4.5|500|g|61|3.5|4.7|3.3|0|46||1.03
+cream|krim;whipping cream;鲜奶油|3.8|250|g|340|2|3|36|0|38||1
+vinegar|cuka;醋;白醋|1.5|300|g|18|0|0|0|0|2||1
+black vinegar|cuka hitam;黑醋|2.8|300|g|88|0.6|19|0|0|10||1.1
+shaoxing wine|arak shaoxing;料酒;绍兴酒;花雕酒|3.5|640|g|126|0.4|5|0|0|9||1
+wine|arak;wain;红酒;白酒;葡萄酒;米酒;rice wine|8|750|g|85|0.1|2.6|0|0|4||1
+beer|bir;啤酒|3|330|g|43|0.5|3.6|0|0|4||1
+mirin|味醂;味啉|4.5|300|g|241|0.3|43|0|0|2||1.2
+gelatin|gelatine;吉利丁;gelatin|3|50|g|335|86|0|0|0|1050||
+water|air;水||||0|0|0|0|0|0||1
+peanuts|kacang tanah;花生|3.2|400|g|567|26|16|49|8.5|18||0.6
+cashew nuts|gajus;腰果|6|200|g|553|18|30|44|3.3|12||0.6
+sesame seeds|bijan;芝麻|2.8|100|g|573|18|23|50|12|11||0.6
+bread crumbs|serbuk roti;面包糠|2.5|200|g|395|13|72|5|4.5|732||0.45
+baking powder|serbuk penaik;发粉;泡打粉|1.8|100|g|53|0|28|0|0.2|10600||0.9`;
+    const Lex = (() => {
+      const num = (v) => { const n = parseFloat(v); return isFinite(n) ? n : null; };
+      const entries = [];
+      const alias = new Map();
+      CATALOG_TEXT.trim().split('\n').forEach((line) => {
+        const f = line.split('|');
+        if (f.length < 5) return;
+        const e = {
+          key: f[0].trim(), price: num(f[2]), pack: num(f[3]), pu: (f[4] || 'g').trim() || 'g',
+          n: num(f[5]) === null ? null : { kcal: num(f[5]), p: num(f[6]) || 0, c: num(f[7]) || 0, f: num(f[8]) || 0, fi: num(f[9]) || 0, na: num(f[10]) || 0 },
+          pcG: num(f[11]), dens: num(f[12]) || 1
+        };
+        entries.push(e);
+        [e.key, ...String(f[1] || '').split(';')].map(s => s.trim().toLowerCase()).filter(Boolean).forEach(a => { if (!alias.has(a)) alias.set(a, e.key); });
+      });
+      const MODS = { cincang: 'minced', kisar: 'ground', kering: 'dried', potong: 'sliced', dipotong: 'sliced', halus: 'fine' };
+      Object.keys(MODS).forEach(k => alias.set(k, MODS[k]));
+      const cjk = (s) => /[㐀-鿿]/.test(s);
+      const rx = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const keys = [...alias.keys()].sort((a, b) => b.length - a.length);
+      const latinRe = new RegExp('(?<![\\p{L}\\p{N}])(' + keys.filter(k => !cjk(k)).map(rx).join('|') + ')(?![\\p{L}\\p{N}])', 'giu');
+      const cjkRe = new RegExp('(' + keys.filter(cjk).map(rx).join('|') + ')', 'g');
+      const STOP = new Set(['fresh', 'of', 'the', 'and', 'a', 'an', 'with', 'or', 'secukupnya', 'sedikit', 'biji', 'batang', 'ulas', 'helai', 'keping', 'ekor']);
+      const stem = (w) => {
+        if (w.length > 3 && w.endsWith('ies')) return w.slice(0, -3) + 'y';
+        if (w.length > 4 && w.endsWith('oes')) return w.slice(0, -2);
+        if (w.length > 3 && w.endsWith('s') && !w.endsWith('ss')) return w.slice(0, -1);
+        return w;
+      };
+      const english = (name) => {
+        let s = String(name == null ? '' : name).toLowerCase();
+        s = s.replace(cjkRe, (m) => ' ' + alias.get(m) + ' ');
+        s = s.replace(latinRe, (m) => alias.get(m.toLowerCase()) || m);
+        return s.replace(/\s+/g, ' ').trim();
+      };
+      const tokens = (name) => english(name).replace(/\([^)]*\)/g, ' ').split(/[^\p{L}\p{N}]+/u).filter(w => w && !STOP.has(w)).map(stem);
+      const keyTokens = entries.map(e => ({ e, t: new Set(tokens(e.key)) }));
+      const find = (name) => {
+        const t = tokens(name); if (!t.length) return null;
+        const ts = new Set(t);
+        let best = null;
+        for (const k of keyTokens) {                                 // every word of the catalog name is in the ingredient
+          if (!k.t.size) continue;
+          let all = true; for (const w of k.t) if (!ts.has(w)) { all = false; break; }
+          if (all && (!best || k.t.size > best.t.size)) best = k;
+        }
+        if (best) return best.e;
+        for (const k of keyTokens) {                                 // the ingredient is a shorter, general name
+          if (!t.every(w => k.t.has(w))) continue;
+          if (!best || k.t.size < best.t.size) best = k;
+        }
+        return best ? best.e : null;
+      };
+      // Malay and Chinese measuring words -> English units so the importer can read "2 sudu besar kicap" or "200克鸡肉"
+      const normUnits = (line) => String(line)
+        .replace(/(\d)\s*(克|公斤|千克|毫升|升|汤匙|大匙|大勺|茶匙|小匙|小勺|杯|个|颗|瓣|根|片|只|条|包|块)/g, (m, d, u) => d + ' ' + ({ '克': 'g', '公斤': 'kg', '千克': 'kg', '毫升': 'ml', '升': 'l', '汤匙': 'tbsp', '大匙': 'tbsp', '大勺': 'tbsp', '茶匙': 'tsp', '小匙': 'tsp', '小勺': 'tsp', '杯': 'cup' }[u] || 'pcs') + ' ')
+        .replace(/\bsudu\s+(?:besar|makan)\b/gi, 'tbsp').replace(/\bsudu\s+teh\b/gi, 'tsp').replace(/\bcawan\b/gi, 'cup')
+        .replace(/\b(?:biji|ulas|batang|helai|keping|ekor|bungkus|ikat)\b/gi, 'pcs');
+      return { entries, english, tokens, find, normUnits, stem, STOP };
+    })();
+
+    // Price list: the original hand-made prices win; everything else comes from the catalog (estimates, the live scan refines them)
+    const roundNickel = (x) => Math.round(x * 20) / 20;
+    const PRICE_ENTRIES = (() => {
+      const map = new Map();
+      Lex.entries.forEach(e => { if (e.price != null && e.pack) map.set(e.key, { key: e.key, fp: e.price, ss: roundNickel(e.price * 0.94), cs: roundNickel(e.price * 1.28), pack: e.pack, pu: e.pu, pcG: e.pcG }); });
+      Object.keys(SG_PRICE_DB).forEach(k => { const o = SG_PRICE_DB[k], ex = map.get(k) || {}; map.set(k, { key: k, fp: o.fp, ss: o.ss, cs: o.cs, pack: o.pack, pu: o.pack <= 12 ? 'pc' : 'g', pcG: ex.pcG || (o.pack <= 12 ? 300 : null) }); });
+      return map;
+    })();
+
+    const Nutrition = {
+      gramsOf(ing, e) {
+        const b = UnitNormalizer.toBase(ing.qty, ing.unit);
+        if (b.type === 'mass') return b.val;
+        if (b.type === 'vol') return b.val * (e.dens || 1);
+        return e.pcG ? b.val * e.pcG : null;
+      },
+      estimate(recipe) {
+        const ings = (recipe && recipe.ingredients) || [];
+        const tot = { kcal: 0, p: 0, c: 0, f: 0, fi: 0, na: 0 };
+        let matched = 0;
+        ings.forEach(ing => {
+          const e = Lex.find(ing.name);
+          if (!e || !e.n) return;
+          const g = this.gramsOf(ing, e);
+          if (g == null) return;
+          const k = g / 100; matched++;
+          for (const x of Object.keys(tot)) tot[x] += e.n[x] * k;
+        });
+        const sv = Math.max(1, parseInt(recipe && recipe.servings, 10) || 1);
+        const r = (v) => Math.max(0, Math.round(v / sv));
+        return { matched, total: ings.length, coverage: ings.length ? matched / ings.length : 0,
+          cal: r(tot.kcal), pro: r(tot.p), carbs: r(tot.c), fat: r(tot.f), fibre: r(tot.fi), sodium: r(tot.na) };
+      },
+      // Fill nutrition from ingredients when enough of them are recognised. Returns the estimate.
+      apply(recipe, force) {
+        if (!recipe || (recipe.nutritionSource === 'manual' && !force)) return null;
+        const est = this.estimate(recipe);
+        if (est.matched >= 2 && est.coverage >= 0.5) {
+          recipe.cal = est.cal; recipe.pro = est.pro; recipe.carbs = est.carbs; recipe.fat = est.fat; recipe.fibre = est.fibre; recipe.sodium = est.sodium;
+          recipe.nutritionSource = 'auto'; recipe.nutritionCoverage = Math.round(est.coverage * 100);
+        }
+        return est;
+      }
+    };
+
     const livePriceOverrides = {};
     const livePriceMeta = {};
     const ovKeyFor = (name, store) => String(name).toLowerCase().trim() + '|' + store;
 
     const PriceEngine = {
       lookup(name) {
-        const n = String(name || '').toLowerCase().trim();
-        if (!n) return null;
-        if (SG_PRICE_DB[n]) return { key: n, ...SG_PRICE_DB[n] };
+        const e = Lex.find(name);
+        if (e && PRICE_ENTRIES.has(e.key)) return PRICE_ENTRIES.get(e.key);
+        // fall back to the old substring match for names the dictionary does not know
+        const n = String(name || '').toLowerCase().trim(); if (!n) return null;
         let best = null;
-        for (const k of Object.keys(SG_PRICE_DB)) {
-          if (n.includes(k) || k.includes(n)) { if (!best || k.length > best.length) best = k; }
-        }
-        return best ? { key: best, ...SG_PRICE_DB[best] } : null;
+        for (const k of PRICE_ENTRIES.keys()) if (n.includes(k) || k.includes(n)) { if (!best || k.length > best.length) best = k; }
+        return best ? PRICE_ENTRIES.get(best) : null;
       },
       priceFor(item, mode) {
         const m = this.lookup(item.name);
@@ -1286,8 +1550,14 @@
           const o = livePriceOverrides[ovKeyFor(item.name, store)];
           if (o) unit = o;
         }
-        const packs = Math.max(1, Math.ceil((parseFloat(item.qty) || 1) / (m.pack || 1)));
-        return { line: Math.round(unit * packs * 100) / 100, unit, store, packQty: m.pack || 1, packs, match: m.key };
+        // work out how many packs are needed, whatever unit the item is in (g, kg, ml, pcs, spoons...)
+        const b = UnitNormalizer.toBase(parseFloat(item.qty) || 1, item.unit);
+        const pack = m.pack || 1;
+        let need;
+        if (m.pu === 'pc') need = (b.type === 'count' ? b.val : b.val / (m.pcG || 100)) / pack;
+        else need = (b.type === 'count' ? b.val * (m.pcG && m.pcG < 1000 ? m.pcG : 1) : b.val) / pack;
+        const packs = Math.max(1, Math.ceil(need - 1e-9));
+        return { line: Math.round(unit * packs * 100) / 100, unit, store, packQty: pack, packUnit: m.pu === 'pc' ? 'pcs' : 'g', packs, match: m.key };
       }
     };
 
@@ -1750,7 +2020,7 @@
       [/canned|\btin\b/, '🥫'], [/frozen/, '🧊']
     ];
     function guessPantryIcon(name, category) {
-      const t = String(name || '').toLowerCase();
+      const t = (String(name || '') + ' ' + Lex.english(name)).toLowerCase();
       for (const [re, ic] of PANTRY_ICON_GUESS) if (re.test(t)) return ic;
       const cat = (AppState.state.pantryCategories || []).find(c => c.id === category || c.name === category);
       return (cat && cat.icon) || '🥫';
@@ -2091,6 +2361,7 @@
         this.fromImport = !recipeId && !!prefill;
         const servingsInput = document.getElementById('editorRecipeServings');
         if (servingsInput) servingsInput.value = (r && r.servings) ? r.servings : 2;
+        { const ac = document.getElementById('editorAutoNutrition'); if (ac) ac.checked = !recipeId || (r && r.nutritionSource === 'auto'); const nn = document.getElementById('editorNutritionNote'); if (nn) nn.textContent = ''; }
         const setV = (id, v) => { document.getElementById(id).value = v; };
         if (r) {
           document.getElementById('recipeEditorModalTitle').textContent = recipeId ? 'Edit Recipe' : 'Review Imported Recipe';
@@ -2128,6 +2399,31 @@
       closeModal() {
         document.getElementById('recipeEditorModal').classList.add('hidden');
         if (this.fromImport && recipeScraper.previewedRecipe) { this.fromImport = false; recipeScraper.reopenPreview(); }
+      }
+
+      readRows() {
+        const out = [];
+        document.querySelectorAll('.editor-ing-row').forEach(row => {
+          const name = row.querySelector('.ing-name').value.trim();
+          if (name) out.push({ name, qty: parseFloat(row.querySelector('.ing-qty').value) || 1, unit: row.querySelector('.ing-unit').value });
+        });
+        return out;
+      }
+
+      autoFillNutrition(quiet) {
+        const servings = Math.max(1, parseInt(document.getElementById('editorRecipeServings').value, 10) || 1);
+        const est = Nutrition.estimate({ ingredients: this.readRows(), servings });
+        const note = document.getElementById('editorNutritionNote');
+        if (est.matched >= 2 && est.coverage >= 0.5) {
+          const set = (id, v) => { document.getElementById(id).value = v; };
+          set('editorRecipeCal', Math.max(10, est.cal)); set('editorRecipePro', est.pro); set('editorRecipeCarbs', est.carbs);
+          set('editorRecipeFat', est.fat); set('editorRecipeFibre', est.fibre); set('editorRecipeSodium', est.sodium);
+          if (note) note.textContent = 'Worked out from ' + est.matched + ' of ' + est.total + ' ingredients, per serving. It is an estimate.';
+          return true;
+        }
+        if (note) note.textContent = 'I could only recognise ' + est.matched + ' of ' + est.total + ' ingredients, so I kept your numbers. Check the names or type the numbers yourself.';
+        if (!quiet) showToast('Not enough known ingredients to calculate', '⚠️');
+        return false;
       }
 
       addIngredientRow(ing = { name: '', qty: 100, unit: 'g' }) {
@@ -2172,10 +2468,12 @@
         });
         if (!title || ingredients.length === 0) return showToast('Please add a title and at least 1 ingredient', '⚠️');
 
+        const autoN = document.getElementById('editorAutoNutrition');
         const recipeObj = {
           ...base, id: id || ('rec_' + Date.now()), title, category, image, prepTime, servings, cal, pro, carbs, fat, fibre, sodium, sugar, ingredients,
           steps: steps.length > 0 ? steps : ['Prepare and cook ingredients as desired.']
         };
+        if (autoN && autoN.checked) Nutrition.apply(recipeObj, true); else recipeObj.nutritionSource = 'manual';
         let list = [...AppState.state.recipes];
         if (id) { list = list.map(r => r.id === id ? recipeObj : r); showToast(`Updated "${title}"!`, '✏️'); }
         else { list.unshift(recipeObj); soundEngine.playChime(); showToast(`Created recipe "${title}"!`, '📖'); }
@@ -2271,6 +2569,7 @@
           .replace(/&#\d+;/g, (m) => { const code = parseInt(m.replace(/\D/g, ''), 10); return !isNaN(code) ? String.fromCharCode(code) : ''; })
           .replace(/^[\s•*▪▫‣⁃–—\-+▢☐☑✓✔]+/, '').trim();
 
+        line = Lex.normUnits(line);
         if (!line || line.length < 2 || line.length > 130) return null;
         if (/^(ingredients?|for the .*|marinade|sauce|dressing|paste|rempah|garnish|seasoning|topping|batter|filling|us customary.*|metric.*|scale\s*1x.*|1x\s*2x\s*3x|print\s*recipe|pin\s*recipe|save\s*recipe|jump\s*to.*|cook\s*mode.*)$/i.test(line)) return null;
         if (/https?:\/\/|www\.|\b(?:I\s+like|I\s+use|I\s+recommend|you\s+can|we\s+love|make\s+sure|read\s+more|see\s+notes|click\s+here)\b/i.test(line)) return null;
@@ -2509,6 +2808,7 @@
       showPreview() {
         if (!this.previewedRecipe) return;
         const r = this.previewedRecipe;
+        try { Nutrition.apply(r); } catch (e) {}
         document.getElementById('scrapedPreviewTitle').textContent = r.title;
         const badge = document.getElementById('scrapedPreviewSourceBadge');
         if (badge) badge.textContent = r.sourceBadge || 'Parsed';
@@ -3355,7 +3655,7 @@
               const label = days < 0 ? 'Expired' : days === 0 ? 'Today' : `${days} day${days > 1 ? 's' : ''}`;
               return `
                 <div class="rounded-2xl p-4 sm:p-5 flex flex-col ${tone[0]}">
-                  <div class="flex items-start justify-between gap-2"><div class="min-w-0 font-display font-extrabold text-2xl sm:text-4xl leading-none ${tone[1]}">${label}</div><div class="flex-shrink-0">${pantryThumb(item, 40)}</div></div>
+                  <div class="flex flex-col-reverse items-start gap-2 sm:flex-row sm:justify-between"><div class="min-w-0 font-display font-extrabold text-2xl sm:text-4xl leading-none ${tone[1]}">${label}</div><div class="flex-shrink-0">${pantryThumb(item, 40)}</div></div>
                   <div class="font-bold text-[17px] mt-2.5 text-[#14211C]">${esc(item.name)}</div>
                   <div class="text-sm text-[#14211C]/70">${item.qty} ${esc(item.unit)} · ${esc(item.zone)}</div>
                   <button data-n="${esc(item.name)}" onclick="findRecipeFor(this.dataset.n)" class="mt-3.5 self-start px-3.5 py-2 rounded-xl font-bold text-xs text-white ${tone[2]}">Find recipe</button>
@@ -3562,7 +3862,7 @@
           ? `<span title="${livePriceMeta[k] === 'web' ? 'Fetched from store website' : 'Live market-adjusted price'}" class="ml-1 text-[9px] px-1 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-black whitespace-nowrap">● Live</span>`
           : '';
         return {
-          html: `<div class="text-right leading-tight"><span class="font-black text-xs text-slate-900 dark:text-white">${money(pf.line)}</span> ${storeTag}${liveBadge}<span class="block text-[9px] text-slate-400">${pf.packs}× ${money(pf.unit)}/${pf.packQty}${esc(item.unit)}</span></div>`,
+          html: `<div class="text-right leading-tight"><span class="font-black text-xs text-slate-900 dark:text-white">${money(pf.line)}</span> ${storeTag}${liveBadge}<span class="block text-[9px] text-slate-400">${pf.packs}× ${money(pf.unit)}/${pf.packQty}${esc(pf.packUnit)}</span></div>`,
           line: pf.line
         };
       };
@@ -3800,6 +4100,7 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
         showToast('Backup downloaded!', '⬇️');
       });
 
+      on('btnEditorRecalcNutrition', 'click', () => { if (recipeEditor.autoFillNutrition(false)) showToast('Nutrition calculated', '🧮'); });
       on('btnOpenAddPantryModal', 'click', () => pantryHandlers.openModal());
       on('closePantryModalBtn', 'click', () => pantryHandlers.closeModal());
       on('btnToggleQuickStaples', 'click', () => $('pantryQuickPickerTray').classList.toggle('hidden'));
