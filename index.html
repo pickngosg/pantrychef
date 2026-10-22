@@ -1146,7 +1146,7 @@
     };
 
     // ===== 3. SEED DATA =====
-    const DEFAULT_CATEGORIES = ['Hawker Classics', 'Chinese Zi Char', 'Malay & Peranakan', 'Quick Weeknight', 'Air Fryer & Healthy', 'Soups & Comfort'];
+    const DEFAULT_CATEGORIES = ['Breakfast', 'Hawker Classics', 'Chinese Zi Char', 'Malay & Peranakan', 'Quick Weeknight', 'Air Fryer & Healthy', 'Soups & Comfort'];
 
     const QUICK_SG_STAPLES = [
       { name: 'Eggs', qty: 10, unit: 'pcs', zone: 'Fridge', category: 'Eggs & Dairy' },
@@ -2098,7 +2098,7 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
       planner(o) {
         if (!this.isObj(o)) return null;
         const out = {};
-        for (const [d, v] of Object.entries(o)) if (this.isObj(v)) out[d] = { lunch: this.str(v.lunch, 80), dinner: this.str(v.dinner, 80) };
+        for (const [d, v] of Object.entries(o)) if (this.isObj(v)) out[d] = { breakfast: this.str(v.breakfast, 80), lunch: this.str(v.lunch, 80), dinner: this.str(v.dinner, 80) };
         return out;
       },
       // returns the cleaned value, or undefined when the value is the wrong shape (so it is skipped)
@@ -4187,7 +4187,7 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
           { icon: '➕', bg: '#DFF5E8', label: 'Add food to Pantry', desc: 'Type in something you bought', run: () => { switchView('pantry'); pantryHandlers.openModal(); } },
           { icon: '📷', bg: '#DCEBFA', label: 'Scan a receipt or groceries', desc: 'Take a photo and we fill in your Pantry', run: () => batchScanner.openModal() },
           { icon: '📖', bg: '#FDE7D3', label: 'Add a new recipe', desc: 'Write one, or paste a link', run: () => { switchView('recipes'); recipeEditor.openModal(); } },
-          { icon: '✨', bg: '#FBF0C4', label: 'Plan my week of meals', desc: 'Picks lunch and dinner for 7 days', run: () => { switchView('planner'); document.getElementById('btnAutoPlanWeek').click(); } },
+          { icon: '✨', bg: '#FBF0C4', label: 'Plan my week of meals', desc: 'Picks breakfast, lunch and dinner for 7 days', run: () => { switchView('planner'); document.getElementById('btnAutoPlanWeek').click(); } },
           { icon: '🔎', bg: '#DDEBFA', label: 'Find an exact product and its prices', desc: 'Search what each shop sells', run: () => { switchView('shopping'); productFinder.openModal(); } },
           { icon: '🏷️', bg: '#F3DCF5', label: 'Add shop prices from a photo', desc: 'Price tags or screenshots of a shop page', run: () => { switchView('shopping'); priceScanner.openModal(); } },
           { icon: '🛒', bg: '#D9F2EE', label: 'Open my shopping list', desc: 'See what you need to buy', run: () => switchView('shopping') },
@@ -4276,6 +4276,21 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
     // ===== Where to shop: total for the whole list in each shop =====
     const SHOP_DOT = { 'FairPrice': '#2B7BD1', 'Sheng Siong': '#D9344F', 'Cold Storage': '#1F9D55', 'RedMart': '#E8691E', 'Suzy Ameer': '#8B5CF6', 'Toko Warisan': '#A16207' };
     const SHOP_HOME = { 'FairPrice': 'https://www.fairprice.com.sg', 'Sheng Siong': 'https://shengsiong.com.sg', 'Cold Storage': 'https://coldstorage.com.sg', 'RedMart': 'https://www.lazada.sg/shop/redmart/', 'Suzy Ameer': 'https://suzyameeronline.com.sg', 'Toko Warisan': 'https://tokowarisan.sg' };
+    // Delivery fees from each shop's own site (checked 22 Oct 2026). Always confirm at checkout.
+    const DELIVERY = {
+      'FairPrice':    { free: 59,  fee: 5, svc: 3.99 },
+      'Cold Storage': { free: 80,  fee: 7, svc: 0 },
+      'Sheng Siong':  { free: 100, fee: 6, svc: 1.99 },
+      'RedMart':      { free: 60,  fee: 5, svc: 0, est: true }
+    };
+    const advMode = { get() { try { return localStorage.getItem('pc_adv_mode') === 'visit' ? 'visit' : 'deliver'; } catch (e) { return 'deliver'; } }, set(v) { try { localStorage.setItem('pc_adv_mode', v); } catch (e) {} } };
+    const advPoll = {
+      get() { try { return localStorage.getItem('pc_poll_order') || ''; } catch (e) { return ''; } },
+      async set(a) {
+        try { localStorage.setItem('pc_poll_order', a); } catch (e) {}
+        try { if (typeof Sync !== 'undefined' && Sync.user && Sync.sb) await Sync.sb.rpc('record_poll', { p_q: 'order_channel', p_a: a }); } catch (e) {}
+      }
+    };
     const CartAdvisor = {
       isReal(src) { return src === 'shop' || src === 'mine' || src === 'community'; },
       compute() {
@@ -4290,7 +4305,17 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
             if (m[st]) { total += m[st].line; have++; if (this.isReal(m[st].src)) real++; }
             else { const o = Object.values(m).map(p => p.line).sort((a, b) => a - b); total += o[Math.floor(o.length / 2)]; est++; }
           });
-          return { st, total: r2(total), have, real, est };
+          total = r2(total);
+          const dv = DELIVERY[st], mode = advMode.get();
+          let delivery = 0, dnote = '', toFree = 0;
+          if (mode === 'deliver') {
+            if (dv) {
+              if (total >= dv.free) { delivery = dv.svc; dnote = dv.svc ? `free delivery, S$${dv.svc.toFixed(2)} service fee` : 'free delivery'; }
+              else if (dv.fee == null) { delivery = dv.svc; dnote = `delivery fee below S$${dv.free} not confirmed`; toFree = r2(dv.free - total); }
+              else { delivery = dv.fee + dv.svc; dnote = `${dv.est ? 'about ' : ''}S$${dv.fee.toFixed(2)} delivery${dv.est ? ' (estimate, please check)' : ''}${dv.svc ? ' + S$' + dv.svc.toFixed(2) + ' service fee' : ''}`; toFree = r2(dv.free - total); }
+            } else dnote = 'delivery not included';
+          }
+          return { st, goods: total, delivery: r2(delivery), dnote, toFree, total: r2(total + delivery), have, real, est };
         }).filter(s => s.have > 0 && s.have >= Math.ceil(priced.length / 2)).sort((a, b) => a.total - b.total);
         if (!stores.length) return { open, priced, stores: [], none: open.length - priced.length };
         const best = stores[0], worst = stores[stores.length - 1];
@@ -4317,17 +4342,22 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
         const n = c.open.length, realBest = c.best.real, max = c.worst.total || 1;
         const conf = `<div class="mt-3"><div class="flex justify-between text-xs font-bold text-slate-500 mb-1"><span>Real prices: ${realBest} of ${n} items</span><span>${Math.round(realBest / n * 100)}%</span></div><div class="h-2 rounded-full bg-slate-200 dark:bg-slate-800"><div class="h-full rounded-full bg-emerald-500" style="width:${Math.round(realBest / n * 100)}%"></div></div><div class="text-xs text-slate-500 mt-1">${n - realBest === 0 ? 'All prices are real shop prices.' : `The other ${n - realBest} ${n - realBest === 1 ? 'is' : 'are'} our guess${c.none ? ' or have no price yet' : ''}.`}</div></div>`;
         const headline = c.stores.length > 1 && c.saving >= 0.05
-          ? `<div class="mt-3 p-3.5 rounded-2xl bg-[#DCEBE1] dark:bg-brand-900/60"><div class="text-sm text-[#145238] dark:text-brand-300 font-bold">Cheapest for your ${n} ${n === 1 ? 'item' : 'items'}</div><div class="font-display font-extrabold text-2xl text-[#14211C] dark:text-white">${esc(c.best.st)} · ${money(c.best.total)}</div><div class="text-sm font-bold text-[#145238] dark:text-brand-300">Save ${money(c.saving)} compared with ${esc(c.worst.st)}</div></div>`
+          ? `<div class="mt-3 p-3.5 rounded-2xl bg-[#DCEBE1] dark:bg-brand-900/60"><div class="text-sm text-[#145238] dark:text-brand-300 font-bold">Cheapest for your ${n} ${n === 1 ? 'item' : 'items'}${advMode.get() === 'deliver' ? ' with delivery' : ''}</div><div class="font-display font-extrabold text-2xl text-[#14211C] dark:text-white">${esc(c.best.st)} · ${money(c.best.total)}</div><div class="text-sm font-bold text-[#145238] dark:text-brand-300">Save ${money(c.saving)} compared with ${esc(c.worst.st)}</div></div>`
           : `<div class="mt-3 p-3.5 rounded-2xl bg-[#DCEBE1] dark:bg-brand-900/60"><div class="font-display font-extrabold text-2xl text-[#14211C] dark:text-white">${esc(c.best.st)} · ${money(c.best.total)}</div><div class="text-sm text-[#145238] dark:text-brand-300 font-bold">for your ${n} ${n === 1 ? 'item' : 'items'}</div></div>`;
         const list = (full ? c.stores : c.stores.slice(0, 3)).map((s, i) => `<div class="py-2.5 ${i ? 'border-t border-slate-100 dark:border-slate-800' : ''}">
             <div class="flex items-center justify-between gap-2"><span class="flex items-center gap-2 min-w-0"><i class="macro-dot !mr-0 flex-shrink-0" style="background:${SHOP_DOT[s.st] || '#64748B'}"></i><span class="font-bold truncate ${i === 0 ? 'text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-200'}">${esc(s.st)}</span>${i === 0 ? '<span class="text-xs font-black px-2 py-0.5 rounded-full bg-[#1F6B4A] text-white">Cheapest</span>' : ''}</span><span class="font-black whitespace-nowrap">${money(s.total)}</span></div>
-            ${full ? `<div class="h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 mt-1.5"><div class="h-full rounded-full" style="width:${Math.max(8, Math.round(s.total / max * 100))}%;background:${SHOP_DOT[s.st] || '#64748B'}"></div></div><div class="text-xs text-slate-500 mt-1">Has ${s.have} of ${c.priced.length} priced items${s.est ? ` · ${s.est} not found here, counted at the usual price` : ''}</div>` : ''}</div>`).join('');
+            ${full ? `<div class="h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 mt-1.5"><div class="h-full rounded-full" style="width:${Math.max(8, Math.round(s.total / max * 100))}%;background:${SHOP_DOT[s.st] || '#64748B'}"></div></div><div class="text-xs text-slate-500 mt-1">${s.dnote ? esc(s.dnote) + ' · ' : ''}Has ${s.have} of ${c.priced.length} priced items${s.est ? ` · ${s.est} not found here, counted at the usual price` : ''}</div>` : ''}</div>`).join('');
         const sale = (c.sale && c.sale.length) ? `<div class="mt-3 p-3 rounded-2xl bg-rose-50 dark:bg-rose-500/10"><div class="text-sm font-black text-rose-700 dark:text-rose-300">🏷️ ${c.sale.length} ${c.sale.length === 1 ? 'item is' : 'items are'} on sale</div>${c.sale.slice(0, full ? 5 : 2).map(x => `<div class="text-sm text-slate-700 dark:text-slate-200 mt-1">${esc(x.name)} at ${esc(x.shop)}: <b>${money(x.now)}</b> <span class="line-through text-slate-400">${money(x.was)}</span></div>`).join('')}</div>` : '';
         const moved = (full && c.moved && c.moved.length) ? `<div class="mt-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60"><div class="text-sm font-black text-slate-800 dark:text-slate-100">📈 Price changes since last week</div>${c.moved.slice(0, 5).map(x => { const up = x.now > x.before; return `<div class="text-sm mt-1 text-slate-700 dark:text-slate-200">${esc(x.name)} at ${esc(x.shop)}: <b class="${up ? 'text-rose-600' : 'text-emerald-600'}">${up ? '▲ up' : '▼ down'} ${money(Math.abs(x.now - x.before))}</b> <span class="text-slate-400">(${money(x.before)} → ${money(x.now)})</span></div>`; }).join('')}</div>` : '';
+        const mode = advMode.get();
+        const toggle = full ? `<div class="mt-3 grid grid-cols-2 gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800"><button type="button" data-adv-mode="deliver" class="py-2.5 rounded-xl text-sm font-black ${mode === 'deliver' ? 'bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white' : 'text-slate-500'}">🚚 Deliver to me</button><button type="button" data-adv-mode="visit" class="py-2.5 rounded-xl text-sm font-black ${mode === 'visit' ? 'bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white' : 'text-slate-500'}">🛒 I will go to the shop</button></div>` : '';
+        const nudge = (full && mode === 'deliver' && c.best.toFree > 0 && c.best.toFree <= 25) ? `<div class="mt-3 p-3 rounded-2xl bg-amber-50 dark:bg-amber-500/10 text-sm font-bold text-amber-800 dark:text-amber-300">💡 Add S$${c.best.toFree.toFixed(2)} more at ${esc(c.best.st)} to get free delivery.</div>` : '';
+        const fine = (full && mode === 'deliver') ? `<div class="text-xs text-slate-500 mt-2">Delivery fees are from each shop's website and can change. Please check at checkout. Suzy Ameer and Toko Warisan fees are not included.</div>` : '';
+        const poll = (full && !advPoll.get()) ? `<div class="mt-4 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700"><div class="text-sm font-black text-slate-900 dark:text-white">Quick question: how do you usually order groceries?</div><div class="grid grid-cols-2 gap-2 mt-2">${[['supermarket_site', 'Supermarket website or app'], ['grab', 'GrabMart'], ['foodpanda', 'foodpanda or pandamart'], ['in_store', 'In the shop'], ['other', 'Something else']].map(([k, l]) => `<button type="button" data-adv-poll="${k}" class="py-2.5 px-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200">${l}</button>`).join('')}</div></div>` : '';
         const acts = full
           ? `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4"><button type="button" data-adv-wa="${esc(c.best.st)}" class="py-3 rounded-2xl bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 font-black text-base hover:bg-emerald-500/25">💬 Send my list for ${esc(c.best.st)}</button><button type="button" data-adv-open="${esc(c.best.st)}" class="py-3 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-black text-base">🛍️ Open ${esc(c.best.st)}</button></div>`
           : `<button type="button" onclick="switchView('shopping')" class="mt-3 w-full py-3 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-black text-base">See the full comparison</button>`;
-        return `${head('Where to shop')}${headline}<div class="mt-2">${list}</div>${conf}${sale}${moved}${acts}`;
+        return `${head('Where to shop')}${toggle}${headline}<div class="mt-2">${list}</div>${conf}${nudge}${sale}${moved}${acts}${fine}${poll}`;
       },
       render() {
         const full = document.getElementById('cartAdvisor'), dash = document.getElementById('dashboardCartCompare');
@@ -4340,11 +4370,13 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
         const money = (n) => 'S$' + Number(n).toFixed(2);
         const lines = c.open.map(item => { const pf = PriceEngine.priceFor(item, shop); const nm = item.prod ? item.name : cartName(item.name).title; const u = item.unit === 'pkt' ? (Number(item.qty) === 1 ? 'pack' : 'packs') : item.unit; return `• ${nm} × ${item.qty} ${u}${pf && !pf.unavailable ? ` (${pf.src === 'guess' ? '~' : ''}${money(pf.line)})` : ''}`; });
         const row = c.stores.find(s => s.st === shop);
-        const text = `🛒 My shopping list for ${shop}\n${lines.join('\n')}${row ? `\nTotal: about ${money(row.total)}` : ''}\n\nMade with PantryChef SG`;
+        const text = `🛒 My shopping list for ${shop}\n${lines.join('\n')}${row ? `\nItems: about ${money(row.goods)}${row.delivery ? `\nDelivery and fees: about ${money(row.delivery)}` : ''}\nTotal: about ${money(row.total)}` : ''}\n\nMade with PantryChef SG`;
         window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener');
       }
     };
     document.addEventListener('click', (e) => {
+      const md = e.target.closest('[data-adv-mode]'); if (md) { advMode.set(md.dataset.advMode); CartAdvisor.render(); return; }
+      const pl = e.target.closest('[data-adv-poll]'); if (pl) { advPoll.set(pl.dataset.advPoll); CartAdvisor.render(); showToast('Thank you!', '🙏'); return; }
       const w = e.target.closest('[data-adv-wa]'); if (w) { CartAdvisor.whatsapp(w.dataset.advWa); return; }
       const o = e.target.closest('[data-adv-open]'); if (o && SHOP_HOME[o.dataset.advOpen]) window.open(SHOP_HOME[o.dataset.advOpen], '_blank', 'noopener');
     });
@@ -4545,6 +4577,10 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
             <div class="flex items-center gap-3">
               <span class="w-11 h-11 rounded-xl ${weekend ? 'bg-[#F6E3A8] text-[#5E4600]' : 'bg-[#DCEBE1] text-[#145238]'} font-bold text-[15px] flex items-center justify-center">${day.slice(0, 3)}</span>
               <span class="font-display font-extrabold text-xl text-slate-900 dark:text-white">${day}</span>
+            </div>
+            <div>
+              <label class="flex items-center gap-2 text-[15px] font-bold text-[#9A3412] dark:text-orange-300 mb-1.5"><span class="w-8 h-8 rounded-lg bg-[#FDE3CF] dark:bg-slate-800 flex items-center justify-center text-lg">🌅</span>Breakfast</label>
+              <select data-day="${day}" data-slot="breakfast" class="planner-slot-select w-full px-3.5 py-3 rounded-xl bg-[#FFF3EA] dark:bg-slate-800 border border-[#F5D5BD] dark:border-slate-700 text-[15px] outline-none">${optsFor(dp.breakfast)}</select>
             </div>
             <div>
               <label class="flex items-center gap-2 text-[15px] font-bold text-[#7A5600] dark:text-amber-300 mb-1.5"><span class="w-8 h-8 rounded-lg bg-[#F6E3A8] dark:bg-slate-800 flex items-center justify-center text-lg">☀️</span>Lunch</label>
@@ -4787,6 +4823,7 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
     function exportPlannerMissingToCart() {
       const plannedIds = [];
       Object.values(AppState.state.planner).forEach(d => {
+        if (d && d.breakfast) plannedIds.push(d.breakfast);
         if (d && d.lunch) plannedIds.push(d.lunch);
         if (d && d.dinner) plannedIds.push(d.dinner);
       });
@@ -4855,7 +4892,7 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
       showToast(`Exported ${plannedIds.length} planned meals: ${created} new, ${incremented} updated cart item(s)`, '🛒');
     }
 
-    // Picks a lunch+dinner pair per day whose combined kcal is closest to the daily target
+    // Picks breakfast + lunch + dinner per day, close to the daily calorie target, shuffled every time
     function getCalorieTarget() {
       const t = parseInt(AppState.state.settings && AppState.state.settings.calorieTarget, 10);
       return (t >= 800 && t <= 6000) ? t : 2000;
@@ -4866,32 +4903,43 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
       db.set('settings', AppState.state.settings);
       renderDashboard();
     }
+    function isBreakfastish(r) {
+      if (r.category === 'Breakfast') return true;
+      return /breakfast|kaya|toast|porridge|congee|bubur|oat|granola|pancake|egg|omelette|prata|roti|cereal|yogurt|yoghurt|smoothie|sandwich|bun\b|pau\b|nasi lemak|lontong|kueh|kuih|idli|dosa/i.test(r.title || '');
+    }
     function buildCalorieTargetPlan(recipes, target) {
       const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
       const n = recipes.length;
       const cals = recipes.map(r => Number(r.cal) || 450);
       const uses = recipes.map(() => 0);
-      const lastDay = new Set();
-      const plan = {};
-      let total = 0;
-      days.forEach(day => {
-        let best = null, bestScore = Infinity;
-        for (let i = 0; i < n; i++) {
-          for (let j = 0; j < n; j++) {
-            if (n > 1 && i === j) continue;           // never the same recipe twice in one day
-            const diff = Math.abs(cals[i] + cals[j] - target);
-            // variety first: heavy penalty for recipes already used this week or yesterday
-            const score = diff * 0.5 + 250 * (uses[i] + uses[j]) + (lastDay.has(i) ? 400 : 0) + (lastDay.has(j) ? 400 : 0) + Math.random() * 40;
-            if (score < bestScore) { bestScore = score; best = [i, j]; }
-          }
-        }
-        const [l, d] = cals[best[0]] <= cals[best[1]] ? best : [best[1], best[0]];
-        uses[l]++; uses[d]++;
-        lastDay.clear(); lastDay.add(l); lastDay.add(d);
-        plan[day] = { lunch: recipes[l].id, dinner: recipes[d].id };
-        total += cals[l] + cals[d];
+      const want = { b: target * 0.25, l: target * 0.35, d: target * 0.40 };
+      // breakfast pool: breakfast-type recipes first; otherwise the lighter half of all recipes
+      let bPool = recipes.map((r, i) => i).filter(i => isBreakfastish(recipes[i]) && cals[i] <= target * 0.45);
+      if (bPool.length < 3) { const light = recipes.map((r, i) => i).sort((x, y) => cals[x] - cals[y]).slice(0, Math.max(3, Math.ceil(n / 2))); bPool = Array.from(new Set(bPool.concat(light))); }
+      const mainPool = recipes.map((r, i) => i).filter(i => !(r => r.category === 'Breakfast')(recipes[i]));
+      const mains = mainPool.length >= 2 ? mainPool : recipes.map((r, i) => i);
+      const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+      const plan = {}; let prev = new Set(), total = 0;
+      shuffle(days.map((d, i) => i)).forEach(di => { /* visit days in random order so no day always gets the first pick */
+        const day = days[di];
+        const cand = [];
+        const B = shuffle(bPool).slice(0, 25), M = shuffle(mains).slice(0, 30);
+        B.forEach(bi => M.forEach(li => M.forEach(dj => {
+          if (n > 2 && (li === dj || bi === li || bi === dj)) return;
+          const sum = cals[bi] + cals[li] + cals[dj];
+          const fit = Math.abs(sum - target) * 0.9 + (Math.abs(cals[bi] - want.b) + Math.abs(cals[li] - want.l) + Math.abs(cals[dj] - want.d)) * 0.15;
+          const rep = 150 * (uses[bi] + uses[li] + uses[dj]) + ([bi, li, dj].filter(x => prev.has(x)).length) * 300;
+          cand.push([fit + rep + Math.random() * 120, bi, li, dj]);
+        })));
+        cand.sort((x, y) => x[0] - y[0]);
+        const pool = cand.slice(0, 6), pick = pool[Math.floor(Math.random() * pool.length)] || [0, 0, Math.min(1, n - 1), 0];
+        const [, bi, li, dj] = pick;
+        uses[bi]++; uses[li]++; uses[dj]++; prev = new Set([bi, li, dj]);
+        plan[day] = { breakfast: recipes[bi].id, lunch: recipes[li].id, dinner: recipes[dj].id };
+        total += cals[bi] + cals[li] + cals[dj];
       });
-      return { plan, avg: Math.round(total / days.length), distinct: uses.filter(u => u > 0).length };
+      const ordered = {}; days.forEach(d => ordered[d] = plan[d]);
+      return { plan: ordered, avg: Math.round(total / days.length), distinct: uses.filter(u => u > 0).length };
     }
 
     function setPriceStore(mode) {
@@ -5054,7 +5102,7 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
         saveCalorieTarget(target);
         const result = buildCalorieTargetPlan(recipes, target);
         AppState.setPlanner(result.plan);
-        showToast(`Planned 7 days using ${result.distinct} recipes · avg ${result.avg} kcal/day (target ${target})` + (recipes.length < 8 ? ` — you only have ${recipes.length} recipes, so meals repeat. Add more recipes for more variety` : ''), '✨');
+        showToast(`Planned 7 days using ${result.distinct} recipes · avg ${result.avg} kcal/day (target ${target})` + (recipes.length < 12 ? ` — you only have ${recipes.length} recipes, so meals repeat. Add more recipes for more variety` : ''), '✨');
       });
 
       on('btnCheckoutCartToPantry', 'click', () => {
