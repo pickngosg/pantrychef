@@ -1,0 +1,24 @@
+name: Build styles
+on:
+  push:
+    branches: [main, master]
+    paths: ['index.html', 'tailwind.config.js', 'tailwind-input.css']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build the styles
+        run: npx --yes tailwindcss@3.4.17 -c tailwind.config.js -i tailwind-input.css -o tailwind.css --minify
+      - name: Save the result
+        run: |
+          git config user.name "pantrychef-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add tailwind.css
+          git diff --cached --quiet || (git commit -m "Update styles" && git push)
