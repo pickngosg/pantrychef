@@ -3081,15 +3081,24 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         if (!r) return;
         const scale = this.currentPax / (r.servings || 2);
         const updated = [...AppState.state.pantry];
-        let rescued = 0, rescuedValue = 0;
+        let rescued = 0, rescuedValue = 0; const used = [], missing = [];
         (r.ingredients || []).forEach(ing => {
           const reqQty = (parseFloat(ing.qty) || 0) * scale;
           const idx = findPantryIndex(ing.name, updated);
-          if (idx === -1) return;
+          if (idx === -1) { if (reqQty > 0) missing.push(ing.name); return; }
           const p = updated[idx];
           // Convert the required amount into the pantry item's own unit (e.g. 300 g -> 0.3 kg)
-          const converted = UnitNormalizer.convert(reqQty, ing.unit, p.unit);
+          let converted = UnitNormalizer.convert(reqQty, ing.unit, p.unit);
+          if (converted === null) {
+            // Different kinds of unit (spoons vs grams, grams vs pieces): use a sensible rule of thumb so the pantry still goes down
+            const a = UnitNormalizer.toBase(reqQty, ing.unit), b = UnitNormalizer.toBase(1, p.unit);
+            const PIECE_G = 150;   // one piece of fruit/veg is roughly 150 g
+            if (a.type !== 'count' && b.type !== 'count') converted = a.val / (b.val || 1);                    // spoons/ml <-> grams: about 1 g per ml
+            else if (a.type !== 'count' && b.type === 'count') converted = Math.max(0.25, Math.round(a.val / PIECE_G * 4) / 4);   // grams -> pieces
+            else if (a.type === 'count' && b.type !== 'count') converted = (a.val * PIECE_G) / (b.val || 1);   // pieces -> grams
+          }
           const deduction = converted !== null ? converted : reqQty;
+          if (reqQty > 0) used.push(p.name);
           const remaining = Math.max(0, Math.round((p.qty - deduction) * 1000) / 1000);
           // Food saved: it was still good but close to its date (0-3 days left) and now got cooked
           const dl = daysLeftOf(p.expiryDate);
@@ -3109,7 +3118,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         intake.meals = [{ title: r.title, cal: r.cal || 450, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }, ...(intake.meals || [])];
         AppState.setDailyIntake(intake);
         soundEngine.playChime();
-        showToast(`Cooked ${r.title}! Pantry deducted & full macros logged.`, '🍲');
+        showToast(`Cooked ${r.title}! Used ${used.length} pantry item${used.length === 1 ? '' : 's'}` + (missing.length ? `. Not in your pantry: ${missing.slice(0, 4).join(', ')}${missing.length > 4 ? '…' : ''}` : '.'), '🍲');
         this.close();
       }
     }
