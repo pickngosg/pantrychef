@@ -3572,8 +3572,18 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         doc.querySelectorAll('script, style, nav, footer, header, aside, noscript').forEach(el => el.remove());
         const cardEl = doc.querySelector('.wprm-recipe-container, .tasty-recipes, .mv-create-card, [itemtype*="Recipe"], .recipe-card');
         const mainEl = cardEl || doc.querySelector('article, main') || doc.body;
-        const pageTitle = (doc.querySelector('h1')?.textContent || doc.title || '').trim();
-        const rawText = (pageTitle ? pageTitle + '\n' : '') + (mainEl ? mainEl.innerText : '');
+        const pageTitle = (doc.querySelector('h1')?.textContent || doc.querySelector('meta[property="og:title"]')?.getAttribute('content') || doc.title || '').replace(/\s+/g, ' ').trim();
+        // A page that is not on screen has no line breaks in innerText, so put them in ourselves (one line per paragraph, heading, list item) and keep the pictures.
+        if (mainEl) {
+          mainEl.querySelectorAll('img').forEach(im => {
+            const src = im.getAttribute('data-src') || im.getAttribute('data-lazy-src') || im.getAttribute('src') || '';
+            if (/^(https?:)?\/\/|^\//.test(src)) im.replaceWith(doc.createTextNode('\n![' + (im.getAttribute('alt') || '').replace(/[\[\]\n]/g, ' ') + '](' + (src.startsWith('//') ? 'https:' + src : src) + ')\n'));
+          });
+          mainEl.querySelectorAll('br').forEach(b => b.replaceWith(doc.createTextNode('\n')));
+          mainEl.querySelectorAll('p,div,li,h1,h2,h3,h4,h5,h6,tr,section,ul,ol,dt,dd,figure,figcaption,blockquote').forEach(b => { b.prepend(doc.createTextNode('\n')); b.append(doc.createTextNode('\n')); });
+        }
+        const bodyText = (mainEl ? mainEl.textContent : '').replace(/[ \t\u00a0]+/g, ' ').replace(/\n\s*\n+/g, '\n');
+        const rawText = (pageTitle ? 'Title: ' + pageTitle + '\n' : '') + bodyText;
         return this.parseRawRecipeText(rawText, false, sourceUrl);
       }
 
@@ -3596,7 +3606,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           const html = await fetcher();
           if (!html || html.length < 300 || blocked(html)) throw new Error('blocked');
           const ext = this.extractRecipeFromHtml(html, url);
-          if (!ext || ext.ingredients.length < 2 || ext.steps.length === 0) throw new Error('no recipe');
+          if (!ext || ext.ingredients.length < 2 || ext.steps.length === 0 || (ext.steps.length === 1 && /^Cook and prepare according/.test(ext.steps[0]))) throw new Error('no recipe');
           return ext;
         };
         // Our own Supabase page-fetcher comes first (reliable); the free public go-betweens are the backup.
@@ -3632,7 +3642,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
             const text = await (await fetchWithTimeout('https://r.jina.ai/' + url, 15000)).text();
             if (!text || blocked(text)) throw new Error('blocked');
             const ext = this.parseRawRecipeText(text, false, url);
-            if (!ext || ext.ingredients.length < 2 || ext.steps.length === 0) throw new Error('no recipe');
+            if (!ext || ext.ingredients.length < 2 || ext.steps.length === 0 || (ext.steps.length === 1 && /^Cook and prepare according/.test(ext.steps[0]))) throw new Error('no recipe');
             ext.sourceBadge = 'Reader Mode';
             return ext;
           }
