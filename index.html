@@ -798,7 +798,7 @@
   <div id="resetPwModal" class="fixed inset-0 z-[80] bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-6">
     <div class="w-full sm:max-w-md bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-4 text-lg text-slate-700 dark:text-slate-200">
       <h3 class="font-display font-extrabold text-2xl text-slate-900 dark:text-white">Choose a new password</h3>
-      <p class="text-base">Type a new password you will remember (at least 6 characters).</p>
+      <p class="text-base">Type a new password you will remember (at least 8 characters).</p>
       <input id="resetPwInput" type="password" autocomplete="new-password" aria-label="New password" class="w-full px-5 py-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-lg outline-none focus:ring-2 focus:ring-brand-500" />
       <div class="flex gap-3">
         <button type="button" id="btnResetPwCancel" class="flex-1 py-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800 font-bold">Not now</button>
@@ -873,7 +873,8 @@
         <li class="flex items-start gap-3">🧾 <span><b>60</b> receipt scans a month</span></li>
         <li class="flex items-start gap-3">📖 <span><b>Unlimited</b> saved recipes</span></li>
       </ul>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <p id="paywallAppNote" class="hidden text-base rounded-2xl bg-slate-100 dark:bg-slate-800 p-4 text-slate-600 dark:text-slate-300">Plus can't be bought inside this app. If you already have Plus, sign in with the same email and it unlocks here.</p>
+      <div id="paywallBuy" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <button type="button" id="btnUpgradeYear" class="p-5 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white text-left shadow-sm">
           <span class="block text-sm font-bold opacity-90">BEST VALUE</span>
           <span class="block font-display font-extrabold text-3xl">S$29.90</span>
@@ -1039,7 +1040,7 @@
           </ul>
         </div>
         <input id="syncEmail" type="email" placeholder="Email" class="w-full px-4 py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500" />
-        <input id="syncPassword" type="password" placeholder="Password (min 6 characters)" class="w-full px-4 py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500" />
+        <input id="syncPassword" type="password" placeholder="Password (at least 8 characters)" class="w-full px-4 py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500" />
         <button id="btnSyncSignIn" class="w-full py-4 text-lg rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">Sign in</button>
         <div class="flex items-center justify-between gap-3 text-base">
           <button id="btnSyncSignUp" type="button" class="font-bold text-brand-600 dark:text-brand-400 underline py-1">New here? Create account</button>
@@ -2083,7 +2084,8 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         if (!this.sb) return showToast('Cloud sync is not set up yet', '⚠️');
         const email = document.getElementById('syncEmail').value.trim();
         const password = document.getElementById('syncPassword').value;
-        if (!email || password.length < 6) return showToast('Enter email and a 6+ character password', '⚠️');
+        if (!email || !password) return showToast('Enter your email and password', '⚠️');
+        if (mode === 'up' && password.length < 8) return showToast('Choose a password with at least 8 characters', '⚠️');
         const { data, error } = mode === 'up' ? await this.sb.auth.signUp({ email, password }) : await this.sb.auth.signInWithPassword({ email, password });
         if (error) return showToast(error.message, '⚠️');
         if (!data.session) return showToast('Check your email to confirm, then sign in', '📧');
@@ -2106,7 +2108,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         document.getElementById('btnResetPwCancel')?.addEventListener('click', () => rpm.classList.add('hidden'));
         document.getElementById('btnResetPwSave')?.addEventListener('click', async () => {
           const pw = document.getElementById('resetPwInput').value;
-          if (pw.length < 6) return showToast('Use at least 6 characters', '⚠️');
+          if (pw.length < 8) return showToast('Use at least 8 characters', '⚠️');
           const { error } = await this.sb.auth.updateUser({ password: pw });
           if (error) return showToast(error.message, '⚠️');
           document.getElementById('resetPwInput').value = ''; rpm.classList.add('hidden'); showToast('Password changed', '✅');
@@ -3713,10 +3715,16 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           }
           document.getElementById('btnLoadDemoKitchenData')?.classList.toggle('hidden', i.plan !== 'owner');
         }
-        document.getElementById('btnPlanUpgrade')?.classList.toggle('hidden', this.isPlus());
-        document.getElementById('btnPlanManage')?.classList.toggle('hidden', !(i.plan === 'plus' && MANAGE_SUBSCRIPTION_URL));
+        document.getElementById('btnPlanUpgrade')?.classList.toggle('hidden', this.isPlus() || this.inApp());
+        document.getElementById('btnPlanManage')?.classList.toggle('hidden', !(i.plan === 'plus' && MANAGE_SUBSCRIPTION_URL && !this.inApp()));
         const chip = document.getElementById('navPlanChip');
-        if (chip) { const sp = chip.querySelector('span:last-child'); if (sp) sp.textContent = i.plan === 'owner' ? 'Owner · full access' : i.plan === 'plus' ? 'Plus plan' : 'Free plan · Upgrade'; }
+        if (chip) { const sp = chip.querySelector('span:last-child'); if (sp) sp.textContent = i.plan === 'owner' ? 'Owner · full access' : i.plan === 'plus' ? 'Plus plan' : (this.inApp() ? 'Free plan' : 'Free plan · Upgrade'); }
+      },
+      inApp() {
+        try {
+          if (/[?&]app=1\b/.test(location.search) || document.referrer.startsWith('android-app://')) localStorage.setItem('pcsg_inapp', '1');
+          return localStorage.getItem('pcsg_inapp') === '1';
+        } catch (e) { return false; }
       },
       showPaywall(reason) {
         const i = this.info;
@@ -3728,6 +3736,9 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           recipes: `The free plan keeps up to ${FREE_RECIPE_LIMIT} of your own recipes.`
         }[reason] || 'Unlock everything with Plus.';
         const r = document.getElementById('paywallReason'); if (r) r.textContent = text;
+        const app = this.inApp();
+        document.getElementById('paywallBuy')?.classList.toggle('hidden', app);
+        document.getElementById('paywallAppNote')?.classList.toggle('hidden', !app);
         document.getElementById('paywallModal')?.classList.remove('hidden');
       },
       hidePaywall() { document.getElementById('paywallModal')?.classList.add('hidden'); },
