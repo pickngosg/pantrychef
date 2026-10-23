@@ -1064,6 +1064,7 @@
           </div>
           <p class="text-sm text-slate-500 dark:text-slate-400 mt-1.5">Shown in the greeting on your home screen.</p>
         </div>
+        <div id="hhBox"></div>
         <div class="flex items-center gap-4">
           <button id="btnSyncNow" class="flex-1 py-4 text-lg rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">🔄 Sync now</button>
           <button id="btnSyncSignOut" type="button" class="px-3 py-3 text-base font-bold text-slate-500 dark:text-slate-400 underline">Sign out</button>
@@ -1973,13 +1974,14 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       status(m) { const s = document.getElementById('syncStatusLine'); if (s) s.textContent = m; const l = document.getElementById('lastSyncedTimestamp'); if (l) l.textContent = m; },
       markLocal(key) {
         if (this.applying || !SYNC_KEYS.includes(key)) return;
+        try { if (HH.owns(key)) { HH.touch(key); return; } } catch (e) {}
         localStorage.setItem('pcsg_ts_' + key, Date.now());
         this.setDirty([...this.dirty(), key]);
         if (this.ready) { clearTimeout(this.timer); this.timer = setTimeout(() => this.push(), 800); }
       },
       async push() {
         if (!this.ready || !this.user) return;
-        const keys = this.dirty(); if (!keys.length) return;
+        const keys = this.dirty().filter(k => { try { return !HH.owns(k); } catch (e) { return true; } }); if (!keys.length) return;
         const snap = {}, rows = [], empty = [];
         for (const k of keys) {
           snap[k] = this.ts(k);
@@ -2005,6 +2007,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         try {
           for (const r of data) {
             if (!SYNC_KEYS.includes(r.key) || r.value === null || r.value === undefined) continue;
+            try { if (HH.owns(r.key)) continue; } catch (e) {}
             const rts = new Date(r.updated_at).getTime();
             if (fresh || (rts > this.ts(r.key) && !dirty.includes(r.key))) {
               const cv = Safe.value(r.key, r.value); if (cv === undefined) continue;     // ignore wrongly shaped cloud data instead of crashing
@@ -2050,6 +2053,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         document.getElementById('accountDanger')?.classList.toggle('hidden', !on);
         try { Plan.load(); } catch (e) {}
         const e = document.getElementById('syncUserEmail'); if (e) e.textContent = this.user?.email || '';
+        try { HH.paint(); } catch (e3) {}
         try {
           const m = (this.user?.user_metadata?.nickname || '').toString().trim().slice(0, 20);
           if (m) localStorage.setItem('pcsg_nick', m);
@@ -2062,6 +2066,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         try { v ? localStorage.setItem('pcsg_nick', v) : localStorage.removeItem('pcsg_nick'); } catch (e) {}
         try { dashGreeting(); } catch (e) {}
         try { if (this.sb && this.user) await this.sb.auth.updateUser({ data: { nickname: v } }); } catch (e) {}
+        try { HH.setNick(); } catch (e) {}
         showToast(v ? 'Nice to meet you, ' + v + '!' : 'Name removed', '👋');
       },
       async afterLogin() {
@@ -2072,11 +2077,13 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           await Safety.snapshot('before switching accounts');
           this.applying = true;
           try { for (const k of SYNC_KEYS) await db.set(k, null); } finally { this.applying = false; }
-          Object.keys(localStorage).filter(k => k.startsWith('pcsg_ts_') || k === 'pcsg_dirty' || k.startsWith('pcsg_synced_')).forEach(k => localStorage.removeItem(k));
+          Object.keys(localStorage).filter(k => k.startsWith('pcsg_ts_') || k === 'pcsg_dirty' || k.startsWith('pcsg_synced_') || k.startsWith('pcsg_hhbase_') || k === 'pcsg_hh_me').forEach(k => localStorage.removeItem(k));
           await this.refreshUI();
         }
         try { localStorage.setItem('pcsg_owner_uid', this.user.id); } catch (e) {}
+        try { HH.restore(); await HH.load(); } catch (e) {}
         await this.pull(); this.ready = true; await this.push(); this.paintSafety();
+        try { await HH.tick(); } catch (e) {}
       },
       async paintSafety() {
         const sb = await Safety.info(); const row = document.getElementById('safetyRow'); if (!row) return;
@@ -2084,7 +2091,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         document.getElementById('safetyText').textContent = 'Your earlier data was saved on ' + new Date(sb.at).toLocaleString() + ' (' + sb.label + '). You can go back to it.';
         row.classList.remove('hidden');
       },
-      async tick() { if (this.user && this.ready) { await this.push(); await this.pull(); } },
+      async tick() { if (this.user && this.ready) { await this.push(); await this.pull(); try { await HH.tick(); } catch (e) {} } },
       async auth(mode) {
         if (!this.sb) return showToast('Cloud sync is not set up yet', '⚠️');
         const email = document.getElementById('syncEmail').value.trim();
@@ -2098,6 +2105,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         this.status('Syncing…'); await this.afterLogin(); showToast('Signed in – sync is on', '☁️');
       },
       async start() {
+        try { HH.start(); } catch (e) {}
         document.getElementById('btnSaveNick')?.addEventListener('click', () => this.saveNick());
         document.getElementById('nickInput')?.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); this.saveNick(); } });
         document.getElementById('btnSyncSignIn')?.addEventListener('click', () => this.auth('in'));
@@ -2122,7 +2130,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         document.getElementById('btnUndoSafety')?.addEventListener('click', async () => { if (await Safety.undo()) { showToast('Your earlier data is back', '↩️'); this.paintSafety(); } });
         document.getElementById('btnOpenDataBackupModal')?.addEventListener('click', () => this.paintSafety());
         document.getElementById('btnSyncNow')?.addEventListener('click', async () => { await this.tick(); showToast('Synced', '☁️'); });
-        document.getElementById('btnSyncSignOut')?.addEventListener('click', async () => { await this.sb.auth.signOut(); this.user = null; this.ready = false; this.renderAuth(); this.status('Signed out – data stays on this device'); });
+        document.getElementById('btnSyncSignOut')?.addEventListener('click', async () => { await this.sb.auth.signOut(); this.user = null; this.ready = false; try { HH.me = null; } catch (e) {} this.renderAuth(); this.status('Signed out – data stays on this device'); });
         if (!this.enabled()) { this.status('Cloud sync not set up (works offline on this device only)'); this.renderAuth(); return; }
         this.sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         this.sb.auth.onAuthStateChange((ev) => { if (ev === 'PASSWORD_RECOVERY') document.getElementById('resetPwModal')?.classList.remove('hidden'); });
@@ -2135,6 +2143,197 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         setInterval(() => { if (!document.hidden) this.tick(); }, 45000);
       }
     };
+    // ===== Household sharing: up to 10 people share one pantry, shopping list and recipes =====
+    const HH = {
+      KEYS: ['pantry', 'shoppingList', 'recipes'], me: null, busy: false, again: false, timer: null, n: 0, mem: {},
+      owns(k) { return !!this.me && this.KEYS.includes(k); },
+      nick() { try { return (localStorage.getItem('pcsg_nick') || '').trim() || (Sync.user && Sync.user.email ? Sync.user.email.split('@')[0] : '') ; } catch (e) { return ''; } },
+      saveMe() { try { if (this.me && Sync.user) localStorage.setItem('pcsg_hh_me', JSON.stringify({ uid: Sync.user.id, me: this.me })); else localStorage.removeItem('pcsg_hh_me'); } catch (e) {} },
+      restore() { try { const c = JSON.parse(localStorage.getItem('pcsg_hh_me') || 'null'); this.me = (c && Sync.user && c.uid === Sync.user.id) ? c.me : null; } catch (e) { this.me = null; } },
+      baseGet(k) { try { const r = localStorage.getItem('pcsg_hhbase_' + k); if (r) return JSON.parse(r); } catch (e) {} return this.mem[k] || null; },
+      baseSet(k, v) { this.mem[k] = v; try { localStorage.setItem('pcsg_hhbase_' + k, JSON.stringify(v)); } catch (e) {} },
+      baseClear() { this.mem = {}; try { Object.keys(localStorage).filter(k => k.startsWith('pcsg_hhbase_') || k === 'pcsg_hh_me').forEach(k => localStorage.removeItem(k)); } catch (e) {} },
+      err(e) {
+        const m = String((e && e.message) || e || '');
+        if (/already_member/.test(m)) return 'You are already in a household.';
+        if (/not_found/.test(m)) return 'That code was not found. Check it and try again.';
+        if (/full/.test(m)) return 'This household already has 10 people.';
+        if (/too_many/.test(m)) return 'Too many wrong codes. Please try again in an hour.';
+        if (/not_owner/.test(m)) return 'Only the household owner can do that.';
+        if (/too_big/.test(m)) return 'Your lists are too big to share. Please remove some old items.';
+        if (/not_signed_in/.test(m)) return 'Please sign in first.';
+        if (/function|schema cache|does not exist/i.test(m)) return 'Household sharing is not switched on yet (the setup file has not been run).';
+        return 'Something went wrong. Please try again.';
+      },
+      touch(k) { if (this.busy) { this.again = true; return; } clearTimeout(this.timer); this.timer = setTimeout(() => this.tick(), 1500); },
+      async load() {
+        if (!Sync.sb || !Sync.user) return;
+        const { data, error } = await Sync.sb.rpc('hh_me');
+        if (error) return;                       // offline or not set up: keep what we know
+        const had = this.me;
+        this.me = data || null; this.saveMe();
+        if (had && !this.me) {                   // we were removed: the lists stay on this device as our own
+          this.baseClear();
+          try { const t = Date.now(); this.KEYS.forEach(k => localStorage.setItem('pcsg_ts_' + k, t)); Sync.setDirty([...Sync.dirty(), ...this.KEYS]); } catch (e) {}
+          showToast('You are no longer in the household. Your lists stay on this device.', 'ℹ️');
+        }
+        this.paint();
+      },
+      async tick() {
+        if (!this.me || !Sync.user || !Sync.ready || this.busy) return;
+        this.busy = true; let changed = false;
+        try {
+          if ((this.n++ % 6) === 0) await this.load();
+          if (!this.me) return;
+          for (const k of this.KEYS) { if (await this.syncKey(k)) changed = true; }
+          if (changed) await Sync.refreshUI();
+          Sync.status('☁️ Household synced ' + new Date().toLocaleTimeString());
+        } catch (e) {} finally {
+          this.busy = false;
+          if (this.again) { this.again = false; this.timer = setTimeout(() => this.tick(), 800); }
+        }
+      },
+      // Merge one shared list item by item, so two people editing different things never overwrite each other
+      async syncKey(k) {
+        const rnd = () => 'hh_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+        for (let attempt = 0; attempt < 4; attempt++) {
+          const { data: got, error } = await Sync.sb.rpc('hh_get', { p_key: k });
+          if (error) throw error;
+          const ver = (got && got.version) || 0;
+          const remote = (got && got.value) || { items: [], stamps: {}, gone: {} };
+          const rItems = new Map((remote.items || []).map(i => [i.id, i]));
+          const stamps = Object.assign({}, remote.stamps), gone = Object.assign({}, remote.gone);
+          let local = await db.get(k, null); if (!Array.isArray(local)) local = null;
+          const base = this.baseGet(k);
+          const now = Date.now(); let dirtyRemote = false, fixedIds = false; const added = [];
+          if (local) {
+            local.forEach(it => { if (it && typeof it === 'object' && !it.id) { it.id = rnd(); fixedIds = true; } });
+            const bMap = new Map((base || []).map(i => [i.id, JSON.stringify(i)]));
+            const lIds = new Set();
+            for (const it of local) {
+              if (!it || typeof it !== 'object') continue;
+              lIds.add(it.id);
+              const js = JSON.stringify(it);
+              if (base) {
+                if (bMap.get(it.id) === js) continue;                           // not changed here
+                if (!rItems.has(it.id)) added.push(it); else rItems.set(it.id, it);
+                stamps[it.id] = now; delete gone[it.id]; dirtyRemote = true;
+              } else if (!rItems.has(it.id) && !gone[it.id]) {                  // first time: add what we have
+                added.push(it); stamps[it.id] = now; dirtyRemote = true;
+              }
+            }
+            if (base) for (const b of base) if (!lIds.has(b.id) && rItems.has(b.id)) {   // removed here
+              rItems.delete(b.id); delete stamps[b.id]; gone[b.id] = now; dirtyRemote = true;
+            }
+          }
+          const merged = [...added, ...rItems.values()];
+          Object.keys(gone).forEach(id => { if (now - gone[id] > 30 * 864e5) delete gone[id]; });
+          if (dirtyRemote) {
+            const { data: put, error: e2 } = await Sync.sb.rpc('hh_put', { p_key: k, p_value: { items: merged, stamps, gone }, p_base: ver });
+            if (e2) throw e2;
+            if (!put || !put.ok) continue;                                      // someone saved first: merge again
+          }
+          let changed = false;
+          if (fixedIds || JSON.stringify(merged) !== JSON.stringify(local || [])) {
+            if (local || merged.length) {
+              Sync.applying = true;
+              try { await db.set(k, merged); } finally { Sync.applying = false; }
+              changed = true;
+            }
+          }
+          this.baseSet(k, merged);
+          return changed;
+        }
+        return false;
+      },
+      async create() {
+        const name = (document.getElementById('hhNameInput')?.value || '').trim();
+        const { data, error } = await Sync.sb.rpc('hh_create', { p_name: name, p_nick: this.nick() });
+        if (error) return showToast(this.err(error), '⚠️');
+        this.me = data; this.saveMe(); this.baseClear(); this.saveMe(); this.paint();
+        showToast('Household created. Share the code with your family.', '👨‍👩‍👧');
+        await this.tick();
+      },
+      async join() {
+        const code = (document.getElementById('hhCodeInput')?.value || '').trim().toUpperCase();
+        if (code.length < 6) return showToast('Type the code you were given', '⚠️');
+        const { data, error } = await Sync.sb.rpc('hh_join', { p_code: code, p_nick: this.nick() });
+        if (error) return showToast(this.err(error), '⚠️');
+        let mine = 0; for (const k of this.KEYS) { const v = await db.get(k, []); mine += Array.isArray(v) ? v.length : 0; }
+        let add = true;
+        if (mine) add = confirm('Add your own pantry items, shopping list and recipes to the household?\n\nOK = add them\nCancel = start with the household\'s lists only (your own are kept as a backup)');
+        try { await Safety.snapshot('before joining a household'); } catch (e) {}
+        if (!add) { Sync.applying = true; try { for (const k of this.KEYS) await db.set(k, []); } finally { Sync.applying = false; } }
+        this.baseClear(); this.me = data; this.saveMe(); this.paint();
+        showToast('You joined ' + (data && data.name ? data.name : 'the household'), '👨‍👩‍👧');
+        await this.tick();
+      },
+      async leave() {
+        if (!confirm('Leave this household? You keep a copy of the lists on this device, but they will no longer be shared.')) return;
+        const { error } = await Sync.sb.rpc('hh_leave');
+        if (error) return showToast(this.err(error), '⚠️');
+        this.me = null; this.baseClear();
+        try { const t = Date.now(); this.KEYS.forEach(k => localStorage.setItem('pcsg_ts_' + k, t)); Sync.setDirty([...Sync.dirty(), ...this.KEYS]); } catch (e) {}
+        this.paint(); showToast('You left the household', '👋'); Sync.push();
+      },
+      async kick(uid) {
+        if (!confirm('Remove this person from the household?')) return;
+        const { error } = await Sync.sb.rpc('hh_kick', { p_user: uid });
+        if (error) return showToast(this.err(error), '⚠️');
+        await this.load(); showToast('Removed', '✅');
+      },
+      async newCode() {
+        if (!confirm('Make a new code? The old code will stop working. People already in the household stay.')) return;
+        const { data, error } = await Sync.sb.rpc('hh_new_code');
+        if (error) return showToast(this.err(error), '⚠️');
+        this.me = data; this.saveMe(); this.paint(); showToast('New code ready', '🔑');
+      },
+      async setNick() { try { if (this.me && Sync.sb) await Sync.sb.rpc('hh_set_nick', { p_nick: this.nick() }); } catch (e) {} },
+      paint() {
+        const box = document.getElementById('hhBox'); if (!box) return;
+        if (!Sync.user) { box.innerHTML = ''; return; }
+        const me = this.me;
+        const inp = 'w-full min-w-0 px-4 py-3.5 text-lg rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white';
+        const btn = 'px-5 py-3.5 text-base rounded-xl font-bold';
+        if (!me) {
+          box.innerHTML = `<div class="rounded-2xl border border-slate-200 dark:border-slate-700 p-4 space-y-4">
+            <div><div class="text-lg font-black text-slate-900 dark:text-white">👨‍👩‍👧 Share with your family</div>
+            <p class="text-base text-slate-600 dark:text-slate-300 mt-1">Up to 10 people can share one pantry, shopping list and recipes.</p></div>
+            <div><label for="hhNameInput" class="block text-base font-bold text-slate-700 dark:text-slate-200 mb-1.5">Start a household</label>
+              <input id="hhNameInput" type="text" maxlength="40" placeholder="Name, for example The Tan Family" class="${inp}">
+              <button type="button" data-hh="create" class="${btn} mt-2 w-full bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">Create household</button></div>
+            <div class="border-t border-slate-200 dark:border-slate-700 pt-4"><label for="hhCodeInput" class="block text-base font-bold text-slate-700 dark:text-slate-200 mb-1.5">Or join one with a code</label>
+              <div class="flex gap-2"><input id="hhCodeInput" type="text" maxlength="8" autocapitalize="characters" autocomplete="off" placeholder="8-letter code" class="${inp} uppercase tracking-widest">
+              <button type="button" data-hh="join" class="${btn} bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-100">Join</button></div></div></div>`;
+          return;
+        }
+        const members = (me.members || []);
+        const isOwner = Sync.user && me.owner_id === Sync.user.id;
+        const msg = encodeURIComponent('Join our household on PantryChef SG! Open https://pickngosg.github.io/pantrychef/ , sign in, go to Backup & Sync, and enter this code: ' + me.code);
+        box.innerHTML = `<div class="rounded-2xl border border-slate-200 dark:border-slate-700 p-4 space-y-4">
+          <div><div class="text-lg font-black text-slate-900 dark:text-white">👨‍👩‍👧 ${esc(me.name)}</div>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">${members.length} of ${me.max || 10} people. Your pantry, shopping list and recipes are shared. Everything else stays private to you.</p></div>
+          <div class="space-y-2">${members.map(m => `<div class="flex items-center justify-between gap-2 py-1.5"><span class="text-base font-bold text-slate-800 dark:text-slate-100 min-w-0 truncate">${esc(m.nick || 'Member')}${Sync.user && m.user_id === Sync.user.id ? ' <span class="text-sm font-semibold text-slate-400">(you)</span>' : ''}${m.owner ? ' <span class="text-xs font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">Owner</span>' : ''}</span>${isOwner && !(Sync.user && m.user_id === Sync.user.id) ? `<button type="button" data-hh="kick" data-uid="${esc(m.user_id)}" class="text-sm font-bold text-rose-500 underline flex-shrink-0">Remove</button>` : ''}</div>`).join('')}</div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-center"><div class="text-sm font-bold text-slate-500 dark:text-slate-400">Invite code</div>
+            <div class="text-3xl font-black tracking-[0.25em] text-slate-900 dark:text-white mt-1 select-all">${esc(me.code)}</div>
+            <div class="grid grid-cols-2 gap-2 mt-3"><button type="button" data-hh="copy" class="${btn} bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-100">Copy code</button>
+            <a href="https://wa.me/?text=${msg}" target="_blank" rel="noopener" class="${btn} bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 text-center">Send on WhatsApp</a></div></div>
+          <div class="flex items-center justify-between gap-3">${isOwner ? `<button type="button" data-hh="newcode" class="text-sm font-bold text-slate-500 dark:text-slate-400 underline">Make a new code</button>` : '<span></span>'}
+            <button type="button" data-hh="leave" class="text-sm font-bold text-rose-500 underline">Leave household</button></div></div>`;
+      },
+      start() {
+        document.getElementById('hhBox')?.addEventListener('click', (ev) => {
+          const b = ev.target.closest('[data-hh]'); if (!b) return;
+          const a = b.dataset.hh;
+          if (a === 'create') this.create(); else if (a === 'join') this.join(); else if (a === 'leave') this.leave();
+          else if (a === 'kick') this.kick(b.dataset.uid); else if (a === 'newcode') this.newCode();
+          else if (a === 'copy') { try { navigator.clipboard.writeText(this.me.code); showToast('Code copied', '📋'); } catch (e) { showToast('Code: ' + this.me.code, '📋'); } }
+        });
+        document.getElementById('hhBox')?.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' && ev.target.id === 'hhCodeInput') { ev.preventDefault(); this.join(); } });
+        setInterval(() => { if (!document.hidden && this.me) this.tick(); }, 20000);
+      }
+    };
+
     if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch((err) => console.warn('SW registration failed:', err)));
 
 
