@@ -214,6 +214,7 @@
         <div id="remindRow" class="hidden mb-3 flex flex-wrap items-center gap-2.5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 px-4 py-3">
           <span class="text-base font-bold text-amber-900 dark:text-amber-200 flex-1 min-w-[200px]" id="remindText">Want a daily nudge before food goes off?</span>
           <button id="btnRemindOn" type="button" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-base">🔔 Remind me</button>
+          <label id="remindTimeWrap" class="hidden flex items-center gap-2 text-base font-bold text-amber-900 dark:text-amber-200">Time <input id="remindTime" type="time" value="08:00" class="px-3 py-2 rounded-xl border border-amber-300 dark:border-amber-800 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-base font-bold"></label>
           <button id="btnRemindOff" type="button" class="hidden px-4 py-2.5 rounded-xl bg-white/80 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-base border border-slate-300 dark:border-slate-600">Turn off</button>
         </div>
         <div id="dashboardExpiringList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"></div>
@@ -4606,7 +4607,9 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
     });
 
     const Remind = {
-      KEY: 'pcsg_remind', DAY: 'pcsg_remind_day', HOUR: 8,
+      KEY: 'pcsg_remind', DAY: 'pcsg_remind_day', TIME: 'pcsg_remind_time',
+      time() { try { const t = localStorage.getItem(this.TIME); return /^\d{2}:\d{2}$/.test(t || '') ? t : '08:00'; } catch (e) { return '08:00'; } },
+      pretty() { const [h, m] = this.time().split(':').map(Number); return ((h % 12) || 12) + ':' + String(m).padStart(2, '0') + (h < 12 ? ' am' : ' pm'); },
       supported() { return typeof Notification !== 'undefined'; },
       isOn() { try { return localStorage.getItem(this.KEY) === '1' && this.supported() && Notification.permission === 'granted'; } catch (e) { return false; } },
       paint() {
@@ -4617,11 +4620,13 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         row.classList.remove('hidden');
         document.getElementById('remindText').textContent = denied
           ? '🔕 Reminders are blocked on this phone. Open Settings > Apps > PantryChef > Notifications and switch them on, then tap "Check again".'
-          : on ? '🔔 Daily reminder is on (around 8am, only when something needs using up).' : 'Want a daily nudge before food goes off?';
+          : on ? '🔔 Daily reminder is on for ' + this.pretty() + ' (only when something needs using up).' : 'Want a daily nudge before food goes off?';
         const bOn = document.getElementById('btnRemindOn');
         bOn.textContent = denied ? '🔄 Check again' : '🔔 Remind me';
         bOn.classList.toggle('hidden', on);
         document.getElementById('btnRemindOff').classList.toggle('hidden', !on);
+        document.getElementById('remindTimeWrap').classList.toggle('hidden', !on);
+        const ti = document.getElementById('remindTime'); if (ti && document.activeElement !== ti) ti.value = this.time();
       },
       async turnOn() {
         try {
@@ -4637,7 +4642,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           if (!this.isOn()) return;
           const now = new Date(), today = now.toDateString();
           if (localStorage.getItem(this.DAY) === today) return;
-          if (!force && now.getHours() < this.HOUR) return;
+          if (!force) { const [th, tm] = this.time().split(':').map(Number); if (now.getHours() * 60 + now.getMinutes() < th * 60 + tm) return; }
           const soon = (AppState.state.pantry || []).map(i => ({ n: i.name, d: daysLeftOf(i.expiryDate) })).filter(x => x.d <= 2).sort((a, b) => a.d - b.d);
           if (!soon.length) return;
           const names = soon.slice(0, 3).map(x => x.n).join(', ') + (soon.length > 3 ? ' and ' + (soon.length - 3) + ' more' : '');
@@ -4653,6 +4658,11 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       init() {
         document.getElementById('btnRemindOn')?.addEventListener('click', () => this.turnOn());
         document.getElementById('btnRemindOff')?.addEventListener('click', () => this.turnOff());
+        document.getElementById('remindTime')?.addEventListener('change', (ev) => {
+          const v = ev.target.value; if (!/^\d{2}:\d{2}$/.test(v)) return;
+          try { localStorage.setItem(this.TIME, v); localStorage.removeItem(this.DAY); } catch (e) {}
+          this.paint(); showToast('Reminder set for ' + this.pretty(), '⏰');
+        });
         document.addEventListener('visibilitychange', () => { if (!document.hidden) { this.paint(); this.check(false); } });
         setInterval(() => this.check(false), 15 * 60 * 1000);
         this.paint(); setTimeout(() => this.check(false), 4000);
