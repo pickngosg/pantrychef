@@ -2523,7 +2523,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           const token = data && data.session && data.session.access_token;
           if (!token) { showToast('Please sign in first. Tap the cloud icon at the top.', '⚠️'); return null; }
           const st = AppState.state;
-          const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), 70000);
+          const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), 100000);
           let res;
           try {
             res = await fetch(SUPABASE_URL + '/functions/v1/scan-photo', {
