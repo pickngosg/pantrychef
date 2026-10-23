@@ -3024,7 +3024,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         if (servingsInput) servingsInput.value = (r && r.servings) ? r.servings : 2;
         { const ac = document.getElementById('editorAutoNutrition'); if (ac) ac.checked = !recipeId || (r && r.nutritionSource === 'auto'); const nn = document.getElementById('editorNutritionNote'); if (nn) nn.textContent = ''; }
         const setV = (id, v) => { document.getElementById(id).value = v; };
-        this.moreOpen = null;
+        this.tagOpen = false; this.tagQuery = '';
         this.tags = new Set(r ? recipeTags(r) : []);
         if (!this.tags.size) this.tags.add(AppState.state.categories[0]);
         this.renderTags();
@@ -3106,30 +3106,74 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         container.appendChild(row);
       }
 
+      // Tag picker: one tidy field that shows the chosen tags; tap it to open a short searchable list with tick boxes
       renderTags() {
         const box = document.getElementById('editorRecipeTags');
         if (!box) return;
         if (!this.tags) this.tags = new Set();
-        const MEALS = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Dessert'], MAINS = ['Beef', 'Chicken', 'Seafood', 'Vegetarian'];
-        const all = Array.from(new Set([...AppState.state.categories, ...this.tags]));
-        const meals = MEALS.filter(t => all.includes(t)), mains = MAINS.filter(t => all.includes(t));
-        const more = all.filter(t => !MEALS.includes(t) && !MAINS.includes(t));
-        const moreChosen = more.filter(t => this.tags.has(t)).length;
-        if (this.moreOpen === undefined || this.moreOpen === null) this.moreOpen = moreChosen > 0;
-        const pill = (c) => {
-          const on = this.tags.has(c);
-          return `<button type="button" data-tag="${esc(c)}" aria-pressed="${on}" class="px-3.5 py-2 rounded-full text-[15px] font-semibold border transition ${on ? 'bg-brand-500 text-white border-brand-500 shadow-sm' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-500'}">${on ? '✓ ' : ''}${esc(c)}</button>`;
-        };
-        const group = (label, list) => list.length ? `<div><div class="text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">${label}</div><div class="flex flex-wrap gap-1.5">${list.map(pill).join('')}</div></div>` : '';
-        box.innerHTML = group('Meal', meals) + group('Main ingredient', mains)
-          + (more.length ? `<div><button type="button" data-more="1" class="text-sm font-bold text-brand-600 dark:text-brand-400">${this.moreOpen ? '▾ Fewer tags' : '▸ More tags (' + more.length + ')' + (moreChosen ? ' · ' + moreChosen + ' chosen' : '')}</button>${this.moreOpen ? `<div class="flex flex-wrap gap-1.5 mt-2">${more.map(pill).join('')}</div>` : ''}</div>` : '');
+        const chosen = Array.from(this.tags);
+        const field = chosen.length
+          ? chosen.map(t => `<span class="inline-flex items-center gap-1.5 pl-3 pr-1.5 py-1 rounded-full bg-brand-500 text-white text-[15px] font-semibold">${esc(t)}<span role="button" tabindex="0" data-rmtag="${esc(t)}" aria-label="Remove ${esc(t)}" class="w-6 h-6 rounded-full bg-white/25 hover:bg-white/40 flex items-center justify-center text-xs leading-none">✕</span></span>`).join('')
+          : '<span class="text-slate-400 text-base">Choose tags…</span>';
+        box.innerHTML = `
+          <div data-field role="button" tabindex="0" aria-expanded="${!!this.tagOpen}" class="w-full min-h-[48px] px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border ${this.tagOpen ? 'border-brand-500 ring-2 ring-brand-500/30' : 'border-slate-300 dark:border-slate-700'} flex items-center gap-1.5 flex-wrap cursor-pointer">
+            ${field}<span class="ml-auto text-slate-400 text-sm pl-2">${this.tagOpen ? '▴' : '▾'}</span>
+          </div>
+          ${this.tagOpen ? `<div class="mt-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg p-2.5">
+            <input id="editorTagSearch" type="text" autocomplete="off" placeholder="Search, or type a new tag" value="${esc(this.tagQuery || '')}" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-base text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
+            <div id="editorTagOptions" class="max-h-60 overflow-y-auto mt-2"></div>
+            <button type="button" data-done class="w-full mt-2 py-2.5 rounded-xl bg-brand-500 text-white font-bold text-base">Done</button>
+          </div>` : ''}`;
+        if (this.tagOpen) this.renderTagOptions();
         box.onclick = (e) => {
-          if (e.target.closest('[data-more]')) { this.moreOpen = !this.moreOpen; this.renderTags(); return; }
-          const b = e.target.closest('[data-tag]'); if (!b) return;
-          const t = b.getAttribute('data-tag');
-          if (this.tags.has(t)) this.tags.delete(t); else this.tags.add(t);
-          this.renderTags();
+          const rm = e.target.closest('[data-rmtag]');
+          if (rm) { this.tags.delete(rm.getAttribute('data-rmtag')); this.renderTags(); return; }
+          if (e.target.closest('[data-done]')) { this.tagOpen = false; this.tagQuery = ''; this.renderTags(); return; }
+          if (e.target.closest('[data-field]')) { this.tagOpen = !this.tagOpen; this.tagQuery = ''; this.renderTags(); if (this.tagOpen) { const i = document.getElementById('editorTagSearch'); if (i) i.focus(); } return; }
+          const c = e.target.closest('[data-create]');
+          if (c) { this.createTag(c.getAttribute('data-create')); return; }
+          const o = e.target.closest('[data-tag]');
+          if (o) { const t = o.getAttribute('data-tag'); if (this.tags.has(t)) this.tags.delete(t); else this.tags.add(t); this.renderTags(); }
         };
+        box.oninput = (e) => { if (e.target.id === 'editorTagSearch') { this.tagQuery = e.target.value; this.renderTagOptions(); } };
+        box.onkeydown = (e) => {
+          if (e.target.id === 'editorTagSearch' && e.key === 'Enter') {
+            e.preventDefault();
+            const q = (this.tagQuery || '').trim(); if (!q) return;
+            const hit = AppState.state.categories.find(c => c.toLowerCase() === q.toLowerCase());
+            if (hit) { this.tags.add(hit); this.tagQuery = ''; this.renderTags(); const i = document.getElementById('editorTagSearch'); if (i) i.focus(); } else this.createTag(q);
+          } else if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[data-field]')) { e.preventDefault(); e.target.click(); }
+        };
+      }
+
+      renderTagOptions() {
+        const el = document.getElementById('editorTagOptions');
+        if (!el) return;
+        const q = (this.tagQuery || '').trim().toLowerCase();
+        const MEALS = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Dessert'], MAINS = ['Beef', 'Chicken', 'Seafood', 'Vegetarian'];
+        const all = Array.from(new Set([...AppState.state.categories, ...this.tags])).filter(t => !q || t.toLowerCase().includes(q));
+        const row = (t) => {
+          const on = this.tags.has(t);
+          return `<button type="button" data-tag="${esc(t)}" role="checkbox" aria-checked="${on}" class="w-full flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-left text-base hover:bg-slate-50 dark:hover:bg-slate-800 ${on ? 'font-bold text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-200'}"><span class="w-6 h-6 flex-shrink-0 rounded-md border-2 flex items-center justify-center text-sm ${on ? 'bg-brand-500 border-brand-500 text-white' : 'border-slate-300 dark:border-slate-600'}">${on ? '✓' : ''}</span>${esc(t)}</button>`;
+        };
+        const grp = (label, list) => list.length ? `<div class="px-2.5 pt-2 pb-1 text-[11px] uppercase tracking-wider font-bold text-slate-400">${label}</div>${list.map(row).join('')}` : '';
+        const meals = all.filter(t => MEALS.includes(t)), mains = all.filter(t => MAINS.includes(t)), rest = all.filter(t => !MEALS.includes(t) && !MAINS.includes(t));
+        let html = grp('Meal', meals) + grp('Main ingredient', mains) + grp(meals.length || mains.length ? 'Style & other' : 'Tags', rest);
+        const exact = AppState.state.categories.some(c => c.toLowerCase() === q);
+        if (q && !exact) html += `<button type="button" data-create="${esc((this.tagQuery || '').trim())}" class="w-full flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-left text-base font-bold text-brand-600 dark:text-brand-400 hover:bg-slate-50 dark:hover:bg-slate-800"><span class="w-6 h-6 flex items-center justify-center">＋</span>Create “${esc((this.tagQuery || '').trim())}”</button>`;
+        if (!html) html = '<div class="px-2.5 py-3 text-slate-400 text-base">No tags yet. Type a name to create one.</div>';
+        el.innerHTML = html;
+      }
+
+      createTag(name) {
+        name = String(name || '').trim().slice(0, 30);
+        if (!name) return;
+        const hit = AppState.state.categories.find(c => c.toLowerCase() === name.toLowerCase());
+        if (!hit) AppState.setCategories([...AppState.state.categories, name]);
+        this.tags.add(hit || name);
+        this.tagQuery = '';
+        this.renderTags();
+        const i = document.getElementById('editorTagSearch'); if (i) i.focus();
       }
 
       saveRecipe() {
