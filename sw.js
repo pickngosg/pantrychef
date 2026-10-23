@@ -1,8 +1,8 @@
-/* PantryChef SG Pro - service worker (v6)
+/* PantryChef SG Pro - service worker (v7)
    - Opens instantly and works offline (app + styles + libraries are kept on the phone)
    - Always tries the internet first for the app page, so new versions arrive automatically
    - Never stores logins, sync data, payments or AI imports */
-const VERSION = 'pcsg-v6-2026-10-23';
+const VERSION = 'pcsg-v7-2026-10-23';
 const CORE = ['./', './index.html', './manifest.json', './privacy.html', './icon-192.png', './icon-512.png', './icon-180.png'];
 const CDN = ['cdn.tailwindcss.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com', 'placehold.co'];
 const NEVER = ['supabase.co', 'stripe.com', 'googleapis.com/v1beta', 'apify.com', 'r.jina.ai'];
@@ -49,5 +49,14 @@ self.addEventListener('notificationclick', (e) => {
   e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
     for (const c of list) { if ('focus' in c) return c.focus(); }
     return self.clients.openWindow(url);
+  }));
+});
+
+// Reminders sent from the server arrive here, even when the app is closed
+self.addEventListener('push', (e) => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (err) { d = { body: e.data ? e.data.text() : '' }; }
+  e.waitUntil(self.registration.showNotification(d.title || '⏰ Use these up soon', {
+    body: d.body || '', icon: 'icon-192.png', badge: 'icon-192.png', tag: 'pcsg-daily', data: { url: d.url || './index.html' }
   }));
 });

@@ -2084,6 +2084,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         try { HH.restore(); await HH.load(); } catch (e) {}
         await this.pull(); this.ready = true; await this.push(); this.paintSafety();
         try { await HH.tick(); } catch (e) {}
+        try { Push.sync(); } catch (e) {}
       },
       async paintSafety() {
         const sb = await Safety.info(); const row = document.getElementById('safetyRow'); if (!row) return;
@@ -4949,6 +4950,36 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       const o = e.target.closest('[data-adv-open]'); if (o && SHOP_HOME[o.dataset.advOpen]) window.open(SHOP_HOME[o.dataset.advOpen], '_blank', 'noopener');
     });
 
+    // ===== Reminders that arrive even when the app is closed (web push) =====
+    const VAPID_PUBLIC_KEY = 'BCeAPgkK-SLKRgZ9G01Xp35s7sSgmLNSL_HCh_hujvBumrZmV2_sulG36tv7wHyEuoutIGXNmEkluT_QHEhD9Xk';
+    const Push = {
+      FLAG: 'pcsg_push',
+      supported() { return 'serviceWorker' in navigator && 'PushManager' in window && typeof Notification !== 'undefined'; },
+      active() { try { return localStorage.getItem(this.FLAG) === '1'; } catch (e) { return false; } },
+      key() { const p = '='.repeat((4 - VAPID_PUBLIC_KEY.length % 4) % 4), b = (VAPID_PUBLIC_KEY + p).replace(/-/g, '+').replace(/_/g, '/'), raw = atob(b); return Uint8Array.from([...raw].map(c => c.charCodeAt(0))); },
+      // Save (or refresh) this phone for server reminders. Needs a signed-in account.
+      async sync() {
+        try {
+          if (!this.supported() || typeof Sync === 'undefined' || !Sync.sb || !Sync.user) return false;
+          if (!Remind.isOn()) return false;
+          const reg = await navigator.serviceWorker.ready;
+          let sub = await reg.pushManager.getSubscription();
+          if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: this.key() });
+          const j = sub.toJSON();
+          const { error } = await Sync.sb.rpc('push_save', { p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth, p_time: Remind.time(), p_tz: -new Date().getTimezoneOffset() });
+          if (error) { localStorage.setItem(this.FLAG, '0'); return false; }
+          localStorage.setItem(this.FLAG, '1'); Remind.paint(); return true;
+        } catch (e) { try { localStorage.setItem(this.FLAG, '0'); } catch (e2) {} return false; }
+      },
+      async off() {
+        try {
+          localStorage.setItem(this.FLAG, '0');
+          if (!this.supported()) return;
+          const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription();
+          if (sub) { try { if (Sync.sb && Sync.user) await Sync.sb.rpc('push_off', { p_endpoint: sub.endpoint }); } catch (e) {} await sub.unsubscribe(); }
+        } catch (e) {}
+      }
+    };
     const Remind = {
       KEY: 'pcsg_remind', DAY: 'pcsg_remind_day', TIME: 'pcsg_remind_time',
       time() { try { const t = localStorage.getItem(this.TIME); return /^\d{2}:\d{2}$/.test(t || '') ? t : '08:00'; } catch (e) { return '08:00'; } },
@@ -4963,7 +4994,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         row.classList.remove('hidden');
         document.getElementById('remindText').textContent = denied
           ? '🔕 Reminders are blocked on this phone. Open Settings > Apps > PantryChef > Notifications and switch them on, then tap "Check again".'
-          : on ? '🔔 Daily reminder is on for ' + this.pretty() + ' (only when something needs using up).' : 'Want a daily nudge before food goes off?';
+          : on ? '🔔 Daily reminder is on for ' + this.pretty() + ' (only when something needs using up).' + (Push.active() ? ' It also reaches you when the app is closed.' : (Sync.user ? '' : ' Sign in to also get it when the app is closed.')) : 'Want a daily nudge before food goes off?';
         const bOn = document.getElementById('btnRemindOn');
         bOn.textContent = denied ? '🔄 Check again' : '🔔 Remind me';
         bOn.classList.toggle('hidden', on);
@@ -4978,11 +5009,13 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           localStorage.setItem(this.KEY, '1'); localStorage.removeItem(this.DAY);
         } catch (e) { showToast('This phone does not support reminders here', '⚠️'); return; }
         this.paint(); showToast('Reminder is on', '🔔'); this.check(true);
+        Push.sync().then(ok => { if (ok) showToast('Reminders will also arrive when the app is closed', '📲'); });
       },
-      turnOff() { try { localStorage.setItem(this.KEY, '0'); } catch (e) {} this.paint(); showToast('Reminder is off', '🔕'); },
+      turnOff() { try { localStorage.setItem(this.KEY, '0'); } catch (e) {} Push.off(); this.paint(); showToast('Reminder is off', '🔕'); },
       async check(force) {
         try {
           if (!this.isOn()) return;
+          if (Push.active() && !force) return;      // the server sends it; do not show it twice
           const now = new Date(), today = now.toDateString();
           if (localStorage.getItem(this.DAY) === today) return;
           if (!force) { const [th, tm] = this.time().split(':').map(Number); if (now.getHours() * 60 + now.getMinutes() < th * 60 + tm) return; }
@@ -5005,7 +5038,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         document.getElementById('remindTime')?.addEventListener('change', (ev) => {
           const v = ev.target.value; if (!/^\d{2}:\d{2}$/.test(v)) return;
           try { localStorage.setItem(this.TIME, v); localStorage.removeItem(this.DAY); } catch (e) {}
-          this.paint(); showToast('Reminder set for ' + this.pretty(), '⏰');
+          this.paint(); showToast('Reminder set for ' + this.pretty(), '⏰'); Push.sync();
         });
         document.addEventListener('visibilitychange', () => { if (!document.hidden) { this.paint(); this.check(false); } });
         setInterval(() => this.check(false), 60 * 1000);
