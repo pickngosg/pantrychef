@@ -5028,7 +5028,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           const body = !soon.length ? wk : names + (gone ? ' – check and cook what you can.' : ' – tap to find a recipe.') + (wk ? ' ' + wk : '');
           localStorage.setItem(this.DAY, today);
           const reg = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration() : null;
-          if (reg && reg.showNotification) await reg.showNotification(title, { body, icon: 'icon-192.png', badge: 'icon-192.png', tag: 'pcsg-daily', data: { url: './index.html' } });
+          if (reg && reg.showNotification) await reg.showNotification(title, { body, icon: 'icon-192.png', badge: 'badge-96.png', tag: 'pcsg-daily', data: { url: './index.html' } });
           else new Notification(title, { body, icon: 'icon-192.png', tag: 'pcsg-daily' });
         } catch (e) {}
       },
