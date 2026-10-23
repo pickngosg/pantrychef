@@ -676,15 +676,17 @@
         <img id="detailRecipeImage" src="" alt="Recipe Photo" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/800x450/064e3b/ecfdf5?text=PantryChef+SG+Recipe';">
         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"></div>
         <div class="absolute top-3 right-3 flex items-center space-x-1.5">
-          <button id="btnEditCurrentRecipeFromDetail" class="px-3 py-1.5 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md text-white font-bold text-[11px] border border-white/15 transition">✏️ Edit</button>
-          <button id="closeRecipeDetailModalBtn" class="w-8 h-8 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md text-white font-bold flex items-center justify-center border border-white/15 transition">✕</button>
+          <button id="btnDetailFav" type="button" aria-label="Favourite" class="w-10 h-10 rounded-full bg-black/55 hover:bg-black/75 backdrop-blur-md text-white text-2xl leading-none flex items-center justify-center transition">♡</button>
+          <button id="btnEditCurrentRecipeFromDetail" class="px-4 h-10 rounded-full bg-black/55 hover:bg-black/75 backdrop-blur-md text-white font-bold text-sm transition">✏️ Edit</button>
+          <button id="closeRecipeDetailModalBtn" class="w-10 h-10 rounded-full bg-black/55 hover:bg-black/75 backdrop-blur-md text-white font-bold flex items-center justify-center transition">✕</button>
         </div>
         <div class="absolute bottom-3 inset-x-4">
-          <div id="detailBadges" class="flex flex-wrap items-center gap-1 mb-1"></div>
-          <h3 id="detailRecipeTitle" class="font-black text-base sm:text-lg text-white drop-shadow">Recipe Name</h3>
+          <div id="detailBadges" class="flex flex-wrap items-center gap-1.5 mb-2"></div>
+          <h3 id="detailRecipeTitle" class="font-display font-extrabold text-2xl sm:text-3xl leading-tight text-white drop-shadow">Recipe Name</h3>
         </div>
       </div>
       <div class="p-4 overflow-y-auto space-y-4">
+        <div id="detailStats"></div>
         <div class="flex flex-wrap items-center justify-between gap-2 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700">
           <div class="flex items-center space-x-2">
             <span class="font-bold text-slate-500">Servings:</span>
@@ -3000,12 +3002,21 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         const carbs = Math.round(r.carbs || 45), fat = Math.round(r.fat || 15), fibre = Math.round(r.fibre || 4), sodium = Math.round(r.sodium || 550);
         const chip = (t) => `<span class="px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-white font-bold text-[10px]">${t}</span>`;
 
-        document.getElementById('detailBadges').innerHTML = `
-          ${(recipeTags(r).length ? recipeTags(r) : ['SG Recipe']).map(t => `<span class="px-2 py-0.5 rounded-md bg-brand-500 text-slate-950 font-black text-[10px] shadow-sm">${esc(t)}</span>`).join('')}
-          ${chip(`⏱️ ${r.prepTime}m`)}${chip(`🔥 ${cal} kcal`)}${chip(`💪 ${pro}g pro`)}${chip(`🌾 ${carbs}g carbs`)}${chip(`🥑 ${fat}g fat`)}${chip(`🥗 ${fibre}g fibre`)}${chip(`🧂 ${sodium}mg Na`)}
-          ${isHalal ? '<span class="px-2 py-0.5 rounded-md bg-emerald-500 text-slate-950 font-black text-[10px]">🌙 Halal</span>' : ''}
-          <button type="button" data-fav="${esc(r.id)}" class="px-2.5 py-1 rounded-md font-black text-[11px] ${r.fav ? 'bg-rose-500 text-white' : 'bg-white/90 text-slate-800'}">${r.fav ? '♥ Favourite' : '♡ Favourite'}</button>
-          <button type="button" data-cooked="${esc(r.id)}" class="px-2.5 py-1 rounded-md font-black text-[11px] ${Number(r.cooked) > 0 ? 'bg-emerald-500 text-slate-950' : 'bg-white/90 text-slate-800'}">${Number(r.cooked) > 0 ? '✓ Cooked' + (r.cooked > 1 ? ' ' + r.cooked + '×' : '') + ' (tap to undo)' : '+ I have cooked this'}</button>`;
+        // Over the photo: only the dish's tags (and Halal). The numbers live in a clean strip underneath.
+        const pill = (t, cls) => `<span class="px-3 py-1 rounded-full text-xs font-bold ${cls}">${t}</span>`;
+        document.getElementById('detailBadges').innerHTML =
+          (recipeTags(r).length ? recipeTags(r) : ['SG Recipe']).slice(0, 3).map(t => pill(esc(t), 'bg-white/90 text-slate-800')).join('') +
+          (isHalal ? pill('🌙 Halal', 'bg-emerald-500 text-slate-950') : '');
+        const fb = document.getElementById('btnDetailFav');
+        if (fb) { fb.dataset.fav = r.id; fb.textContent = r.fav ? '♥' : '♡'; fb.className = 'w-10 h-10 rounded-full backdrop-blur-md text-2xl leading-none flex items-center justify-center transition ' + (r.fav ? 'bg-rose-500 text-white' : 'bg-black/55 hover:bg-black/75 text-white'); }
+        const tile = (v, l) => `<div class="rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700 py-3 text-center"><div class="font-display font-extrabold text-xl text-slate-900 dark:text-white">${v}</div><div class="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">${l}</div></div>`;
+        const cooked = Number(r.cooked) > 0;
+        document.getElementById('detailStats').innerHTML = `
+          <div class="grid grid-cols-4 gap-2">${tile((r.prepTime || 0) + 'm', 'Time')}${tile(cal, 'kcal')}${tile(pro + 'g', 'Protein')}${tile(carbs + 'g', 'Carbs')}</div>
+          <div class="flex flex-wrap items-center justify-between gap-2 mt-2.5">
+            <details class="text-sm text-slate-600 dark:text-slate-300"><summary class="cursor-pointer select-none font-bold py-1.5">More nutrition ▾</summary><div class="grid grid-cols-3 gap-2 mt-2 min-w-[260px]">${tile(fat + 'g', 'Fat')}${tile(fibre + 'g', 'Fibre')}${tile(sodium + 'mg', 'Sodium')}</div></details>
+            <button type="button" data-cooked="${esc(r.id)}" class="text-sm font-bold px-3.5 py-2 rounded-full ${cooked ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}">${cooked ? '✓ Cooked' + (r.cooked > 1 ? ' ' + r.cooked + '×' : '') + ' · tap to undo' : '+ Mark as cooked before'}</button>
+          </div>`;
 
         ['Healthy', 'Halal', 'Protein'].forEach(k => {
           const btn = document.getElementById(`btnTweak${k}`);
