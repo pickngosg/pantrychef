@@ -3590,6 +3590,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           this.setStatus(false);
           const why = ownWhy === 'not signed in' ? ' (Sign in first, then try again.)'
             : ownWhy === 'function not deployed' ? ' (The fetch-page function is not set up in Supabase yet.)'
+            : /daily_limit/.test(ownWhy) ? ' (You have read a lot of pages today. Please try again tomorrow, or paste the recipe text.)'
             : /site_refused/.test(ownWhy) ? ' (That website refuses to be read automatically.)'
             : ownWhy ? ' (' + ownWhy.slice(0, 60) + ')' : '';
           showToast('Could not read that page.' + why + ' Paste the recipe text instead.', '📋');
