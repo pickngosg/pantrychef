@@ -1044,6 +1044,14 @@
 
       <div id="syncSignedIn" class="hidden space-y-4">
         <p class="text-lg text-slate-600 dark:text-slate-300">Signed in as <b id="syncUserEmail" class="break-all"></b></p>
+        <div>
+          <label for="nickInput" class="block text-base font-bold text-slate-700 dark:text-slate-200 mb-1.5">What should we call you?</label>
+          <div class="flex gap-2">
+            <input id="nickInput" type="text" maxlength="20" placeholder="Your name or nickname" autocomplete="nickname" class="flex-1 min-w-0 px-4 py-3.5 text-lg rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white">
+            <button id="btnSaveNick" type="button" class="px-5 py-3.5 text-base rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-100 font-bold">Save</button>
+          </div>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1.5">Shown in the greeting on your home screen.</p>
+        </div>
         <div class="flex items-center gap-4">
           <button id="btnSyncNow" class="flex-1 py-4 text-lg rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">🔄 Sync now</button>
           <button id="btnSyncSignOut" type="button" class="px-3 py-3 text-base font-bold text-slate-500 dark:text-slate-400 underline">Sign out</button>
@@ -2030,6 +2038,19 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         document.getElementById('accountDanger')?.classList.toggle('hidden', !on);
         try { Plan.load(); } catch (e) {}
         const e = document.getElementById('syncUserEmail'); if (e) e.textContent = this.user?.email || '';
+        try {
+          const m = (this.user?.user_metadata?.nickname || '').toString().trim().slice(0, 20);
+          if (m) localStorage.setItem('pcsg_nick', m);
+          const ni = document.getElementById('nickInput'); if (ni && document.activeElement !== ni) ni.value = localStorage.getItem('pcsg_nick') || '';
+          dashGreeting();
+        } catch (e2) {}
+      },
+      async saveNick() {
+        const v = (document.getElementById('nickInput')?.value || '').replace(/\s+/g, ' ').trim().slice(0, 20);
+        try { v ? localStorage.setItem('pcsg_nick', v) : localStorage.removeItem('pcsg_nick'); } catch (e) {}
+        try { dashGreeting(); } catch (e) {}
+        try { if (this.sb && this.user) await this.sb.auth.updateUser({ data: { nickname: v } }); } catch (e) {}
+        showToast(v ? 'Nice to meet you, ' + v + '!' : 'Name removed', '👋');
       },
       async afterLogin() {
         this.ready = false;
@@ -2064,6 +2085,8 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         this.status('Syncing…'); await this.afterLogin(); showToast('Signed in – sync is on', '☁️');
       },
       async start() {
+        document.getElementById('btnSaveNick')?.addEventListener('click', () => this.saveNick());
+        document.getElementById('nickInput')?.addEventListener('keydown', ev => { if (ev.key === 'Enter') { ev.preventDefault(); this.saveNick(); } });
         document.getElementById('btnSyncSignIn')?.addEventListener('click', () => this.auth('in'));
         document.getElementById('btnSyncForgot')?.addEventListener('click', async () => {
           if (!this.sb) return showToast('Cloud sync is not set up yet', '⚠️');
@@ -4584,7 +4607,8 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         : h >= 17 && h < 21 ? ['🌆', 'Good evening', 'What shall we cook tonight?']
         : ['🌙', 'Good night', 'Planning ahead? Here is your kitchen.'];
       const set = (id, v) => { const e = document.getElementById(id); if (e && e.textContent !== v) e.textContent = v; };
-      set('dashIcon', g[0]); set('dashTitle', g[1]); set('dashSub', g[2]);
+      let nick = ''; try { nick = (localStorage.getItem('pcsg_nick') || '').trim(); } catch (e) {}
+      set('dashIcon', g[0]); set('dashTitle', nick ? g[1] + ', ' + nick : g[1]); set('dashSub', g[2]);
     }
     function renderDashboard() {
       const now = Date.now();
