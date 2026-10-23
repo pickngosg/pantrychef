@@ -758,7 +758,7 @@
                   <label class="text-xs font-bold text-slate-600 dark:text-slate-300">Tags <span class="font-normal text-slate-400">(tap one or more)</span></label>
                   <button type="button" id="btnEditorManageCategories" class="text-xs text-brand-600 dark:text-brand-400 font-bold hover:underline">Edit list</button>
                 </div>
-                <div id="editorRecipeTags" class="flex flex-wrap gap-2"></div>
+                <div id="editorRecipeTags" class="space-y-3.5"></div>
               </div>
             </div>
 
@@ -3024,6 +3024,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         if (servingsInput) servingsInput.value = (r && r.servings) ? r.servings : 2;
         { const ac = document.getElementById('editorAutoNutrition'); if (ac) ac.checked = !recipeId || (r && r.nutritionSource === 'auto'); const nn = document.getElementById('editorNutritionNote'); if (nn) nn.textContent = ''; }
         const setV = (id, v) => { document.getElementById(id).value = v; };
+        this.moreOpen = null;
         this.tags = new Set(r ? recipeTags(r) : []);
         if (!this.tags.size) this.tags.add(AppState.state.categories[0]);
         this.renderTags();
@@ -3109,12 +3110,21 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         const box = document.getElementById('editorRecipeTags');
         if (!box) return;
         if (!this.tags) this.tags = new Set();
+        const MEALS = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Dessert'], MAINS = ['Beef', 'Chicken', 'Seafood', 'Vegetarian'];
         const all = Array.from(new Set([...AppState.state.categories, ...this.tags]));
-        box.innerHTML = all.map(c => {
+        const meals = MEALS.filter(t => all.includes(t)), mains = MAINS.filter(t => all.includes(t));
+        const more = all.filter(t => !MEALS.includes(t) && !MAINS.includes(t));
+        const moreChosen = more.filter(t => this.tags.has(t)).length;
+        if (this.moreOpen === undefined || this.moreOpen === null) this.moreOpen = moreChosen > 0;
+        const pill = (c) => {
           const on = this.tags.has(c);
-          return `<button type="button" data-tag="${esc(c)}" aria-pressed="${on}" class="px-4 py-2.5 rounded-xl text-base font-bold border transition ${on ? 'bg-brand-500 text-white border-brand-500' : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700'}">${on ? '✓ ' : ''}${esc(c)}</button>`;
-        }).join('');
+          return `<button type="button" data-tag="${esc(c)}" aria-pressed="${on}" class="px-3.5 py-2 rounded-full text-[15px] font-semibold border transition ${on ? 'bg-brand-500 text-white border-brand-500 shadow-sm' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-500'}">${on ? '✓ ' : ''}${esc(c)}</button>`;
+        };
+        const group = (label, list) => list.length ? `<div><div class="text-[11px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">${label}</div><div class="flex flex-wrap gap-1.5">${list.map(pill).join('')}</div></div>` : '';
+        box.innerHTML = group('Meal', meals) + group('Main ingredient', mains)
+          + (more.length ? `<div><button type="button" data-more="1" class="text-sm font-bold text-brand-600 dark:text-brand-400">${this.moreOpen ? '▾ Fewer tags' : '▸ More tags (' + more.length + ')' + (moreChosen ? ' · ' + moreChosen + ' chosen' : '')}</button>${this.moreOpen ? `<div class="flex flex-wrap gap-1.5 mt-2">${more.map(pill).join('')}</div>` : ''}</div>` : '');
         box.onclick = (e) => {
+          if (e.target.closest('[data-more]')) { this.moreOpen = !this.moreOpen; this.renderTags(); return; }
           const b = e.target.closest('[data-tag]'); if (!b) return;
           const t = b.getAttribute('data-tag');
           if (this.tags.has(t)) this.tags.delete(t); else this.tags.add(t);
