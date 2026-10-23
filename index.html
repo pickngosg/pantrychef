@@ -4611,17 +4611,22 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       isOn() { try { return localStorage.getItem(this.KEY) === '1' && this.supported() && Notification.permission === 'granted'; } catch (e) { return false; } },
       paint() {
         const row = document.getElementById('remindRow'); if (!row) return;
-        if (!this.supported() || Notification.permission === 'denied') { row.classList.add('hidden'); return; }
+        if (!this.supported()) { row.classList.add('hidden'); return; }
+        const denied = Notification.permission === 'denied';
         const on = this.isOn();
         row.classList.remove('hidden');
-        document.getElementById('remindText').textContent = on ? '🔔 Daily reminder is on (around 8am, only when something needs using up).' : 'Want a daily nudge before food goes off?';
-        document.getElementById('btnRemindOn').classList.toggle('hidden', on);
+        document.getElementById('remindText').textContent = denied
+          ? '🔕 Reminders are blocked on this phone. Open Settings > Apps > PantryChef > Notifications and switch them on, then tap "Check again".'
+          : on ? '🔔 Daily reminder is on (around 8am, only when something needs using up).' : 'Want a daily nudge before food goes off?';
+        const bOn = document.getElementById('btnRemindOn');
+        bOn.textContent = denied ? '🔄 Check again' : '🔔 Remind me';
+        bOn.classList.toggle('hidden', on);
         document.getElementById('btnRemindOff').classList.toggle('hidden', !on);
       },
       async turnOn() {
         try {
-          const perm = await Notification.requestPermission();
-          if (perm !== 'granted') { showToast('Reminders are blocked. Allow notifications for this app in your phone settings.', '🔕'); this.paint(); return; }
+          const perm = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
+          if (perm !== 'granted') { showToast('Still blocked. Switch notifications on in your phone settings, then tap Check again.', '🔕'); this.paint(); return; }
           localStorage.setItem(this.KEY, '1'); localStorage.removeItem(this.DAY);
         } catch (e) { showToast('This phone does not support reminders here', '⚠️'); return; }
         this.paint(); showToast('Reminder is on', '🔔'); this.check(true);
@@ -4648,7 +4653,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       init() {
         document.getElementById('btnRemindOn')?.addEventListener('click', () => this.turnOn());
         document.getElementById('btnRemindOff')?.addEventListener('click', () => this.turnOff());
-        document.addEventListener('visibilitychange', () => { if (!document.hidden) this.check(false); });
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) { this.paint(); this.check(false); } });
         setInterval(() => this.check(false), 15 * 60 * 1000);
         this.paint(); setTimeout(() => this.check(false), 4000);
       }
