@@ -1,105 +1,53 @@
-// Bump this on every release so old caches are cleared.
-const CACHE = 'pantrychef-sg-v5'; 
-const PRECACHE = [
-  './', './index.html', './manifest.json',
-  './icon-192.png', './icon-512.png',
-  './icon-maskable-512.png', './icon-180.png'
-];
-
-// Recipe-scraping proxies: network-first (responses must be fresh)
-const NETWORK_FIRST_HOSTS = ['allorigins.win', 'codetabs.com', 'corsproxy.io', 'r.jina.ai'];
-
-// Third-party libs/fonts that are safe to cache for offline use
-const CDN_HOSTS = ['cdn.tailwindcss.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'];
-
-const hostIn = (host, list) => list.some((h) => host === h || host.endsWith('.' + h));
-
-// Helper to identify Supabase API calls (Auth, REST, Realtime) vs Supabase Storage (Images)
-const isSupabaseApi = (url) => {
-  if (!url.hostname.endsWith('supabase.co') && !url.hostname.endsWith('supabase.in')) return false;
-  // We WANT to cache storage (images), but NEVER cache auth, rest, or realtime
-  return !url.pathname.startsWith('/storage/');
-};
+/* PantryChef SG Pro - service worker (v6)
+   - Opens instantly and works offline (app + styles + libraries are kept on the phone)
+   - Always tries the internet first for the app page, so new versions arrive automatically
+   - Never stores logins, sync data, payments or AI imports */
+const VERSION = 'pcsg-v6-2026-10-23';
+const CORE = ['./', './index.html', './manifest.json', './privacy.html', './icon-192.png', './icon-512.png', './icon-180.png'];
+const CDN = ['cdn.tailwindcss.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com', 'placehold.co'];
+const NEVER = ['supabase.co', 'stripe.com', 'googleapis.com/v1beta', 'apify.com', 'r.jina.ai'];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE)
-      .then((c) => Promise.all(PRECACHE.map((u) => c.add(u).catch((err) => console.warn('[SW] precache skipped', u, err)))))
-      .then(() => self.skipWaiting())
-  );
+  e.waitUntil(caches.open(VERSION).then((c) => Promise.all(CORE.map((u) => c.add(u).catch(() => {})))).then(() => self.skipWaiting()));
 });
-
 self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
-      .then(() => self.clients.claim())
-  );
+  e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== VERSION).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
 });
-
-function networkFirst(req, cacheName) {
-  return fetch(req)
-    .then((res) => {
-      if (res && res.ok) {
-        const copy = res.clone();
-        caches.open(cacheName).then((c) => c.put(req, copy));
-      }
-      return res;
-    })
-    .catch(() => caches.match(req).then((m) => m || (req.mode === 'navigate' ? caches.match('./index.html') : Response.error())));
-}
+self.addEventListener('message', (e) => { if (e.data === 'SKIP_WAITING') self.skipWaiting(); });
 
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
-
   const url = new URL(req.url);
-  if (!/^https?:$/.test(url.protocol)) return;
+  if (NEVER.some((h) => url.href.includes(h))) return;
 
-  // 1. Supabase Auth / REST / Realtime: leave entirely to the browser (never cached)
-  if (isSupabaseApi(url)) {
-    return; 
-  }
-
-  // 2. Recipe-scraping proxies: network only, but SAVE to cache if successful, fall back to cache if offline
-  if (hostIn(url.hostname, NETWORK_FIRST_HOSTS)) {
+  // The app page itself (also used when a recipe is shared to the app): internet first, saved copy if offline
+  if (req.mode === 'navigate') {
     e.respondWith(
       fetch(req).then((res) => {
-        if (res && res.ok) {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy));
-        }
+        if (res.ok) { const copy = res.clone(); caches.open(VERSION).then((c) => c.put('./index.html', copy)); }
         return res;
-      }).catch(() => caches.match(req))
+      }).catch(() => caches.match('./index.html').then((r) => r || caches.match('./')))
     );
     return;
   }
-
-  const sameOrigin = url.origin === self.location.origin;
-
-  // 3. App shell (HTML, manifest, sw): network-first so updates show up immediately
-  // FIX: Escaped the dot in the regex /\.(html|json)$/
-  if (sameOrigin && (req.mode === 'navigate' || /\.(html|json)$/.test(url.pathname) || url.pathname.endsWith('/'))) {
-    e.respondWith(networkFirst(req, CACHE));
-    return;
-  }
-
-  // 4. Photos (Supabase Storage, Unsplash, recipe sites) & Static files / CDNs: stale-while-revalidate
-  if (sameOrigin || hostIn(url.hostname, CDN_HOSTS) || url.hostname.includes('storage.supabase.co')) {
+  // Our own files and trusted libraries/fonts: show the saved copy at once, refresh it quietly
+  if (url.origin === location.origin || CDN.includes(url.hostname)) {
     e.respondWith(
-      caches.match(req).then((cached) => {
-        const fetched = fetch(req).then((res) => {
-          if (res && (res.ok || res.type === 'opaque')) {
-            const copy = res.clone();
-            caches.open(CACHE).then((c) => c.put(req, copy));
-          }
-          return res;
-        }).catch(() => cached || Response.error());
-        return cached || fetched;
-      })
+      caches.open(VERSION).then((c) => c.match(req).then((hit) => {
+        const net = fetch(req).then((res) => { if (res && (res.ok || res.type === 'opaque')) c.put(req, res.clone()); return res; }).catch(() => hit);
+        return hit || net;
+      }))
     );
-    return;
   }
+});
 
-  // 5. Anything else: default browser behaviour (not cached)
+// Tapping a reminder opens the app (or brings it to the front)
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const url = (e.notification.data && e.notification.data.url) || './index.html';
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+    for (const c of list) { if ('focus' in c) return c.focus(); }
+    return self.clients.openWindow(url);
+  }));
 });

@@ -211,6 +211,11 @@
 
       <section>
         <h2 class="dash-sec font-display font-extrabold text-xl sm:text-2xl mb-3.5 text-slate-900 dark:text-white"><span class="dash-ico tn-rose !w-10 !h-10 !text-xl" data-noicon="1" aria-hidden="true">🔥</span>Cook these first</h2>
+        <div id="remindRow" class="hidden mb-3 flex flex-wrap items-center gap-2.5 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 px-4 py-3">
+          <span class="text-base font-bold text-amber-900 dark:text-amber-200 flex-1 min-w-[200px]" id="remindText">Want a daily nudge before food goes off?</span>
+          <button id="btnRemindOn" type="button" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-base">🔔 Remind me</button>
+          <button id="btnRemindOff" type="button" class="hidden px-4 py-2.5 rounded-xl bg-white/80 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-base border border-slate-300 dark:border-slate-600">Turn off</button>
+        </div>
         <div id="dashboardExpiringList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"></div>
       </section>
 
@@ -4600,6 +4605,55 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       const o = e.target.closest('[data-adv-open]'); if (o && SHOP_HOME[o.dataset.advOpen]) window.open(SHOP_HOME[o.dataset.advOpen], '_blank', 'noopener');
     });
 
+    const Remind = {
+      KEY: 'pcsg_remind', DAY: 'pcsg_remind_day', HOUR: 8,
+      supported() { return typeof Notification !== 'undefined'; },
+      isOn() { try { return localStorage.getItem(this.KEY) === '1' && this.supported() && Notification.permission === 'granted'; } catch (e) { return false; } },
+      paint() {
+        const row = document.getElementById('remindRow'); if (!row) return;
+        if (!this.supported() || Notification.permission === 'denied') { row.classList.add('hidden'); return; }
+        const on = this.isOn();
+        row.classList.remove('hidden');
+        document.getElementById('remindText').textContent = on ? '🔔 Daily reminder is on (around 8am, only when something needs using up).' : 'Want a daily nudge before food goes off?';
+        document.getElementById('btnRemindOn').classList.toggle('hidden', on);
+        document.getElementById('btnRemindOff').classList.toggle('hidden', !on);
+      },
+      async turnOn() {
+        try {
+          const perm = await Notification.requestPermission();
+          if (perm !== 'granted') { showToast('Reminders are blocked. Allow notifications for this app in your phone settings.', '🔕'); this.paint(); return; }
+          localStorage.setItem(this.KEY, '1'); localStorage.removeItem(this.DAY);
+        } catch (e) { showToast('This phone does not support reminders here', '⚠️'); return; }
+        this.paint(); showToast('Reminder is on', '🔔'); this.check(true);
+      },
+      turnOff() { try { localStorage.setItem(this.KEY, '0'); } catch (e) {} this.paint(); showToast('Reminder is off', '🔕'); },
+      async check(force) {
+        try {
+          if (!this.isOn()) return;
+          const now = new Date(), today = now.toDateString();
+          if (localStorage.getItem(this.DAY) === today) return;
+          if (!force && now.getHours() < this.HOUR) return;
+          const soon = (AppState.state.pantry || []).map(i => ({ n: i.name, d: daysLeftOf(i.expiryDate) })).filter(x => x.d <= 2).sort((a, b) => a.d - b.d);
+          if (!soon.length) return;
+          const names = soon.slice(0, 3).map(x => x.n).join(', ') + (soon.length > 3 ? ' and ' + (soon.length - 3) + ' more' : '');
+          const gone = soon.filter(x => x.d < 0).length;
+          const title = gone ? '⚠️ Some food has expired' : '⏰ Use these up soon';
+          const body = names + (gone ? ' – check and cook what you can.' : ' – tap to find a recipe.');
+          localStorage.setItem(this.DAY, today);
+          const reg = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration() : null;
+          if (reg && reg.showNotification) await reg.showNotification(title, { body, icon: 'icon-192.png', badge: 'icon-192.png', tag: 'pcsg-daily', data: { url: './index.html' } });
+          else new Notification(title, { body, icon: 'icon-192.png', tag: 'pcsg-daily' });
+        } catch (e) {}
+      },
+      init() {
+        document.getElementById('btnRemindOn')?.addEventListener('click', () => this.turnOn());
+        document.getElementById('btnRemindOff')?.addEventListener('click', () => this.turnOff());
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) this.check(false); });
+        setInterval(() => this.check(false), 15 * 60 * 1000);
+        this.paint(); setTimeout(() => this.check(false), 4000);
+      }
+    };
+
     function dashGreeting() {
       const h = new Date().getHours();
       const g = h >= 5 && h < 12 ? ['☀️', 'Good morning', 'Here is what is in your kitchen today.']
@@ -5481,6 +5535,7 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
       renderPlanner();
       renderShoppingList();
       Sync.start();
+      Remind.init();
     });
   </script>
 
