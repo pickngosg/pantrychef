@@ -1,9 +1,9 @@
-/* PantryChef SG Pro - service worker (v8)
+/* PantryChef SG Pro - service worker (v9)
    - Opens instantly and works offline (app + styles + libraries are kept on the phone)
    - Always tries the internet first for the app page, so new versions arrive automatically
    - Never stores logins, sync data, payments or AI imports */
-const VERSION = 'pcsg-v8-2026-10-23';
-const CORE = ['./', './index.html', './manifest.json', './privacy.html', './icon-192.png', './icon-512.png', './icon-180.png', './badge-96.png'];
+const VERSION = 'pcsg-v9-2026-10-23';
+const CORE = ['./', './index.html', './manifest.json', './privacy.html', './icon-192.png', './icon-512.png', './icon-180.png', './badge-96.png', './tailwind.css'];
 const CDN = ['cdn.tailwindcss.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com', 'placehold.co'];
 const NEVER = ['supabase.co', 'stripe.com', 'googleapis.com/v1beta', 'apify.com', 'r.jina.ai'];
 

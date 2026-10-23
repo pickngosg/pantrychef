@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Marker: the app checks for this to know the built styles loaded */
+:root { --pcsg-built: 1; }
