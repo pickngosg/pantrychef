@@ -3678,7 +3678,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         const qtyOnly = /^(about\s+)?[\d\s\u00BC-\u00BE\u2150-\u215E\/.\-\u2013]+\s*(ounces?|oz|pounds?|lbs?|cups?|tablespoons?|tbsp|teaspoons?|tsp|grams?|g|kg|ml|l|liters?|litres?|cloves?|cans?|tins?|packs?|packets?|sticks?|pinch(es)?|dash(es)?|slices?|pieces?|large|medium|small)?\.?$/i;
         const ingHdr = /^(ingredients?|what you'll need|for the .*)\b/i;
         const stepHdr = /^(instructions?|directions?|method|steps?|preparation|how to make|how to cook|cooking (?:method|instructions?|steps?|directions?)|procedure)\b/i;
-        const stopHdr = /^(nutrition|notes?|tips?|faq|storage|comments?|reviews?|ratings?|you\s+may\s+also|more\s+recipes|related\s+recipes?)/i;
+        const stopHdr = /^(nutrition|notes?|tips?|faq|storage|comments?|reviews?|ratings?|you\s+may\s+also|you\s+might|more\s+recipes|related\s+recipes?|similar|other\s+recipes|popular|recommended|read\s+also|share|subscribe|newsletter|latest|categories|tags|about\s+us|contacts?)\b/i;
         const hasHeading = lines.some(x => ingHdr.test(x) || stepHdr.test(x));
 
         let title = 'Imported Recipe', section = 'unknown';
@@ -3698,7 +3698,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
             // a short bold sub-heading ("Prepare the steak") followed by its paragraph becomes one step
             if (pendingHead) { cs = pendingHead + ': ' + cs; pendingHead = ''; }
             else if (cs.length > 3 && cs.length <= 40 && !/[.!?:]$/.test(cs) && li + 1 < lines.length && lines[li + 1].length > 40 && !stopHdr.test(lines[li + 1])) { pendingHead = cs; continue; }
-            if (cs.length > 3) steps.push(cs);
+            if (cs.length > 3 && steps.length < 30) steps.push(cs);
           } else if (section === 'unknown' && !hasHeading) {
             const pi = this.parseIngredientLine(l, true);
             if (pi) ingredients.push(pi);
@@ -3746,7 +3746,8 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           steps: steps.length > 0 ? steps : ['Cook and prepare according to recipe notes.'],
           sourceBadge: 'Text Parse'
         };
-        this.previewedRecipe = recipeObj;
+        // Only the paste-text path shows this result itself. The web-address path races several readers, and a slow loser must not overwrite the recipe being shown.
+        if (renderImmediately) this.previewedRecipe = recipeObj;
         if (renderImmediately) {
           this.showPreview(); soundEngine.playChime();
           showToast(`Parsed ${recipeObj.ingredients.length} ingredients & ${recipeObj.steps.length} steps!`, '📋');
@@ -4258,6 +4259,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       RecipeScraperController.prototype.parseRawRecipeText = function (text, render = true, url = '') {
         const r = origParse.call(this, text, false, url);
         if (r && render) {
+          this.previewedRecipe = r;
           if (this.pendingSource) { this.applySource(r); this.pendingSource = null; }
           this.showPreview(); soundEngine.playChime();
           showToast(`Parsed ${r.ingredients.length} ingredients & ${r.steps.length} steps!`, '📋');
