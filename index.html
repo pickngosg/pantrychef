@@ -755,10 +755,10 @@
               </div>
               <div>
                 <div class="flex items-center justify-between mb-1.5">
-                  <label for="editorRecipeCategory" class="text-xs font-bold text-slate-600 dark:text-slate-300">Category</label>
+                  <label class="text-xs font-bold text-slate-600 dark:text-slate-300">Tags <span class="font-normal text-slate-400">(tap one or more)</span></label>
                   <button type="button" id="btnEditorManageCategories" class="text-xs text-brand-600 dark:text-brand-400 font-bold hover:underline">Edit list</button>
                 </div>
-                <select id="editorRecipeCategory" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500"></select>
+                <div id="editorRecipeTags" class="flex flex-wrap gap-2"></div>
               </div>
             </div>
 
@@ -863,7 +863,7 @@
         <li class="flex items-start gap-3">✨ <span><b>Recipes from videos:</b> 40 credits a month (YouTube 1, Instagram or TikTok 2)</span></li>
         <li class="flex items-start gap-3">📅 <span><b>7-day meal plan</b> and send missing items to your cart</span></li>
         <li class="flex items-start gap-3">🏷️ <span><b>Cheapest shop</b> guide for your shopping list</span></li>
-        <li class="flex items-start gap-3">🧾 <span><b>Unlimited</b> receipt scans</span></li>
+        <li class="flex items-start gap-3">🧾 <span><b>60</b> receipt scans a month</span></li>
         <li class="flex items-start gap-3">📖 <span><b>Unlimited</b> saved recipes</span></li>
       </ul>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1149,7 +1149,7 @@
     };
 
     // ===== 3. SEED DATA =====
-    const DEFAULT_CATEGORIES = ['Breakfast', 'Hawker Classics', 'Chinese Zi Char', 'Malay & Peranakan', 'Quick Weeknight', 'Air Fryer & Healthy', 'Soups & Comfort'];
+    const DEFAULT_CATEGORIES = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Dessert', 'Beef', 'Chicken', 'Seafood', 'Vegetarian', 'Hawker Classics', 'Chinese Zi Char', 'Malay & Peranakan', 'Quick Weeknight', 'Air Fryer & Healthy', 'Soups & Comfort'];
 
     const QUICK_SG_STAPLES = [
       { name: 'Eggs', qty: 10, unit: 'pcs', zone: 'Fridge', category: 'Eggs & Dairy' },
@@ -1218,6 +1218,13 @@
       }
     ];
 
+    // A recipe can carry several tags (Beef + Dinner). Older recipes only have one "category" - that becomes its single tag.
+    function recipeTags(r) {
+      if (!r) return [];
+      const t = Array.isArray(r.tags) ? r.tags.filter(x => typeof x === 'string' && x.trim()) : [];
+      if (t.length) return Array.from(new Set(t.map(x => x.trim())));
+      return r.category ? [String(r.category)] : [];
+    }
     function getRecipeFallbackImage(title = '', category = '') {
       const t = `${title} ${category}`.toLowerCase();
       const U = (id) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=800&q=80`;
@@ -1233,7 +1240,7 @@
 
     function getRecipeImage(recipe) {
       if (recipe && typeof recipe.image === 'string' && recipe.image.trim().length > 4) return recipe.image.trim();
-      return getRecipeFallbackImage(recipe?.title, recipe?.category);
+      return getRecipeFallbackImage(recipe?.title, recipeTags(recipe).join(' '));
     }
 
     // ===== 4. HALAL ENGINE =====
@@ -2079,7 +2086,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       recipes(a) {
         if (!Array.isArray(a)) return null;
         return a.filter(this.isObj).map(r => ({
-          ...r, id: this.id(r.id, 'rec_'), title: this.str(r.title, 160) || 'Untitled recipe', category: this.str(r.category, 60),
+          ...r, id: this.id(r.id, 'rec_'), title: this.str(r.title, 160) || 'Untitled recipe', category: this.str(recipeTags(r)[0] || r.category, 60), tags: recipeTags(r).slice(0, 12).map(x => this.str(x, 60)).filter(Boolean),
           prepTime: this.num(r.prepTime), cal: this.num(r.cal), pro: this.num(r.pro), carbs: this.num(r.carbs, 45), fat: this.num(r.fat, 15), fibre: this.num(r.fibre, 4), sodium: this.num(r.sodium),
           image: this.img(r.image),
           ingredients: (Array.isArray(r.ingredients) ? r.ingredients : []).filter(this.isObj).map(i => ({ ...i, name: this.str(i.name, 120), qty: this.num(i.qty), unit: this.str(i.unit, 20) || 'pcs' })),
@@ -2203,7 +2210,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
               updatedExisting = true;
               return {
                 ...r,
-                image: r.image || (seed ? seed.image : getRecipeFallbackImage(r.title, r.category)),
+                image: r.image || (seed ? seed.image : getRecipeFallbackImage(r.title, recipeTags(r).join(' '))),
                 carbs: r.carbs !== undefined ? r.carbs : (seed ? seed.carbs : 45),
                 fat: r.fat !== undefined ? r.fat : (seed ? seed.fat : 15),
                 fibre: r.fibre !== undefined ? r.fibre : (seed ? seed.fibre : 4)
@@ -2917,7 +2924,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         const chip = (t) => `<span class="px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-white font-bold text-[10px]">${t}</span>`;
 
         document.getElementById('detailBadges').innerHTML = `
-          <span class="px-2 py-0.5 rounded-md bg-brand-500 text-slate-950 font-black text-[10px] shadow-sm">${esc(r.category || 'SG Recipe')}</span>
+          ${(recipeTags(r).length ? recipeTags(r) : ['SG Recipe']).map(t => `<span class="px-2 py-0.5 rounded-md bg-brand-500 text-slate-950 font-black text-[10px] shadow-sm">${esc(t)}</span>`).join('')}
           ${chip(`⏱️ ${r.prepTime}m`)}${chip(`🔥 ${cal} kcal`)}${chip(`💪 ${pro}g pro`)}${chip(`🌾 ${carbs}g carbs`)}${chip(`🥑 ${fat}g fat`)}${chip(`🥗 ${fibre}g fibre`)}${chip(`🧂 ${sodium}mg Na`)}
           ${isHalal ? '<span class="px-2 py-0.5 rounded-md bg-emerald-500 text-slate-950 font-black text-[10px]">🌙 Halal</span>' : ''}`;
 
@@ -3006,7 +3013,6 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
     class RecipeEditorController {
       openModal(recipeId = null, prefill = null) {
         const modal = document.getElementById('recipeEditorModal');
-        document.getElementById('editorRecipeCategory').innerHTML = AppState.state.categories.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
         const container = document.getElementById('editorIngredientsContainer');
         container.innerHTML = '';
         const imgInput = document.getElementById('editorRecipeImage');
@@ -3018,11 +3024,13 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         if (servingsInput) servingsInput.value = (r && r.servings) ? r.servings : 2;
         { const ac = document.getElementById('editorAutoNutrition'); if (ac) ac.checked = !recipeId || (r && r.nutritionSource === 'auto'); const nn = document.getElementById('editorNutritionNote'); if (nn) nn.textContent = ''; }
         const setV = (id, v) => { document.getElementById(id).value = v; };
+        this.tags = new Set(r ? recipeTags(r) : []);
+        if (!this.tags.size) this.tags.add(AppState.state.categories[0]);
+        this.renderTags();
         if (r) {
           document.getElementById('recipeEditorModalTitle').textContent = recipeId ? 'Edit Recipe' : 'Review Imported Recipe';
           setV('editorRecipeId', recipeId || '');
           setV('editorRecipeTitle', r.title || '');
-          setV('editorRecipeCategory', r.category || AppState.state.categories[0]);
           setV('editorRecipeTime', r.prepTime ?? 20);
           setV('editorRecipeCal', r.cal ?? 450);
           setV('editorRecipePro', r.pro ?? 25);
@@ -3097,10 +3105,29 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         container.appendChild(row);
       }
 
+      renderTags() {
+        const box = document.getElementById('editorRecipeTags');
+        if (!box) return;
+        if (!this.tags) this.tags = new Set();
+        const all = Array.from(new Set([...AppState.state.categories, ...this.tags]));
+        box.innerHTML = all.map(c => {
+          const on = this.tags.has(c);
+          return `<button type="button" data-tag="${esc(c)}" aria-pressed="${on}" class="px-4 py-2.5 rounded-xl text-base font-bold border transition ${on ? 'bg-brand-500 text-white border-brand-500' : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700'}">${on ? '✓ ' : ''}${esc(c)}</button>`;
+        }).join('');
+        box.onclick = (e) => {
+          const b = e.target.closest('[data-tag]'); if (!b) return;
+          const t = b.getAttribute('data-tag');
+          if (this.tags.has(t)) this.tags.delete(t); else this.tags.add(t);
+          this.renderTags();
+        };
+      }
+
       saveRecipe() {
         const id = document.getElementById('editorRecipeId').value;
         const title = document.getElementById('editorRecipeTitle').value.trim();
-        const category = document.getElementById('editorRecipeCategory').value;
+        const tags = Array.from(this.tags || []);
+        if (!tags.length) return showToast('Please tap at least one tag', '⚠️');
+        const category = tags[0];
         const readNum = (elId, dflt, min = 0) => { const v = parseInt(document.getElementById(elId).value, 10); return isNaN(v) ? dflt : Math.max(min, v); };
         const prepTime = readNum('editorRecipeTime', 20, 1), cal = readNum('editorRecipeCal', 450), pro = readNum('editorRecipePro', 25);
         const carbs = readNum('editorRecipeCarbs', 45), fat = readNum('editorRecipeFat', 15), fibre = readNum('editorRecipeFibre', 4);
@@ -3108,7 +3135,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         const servings = readNum('editorRecipeServings', 2, 1) || 2;
         const base = this.baseRecipe || {};
         const rawImage = (document.getElementById('editorRecipeImage')?.value || '').trim();
-        const image = rawImage || getRecipeFallbackImage(title, category);
+        const image = rawImage || getRecipeFallbackImage(title, tags.join(' '));
         const steps = document.getElementById('editorRecipeSteps').value.split('\n').map(s => s.replace(/^\d+[\.\)]\s*/, '').trim()).filter(Boolean);
 
         const ingredients = [];
@@ -3125,7 +3152,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
 
         const autoN = document.getElementById('editorAutoNutrition');
         const recipeObj = {
-          ...base, id: id || ('rec_' + Date.now()), title, category, image, prepTime, servings, cal, pro, carbs, fat, fibre, sodium, sugar, ingredients,
+          ...base, id: id || ('rec_' + Date.now()), title, category, tags, image, prepTime, servings, cal, pro, carbs, fat, fibre, sodium, sugar, ingredients,
           steps: steps.length > 0 ? steps : ['Prepare and cook ingredients as desired.']
         };
         if (autoN && autoN.checked) Nutrition.apply(recipeObj, true); else recipeObj.nutritionSource = 'manual';
@@ -3560,7 +3587,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         let usage;
         if (!i.signed_in) usage = 'Sign in to use video imports and receipt scans.';
         else if (i.plan === 'owner') usage = 'Full access. No limits.';
-        else usage = `Video credits: ${i.ai_used} of ${i.ai_limit} used this month (YouTube 1, Instagram or TikTok 2).` + (i.plan === 'free' ? ` Receipt scans: ${i.scan_used} of ${i.scan_limit}.` : '');
+        else usage = `Video credits: ${i.ai_used} of ${i.ai_limit} used this month (YouTube 1, Instagram or TikTok 2).` + (i.plan !== 'owner' ? ` Receipt scans: ${i.scan_used} of ${i.scan_limit}.` : '');
         set('planUsage', usage);
         document.getElementById('btnPlanUpgrade')?.classList.toggle('hidden', this.isPlus());
         document.getElementById('btnPlanManage')?.classList.toggle('hidden', !(i.plan === 'plus' && MANAGE_SUBSCRIPTION_URL));
@@ -3571,7 +3598,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         const i = this.info;
         const text = {
           ai: `You have used your free video credits for this month (${i.ai_used} of ${i.ai_limit}).`,
-          scan: `You have used your ${i.scan_limit} free receipt scans this month.`,
+          scan: i.plan === 'plus' ? `You have used all ${i.scan_limit} receipt scans for this month. They start again next month.` : `You have used your ${i.scan_limit} free receipt scans this month.`,
           auto: 'The 7-day meal plan and sending missing items to your cart are part of Plus.',
           price: 'Live prices from supermarkets are part of Plus.',
           recipes: `The free plan keeps up to ${FREE_RECIPE_LIMIT} of your own recipes.`
@@ -4599,8 +4626,8 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       if (activeFilter === undefined) [activeFilter, activeCat] = currentRecipeFilters();
       const search = (document.getElementById('searchRecipeInput')?.value || '').toLowerCase();
       let list = AppState.state.recipes.map(r => ({ recipe: r, ...calculateRecipeMatch(r) }));
-      if (activeCat !== 'ALL') list = list.filter(x => x.recipe.category === activeCat);
-      if (search) list = list.filter(x => x.recipe.title.toLowerCase().includes(search) || (x.recipe.ingredients || []).some(i => i.name.toLowerCase().includes(search)));
+      if (activeCat !== 'ALL') list = list.filter(x => recipeTags(x.recipe).includes(activeCat));
+      if (search) list = list.filter(x => x.recipe.title.toLowerCase().includes(search) || recipeTags(x.recipe).some(t => t.toLowerCase().includes(search)) || (x.recipe.ingredients || []).some(i => i.name.toLowerCase().includes(search)));
       if (activeFilter === 'cookable') list = list.filter(x => x.pct >= 60);
       if (activeFilter === 'expiring') list = list.filter(x => x.usesExpiring);
       if (activeFilter === 'halal') list = list.filter(x => HalalEngine.checkRecipe(x.recipe).length === 0);
@@ -4616,7 +4643,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
                 <img src="${esc(getRecipeImage(recipe))}" alt="${esc(recipe.title)}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null;this.src='https://placehold.co/600x400/064e3b/ecfdf5?text=PantryChef+SG';">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent"></div>
                 <div class="absolute top-3 inset-x-3 flex items-center justify-between gap-2">
-                  <span class="text-sm font-bold px-3.5 py-1.5 rounded-xl bg-black/65 backdrop-blur-md text-white">${esc(recipe.category || 'SG Dish')}</span>
+                  <span class="flex flex-wrap gap-1.5 min-w-0">${(recipeTags(recipe).length ? recipeTags(recipe) : ['SG Dish']).slice(0, 2).map(t => `<span class="text-sm font-bold px-3.5 py-1.5 rounded-xl bg-black/65 backdrop-blur-md text-white">${esc(t)}</span>`).join('')}${recipeTags(recipe).length > 2 ? `<span class="text-sm font-bold px-2.5 py-1.5 rounded-xl bg-black/65 backdrop-blur-md text-white">+${recipeTags(recipe).length - 2}</span>` : ''}</span>
                   <span class="text-sm font-bold px-3.5 py-1.5 rounded-xl ${pct >= 75 ? 'bg-brand-500 text-white' : 'bg-amber-500 text-slate-950'}">${pct}% match</span>
                 </div>
                 ${usesExpiring ? '<span class="absolute bottom-3 left-3 text-sm font-bold px-3 py-1 rounded-lg bg-amber-500 text-slate-950">Rescues expiring items</span>' : ''}
@@ -5006,7 +5033,7 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
       renderDashboard();
     }
     function isBreakfastish(r) {
-      if (r.category === 'Breakfast') return true;
+      if (recipeTags(r).includes('Breakfast')) return true;
       return /breakfast|kaya|toast|porridge|congee|bubur|oat|granola|pancake|egg|omelette|prata|roti|cereal|yogurt|yoghurt|smoothie|sandwich|bun\b|pau\b|nasi lemak|lontong|kueh|kuih|idli|dosa/i.test(r.title || '');
     }
     function buildCalorieTargetPlan(recipes, target) {
@@ -5018,7 +5045,7 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
       // breakfast pool: breakfast-type recipes first; otherwise the lighter half of all recipes
       let bPool = recipes.map((r, i) => i).filter(i => isBreakfastish(recipes[i]) && cals[i] <= target * 0.45);
       if (bPool.length < 3) { const light = recipes.map((r, i) => i).sort((x, y) => cals[x] - cals[y]).slice(0, Math.max(3, Math.ceil(n / 2))); bPool = Array.from(new Set(bPool.concat(light))); }
-      const mainPool = recipes.map((r, i) => i).filter(i => !(r => r.category === 'Breakfast')(recipes[i]));
+      const mainPool = recipes.map((r, i) => i).filter(i => !recipeTags(recipes[i]).includes('Breakfast'));
       const mains = mainPool.length >= 2 ? mainPool : recipes.map((r, i) => i);
       const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
       const plan = {}; let prev = new Set(), total = 0;
@@ -5172,12 +5199,7 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
       on('closeCategoryManagerBtn', 'click', () => {
         const m = $('categoryManagerModal'); if (m) m.style.zIndex = '';
         categoryManager.closeModal();
-        const sel = $('editorRecipeCategory');
-        if (sel && !$('recipeEditorModal').classList.contains('hidden')) {
-          const cur = sel.value;
-          sel.innerHTML = AppState.state.categories.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
-          if (AppState.state.categories.includes(cur)) sel.value = cur;
-        }
+        if (!$('recipeEditorModal').classList.contains('hidden')) recipeEditor.renderTags();
       });
       on('addCategoryForm', 'submit', (e) => {
         e.preventDefault();
