@@ -3410,6 +3410,10 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           .replace(/&#\d+;/g, (m) => { const code = parseInt(m.replace(/\D/g, ''), 10); return !isNaN(code) ? String.fromCharCode(code) : ''; })
           .replace(/^[\s•*▪▫‣⁃–—\-+▢☐☑✓✔]+/, '').trim();
 
+        // "250g" -> "250 g"; Eastern-European spoon abbreviations ("1 st. l." = tablespoon, "1 h. l." = teaspoon)
+        line = line.replace(/(\d)(kg|g|ml|l|oz|lbs?|tbsp|tsp)\b/gi, '$1 $2')
+          .replace(/\b(\d+(?:[.,]\d+)?)\s*(?:st|tbsp)\.?\s*l\.?(?=\s)/gi, '$1 tbsp')
+          .replace(/\b(\d+(?:[.,]\d+)?)\s*(?:h|ch|tsp)\.?\s*l\.?(?=\s)/gi, '$1 tsp');
         line = Lex.normUnits(line);
         if (!line || line.length < 2 || line.length > 130) return null;
         if (/^(ingredients?|for the .*|marinade|sauce|dressing|paste|rempah|garnish|seasoning|topping|batter|filling|us customary.*|metric.*|scale\s*1x.*|1x\s*2x\s*3x|print\s*recipe|pin\s*recipe|save\s*recipe|jump\s*to.*|cook\s*mode.*)$/i.test(line)) return null;
@@ -3420,6 +3424,13 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           const qty = this.parseFractionNumber(trailing[2]) || 1;
           const rawUnit = (trailing[3] || 'pcs').toLowerCase().replace(/\.$/, '');
           return { name: trailing[1].trim(), qty, unit: this.unitMap[rawUnit] || 'pcs', store: 'FairPrice' };
+        }
+
+        // "Green onion (sliced ≈ 5 cm long) 20 g": the amount comes last
+        const endAmt = line.match(/^([a-zA-Z][^\d]{1,70}?(?:\([^)]*\))?[^\d]{0,20}?)\s+(\d+(?:\.\d+)?)\s*(g|kg|ml|l|tbsp|tsp|cups?)$/i);
+        if (endAmt && !/^\d/.test(line)) {
+          const u = this.unitMap[endAmt[3].toLowerCase()] || endAmt[3].toLowerCase();
+          return { name: endAmt[1].trim().replace(/^./, c => c.toUpperCase()), qty: parseFloat(endAmt[2]) || 1, unit: u, store: 'FairPrice' };
         }
 
         const leading = line.match(/^((?:\d+\s+\d+\/\d+)|(?:\d+\/\d+)|(?:\d+(?:\.\d+)?(?:\s*(?:-|–|to)\s*\d+(?:\.\d+)?)?)|(?:\d*\s*[½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞]))\s*(?:\(([^)]+)\)\s*)?(.*)$/i);
@@ -3457,7 +3468,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           }
           if (parenNote && name) name = `${name} (${parenNote})`;
           name = name.replace(/^[-–—,:]+\s*/, '').trim();
-          if (name && name.length <= 90 && !/[.!?;].*[a-zA-Z]/.test(name)) {
+          if (name && name.length <= 90 && !/[.!?;].*[a-zA-Z]/.test(name.replace(/\d[.,]\d/g, '0'))) {   // decimals like 2.54cm are not sentence ends
             return { name: name.charAt(0).toUpperCase() + name.slice(1), qty: Math.round(qty * factor * 100) / 100, unit, store: 'FairPrice' };
           }
         }
@@ -3655,25 +3666,23 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         const imgMatch = text.match(/^(?:image|photo|thumbnail)\s*[:\-]\s*(https?:\/\/[^\s)]+)/im);
         if (imgMatch) extractedImage = this.resolveImageUrl(imgMatch[1], sourceUrl);
 
-        // The page-reader returns "markdown": remove picture/link/bold marks, and remember the page's first real photo
+        // The page-reader returns "markdown". Collect its pictures; the dish photo is picked once the dish name is known (never the site logo).
+        const imgCands = [];
         if (!extractedImage) {
           const re = /!\[([^\]]*)\]\((https?:\/\/[^)\s]+)/g; let mm;
-          while ((mm = re.exec(text))) {
-            if (/logo|icon|avatar|sprite|pixel|badge|gravatar|tracking|placeholder|\.svg|\.gif|emoji|author|newsletter/i.test(mm[2] + ' ' + mm[1])) continue;
-            extractedImage = this.resolveImageUrl(mm[2], sourceUrl); break;
-          }
+          while ((mm = re.exec(text))) imgCands.push({ alt: mm[1], url: mm[2] });
         }
         const unmark = (l) => l.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/(\*\*|__)/g, '').replace(/^\s*[*\u2022]\s+/, '').replace(/\s{2,}/g, ' ');
         const lines = text.split('\n').map(l => unmark(l.replace(/^#+\s*/, '')).trim()).filter(Boolean);
         // A line that is only an amount ("8 ounces", "1/2 teaspoon") belongs with the next line (the food name)
         const qtyOnly = /^(about\s+)?[\d\s\u00BC-\u00BE\u2150-\u215E\/.\-\u2013]+\s*(ounces?|oz|pounds?|lbs?|cups?|tablespoons?|tbsp|teaspoons?|tsp|grams?|g|kg|ml|l|liters?|litres?|cloves?|cans?|tins?|packs?|packets?|sticks?|pinch(es)?|dash(es)?|slices?|pieces?|large|medium|small)?\.?$/i;
         const ingHdr = /^(ingredients?|what you'll need|for the .*)\b/i;
-        const stepHdr = /^(instructions?|directions?|method|steps?|preparation|how to make)\b/i;
-        const stopHdr = /^(nutrition|notes?|tips?|faq|storage|comments?|related\s+recipes?)/i;
+        const stepHdr = /^(instructions?|directions?|method|steps?|preparation|how to make|how to cook|cooking (?:method|instructions?|steps?|directions?)|procedure)\b/i;
+        const stopHdr = /^(nutrition|notes?|tips?|faq|storage|comments?|reviews?|ratings?|you\s+may\s+also|more\s+recipes|related\s+recipes?)/i;
         const hasHeading = lines.some(x => ingHdr.test(x) || stepHdr.test(x));
 
         let title = 'Imported Recipe', section = 'unknown';
-        const ingredients = [], steps = [];
+        const ingredients = [], steps = []; let pendingHead = '';
         for (let li = 0; li < lines.length; li++) {
           let l = lines[li];
           if (/^title:\s*(.+)$/i.test(l)) { title = l.replace(/^title:\s*/i, '').trim(); continue; }
@@ -3685,7 +3694,10 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
             const pi = this.parseIngredientLine(l, false);
             if (pi) ingredients.push(pi);
           } else if (section === 'steps') {
-            const cs = l.replace(/^(?:step\s*\d+|\d+[.)])\s*/i, '').trim();
+            let cs = l.replace(/^(?:step\s*\d+|\d+[.)])\s*/i, '').trim();
+            // a short bold sub-heading ("Prepare the steak") followed by its paragraph becomes one step
+            if (pendingHead) { cs = pendingHead + ': ' + cs; pendingHead = ''; }
+            else if (cs.length > 3 && cs.length <= 40 && !/[.!?:]$/.test(cs) && li + 1 < lines.length && lines[li + 1].length > 40 && !stopHdr.test(lines[li + 1])) { pendingHead = cs; continue; }
             if (cs.length > 3) steps.push(cs);
           } else if (section === 'unknown' && !hasHeading) {
             const pi = this.parseIngredientLine(l, true);
@@ -3695,9 +3707,10 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         }
 
         // Headline-style page titles ("'Too Good to Be True' Is What Everyone Says About This Pasta") are not the dish name: use the web address instead
-        const cleanTitle = (t, url) => {
-          t = String(t || '').replace(/\s+\|\s+[^|]+$/, '').trim();
+        const cleanTitle = (t, url, h1) => {
+          t = String(t || '').replace(/\s+\|\s+[^|]+$/, '').replace(/\s+[-–—]\s+(step[- ]by[- ]step|easy|simple|best|the best|quick|recipe|how to|with photos)\b.*$/i, '').trim();
           const bad = /["\u201C\u201D]/.test(t) || t.length > 60 || /\b(everyone|you need|you'll|this is|why you|best .* ever)\b/i.test(t);
+          if (bad && h1 && h1.length <= 60 && !/["\u201C\u201D]/.test(h1)) return h1;
           if (bad && url) {
             try {
               let seg = new URL(url).pathname.split('/').filter(Boolean).pop() || '';
@@ -3708,11 +3721,27 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           }
           return t || 'Imported Recipe';
         };
-        title = cleanTitle(title, sourceUrl);
+        const h1 = (text.match(/^#\s+(.+)$/m) || [])[1];
+        title = cleanTitle(title, sourceUrl, h1 ? unmark(h1).trim() : '');
+        if (!extractedImage && imgCands.length) {
+          const words = (title + ' ' + sourceUrl.split('/').pop().replace(/-/g, ' ')).toLowerCase().split(/[^a-z\u0400-\u04ff]+/).filter(w => w.length > 3);
+          let best = null, bestScore = 0;
+          imgCands.forEach((c, i) => {
+            const hay = (c.alt + ' ' + c.url).toLowerCase();
+            let sc = words.filter(w => hay.includes(w)).length * 2;
+            if (/recipe|receipt|dish|food|photo|foto|upload|editor|content|media/.test(c.url.toLowerCase())) sc += 1;
+            if (/logo|icon|avatar|sprite|pixel|badge|gravatar|tracking|placeholder|\.svg|\.gif|emoji|author|newsletter|settings|banner|header|footer|brand|menu|ads?\b/.test(hay)) sc -= 6;
+            if (sc > bestScore) { bestScore = sc; best = c; }
+          });
+          if (best) extractedImage = this.resolveImageUrl(best.url, sourceUrl);
+        }
+        const head = lines.slice(0, 80).join(' ');
+        const mm1 = head.match(/(\d{1,3})\s*(?:\u043c\u0438\u043d|min(?:ute)?s?(?![a-z]))/i), mm2 = head.match(/(\d{1,2})(?:\s*[-\u2013]\s*\d{1,2})?\s*(?:\u043f\u043e\u0440\u0446|servings?|serves|portions?)/i);
+        const pageMins = mm1 ? Math.min(600, parseInt(mm1[1], 10)) : 0, pageServes = mm2 ? Math.min(24, parseInt(mm2[1], 10)) : 0;
         const recipeObj = {
           id: 'rec_' + Date.now(), title: title.slice(0, 80), category: 'Quick Weeknight',
           image: extractedImage || `https://placehold.co/800x500/064e3b/ecfdf5?text=${encodeURIComponent(title.slice(0, 28))}`,   // an honest placeholder, never a photo of the wrong dish
-          prepTime: 25, servings: 2, cal: 450, pro: 25, carbs: 45, fat: 15, fibre: 4, sodium: 550, sugar: 4,
+          prepTime: pageMins || 25, servings: pageServes || 2, cal: 450, pro: 25, carbs: 45, fat: 15, fibre: 4, sodium: 550, sugar: 4,
           ingredients: ingredients.length > 0 ? ingredients : [{ name: 'Eggs', qty: 2, unit: 'pcs', store: 'FairPrice' }],
           steps: steps.length > 0 ? steps : ['Cook and prepare according to recipe notes.'],
           sourceBadge: 'Text Parse'
@@ -4788,7 +4817,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       },
       text() {
         const w = this.week(); if (!w.meals) return '';
-        return 'This week: ' + w.meals + ' meal' + (w.meals > 1 ? 's' : '') + ' cooked' + (w.items ? ', ' + w.items + ' item' + (w.items > 1 ? 's' : '') + ' saved from going off' + (w.value >= 0.5 ? ' (about S$' + w.value.toFixed(2) + ')' : '') : '') + '.';
+        return 'This week: ' + w.meals + ' meal' + (w.meals > 1 ? 's' : '') + ' cooked' + (w.items ? ', ' + w.items + ' item' + (w.items > 1 ? 's' : '') + ' saved from going off' + (w.value >= 0.5 ? ' (about S$' + w.value.toFixed(2) + ')' : '') + '.' : '. Nothing saved from going off yet: cook something from "Cook these first" to start counting.');
       },
       paint() {
         const el = document.getElementById('dashSaved'); if (!el) return;
