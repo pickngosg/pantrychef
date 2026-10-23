@@ -3370,7 +3370,26 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
           if (!ext || ext.ingredients.length < 2 || ext.steps.length === 0) throw new Error('no recipe');
           return ext;
         };
+        // Our own Supabase page-fetcher comes first (reliable); the free public go-betweens are the backup.
+        const ownFetch = fromHtml(async () => {
+          if (typeof Sync === 'undefined' || !Sync.user || !Sync.sb) throw new Error('not signed in');
+          const { data } = await Sync.sb.auth.getSession();
+          const token = data && data.session && data.session.access_token;
+          if (!token) throw new Error('not signed in');
+          const ctrl = new AbortController(); const timer = setTimeout(() => ctrl.abort(), 25000);
+          try {
+            const r = await fetch(SUPABASE_URL + '/functions/v1/fetch-page', {
+              method: 'POST', signal: ctrl.signal,
+              headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token, apikey: SUPABASE_ANON_KEY },
+              body: JSON.stringify({ url })
+            });
+            const j = await r.json().catch(() => ({}));
+            if (!r.ok || !j.ok || !j.html) throw new Error(j.error || 'fetch failed');
+            return j.html;
+          } finally { clearTimeout(timer); }
+        });
         const sources = [
+          ownFetch,
           fromHtml(async () => (await fetchWithTimeout('https://api.allorigins.win/raw?url=' + encodeURIComponent(url), 10000)).text()),
           fromHtml(async () => (await fetchWithTimeout('https://corsproxy.io/?url=' + encodeURIComponent(url), 10000)).text()),
           fromHtml(async () => (await fetchWithTimeout('https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(url), 10000)).text()),
