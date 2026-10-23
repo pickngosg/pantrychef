@@ -3403,7 +3403,9 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           return ext;
         };
         // Our own Supabase page-fetcher comes first (reliable); the free public go-betweens are the backup.
+        let ownWhy = '';
         const ownFetch = fromHtml(async () => {
+          try {
           if (typeof Sync === 'undefined' || !Sync.user || !Sync.sb) throw new Error('not signed in');
           const { data } = await Sync.sb.auth.getSession();
           const token = data && data.session && data.session.access_token;
@@ -3416,9 +3418,11 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
               body: JSON.stringify({ url })
             });
             const j = await r.json().catch(() => ({}));
-            if (!r.ok || !j.ok || !j.html) throw new Error(j.error || 'fetch failed');
+            if (r.status === 404) throw new Error('function not deployed');
+            if (!r.ok || !j.ok || !j.html) throw new Error(j.error ? (j.error + (j.status ? ' ' + j.status : '')) : ('http ' + r.status));
             return j.html;
           } finally { clearTimeout(timer); }
+          } catch (e) { ownWhy = String((e && e.message) || e); throw e; }
         });
         const sources = [
           ownFetch,
@@ -3446,7 +3450,11 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           showToast(`Extracted ${ext.ingredients.length} ingredients & ${ext.steps.length} steps!`, '✨');
         } catch (e) {
           this.setStatus(false);
-          showToast('Could not read that page. Paste the recipe text instead.', '📋');
+          const why = ownWhy === 'not signed in' ? ' (Sign in first, then try again.)'
+            : ownWhy === 'function not deployed' ? ' (The fetch-page function is not set up in Supabase yet.)'
+            : /site_refused/.test(ownWhy) ? ' (That website refuses to be read automatically.)'
+            : ownWhy ? ' (' + ownWhy.slice(0, 60) + ')' : '';
+          showToast('Could not read that page.' + why + ' Paste the recipe text instead.', '📋');
           this.switchTab('text');
         }
       }
