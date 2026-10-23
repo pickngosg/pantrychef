@@ -3984,7 +3984,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       this.pendingSource = { url: sh.url, image: meta.image || '', kind };
       this.setStatus(false);
       const r = (caption && SocialShare.looksLikeRecipe(caption)) ? this.parseRawRecipeText(`title: ${title}\n${caption}`, false, sh.url) : null;
-      if (r && r.ingredients.length >= 2) {
+      if (r && r.ingredients.filter(i => String((i && i.name) || '').trim().length >= 3).length >= 3) {
         this.applySource(r);
         this.previewedRecipe = r; this.showPreview(); soundEngine.playChime();
         showToast(`Found ${r.ingredients.length} ingredients in the ${kind} post — check them before saving`, '✨');
