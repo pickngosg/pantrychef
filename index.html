@@ -3009,14 +3009,20 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           (isHalal ? pill('🌙 Halal', 'bg-emerald-500 text-slate-950') : '');
         const fb = document.getElementById('btnDetailFav');
         if (fb) { fb.dataset.fav = r.id; fb.textContent = r.fav ? '♥' : '♡'; fb.className = 'w-10 h-10 rounded-full backdrop-blur-md text-2xl leading-none flex items-center justify-center transition ' + (r.fav ? 'bg-rose-500 text-white' : 'bg-black/55 hover:bg-black/75 text-white'); }
-        const tile = (v, l) => `<div class="rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700 py-3 text-center"><div class="font-display font-extrabold text-xl text-slate-900 dark:text-white">${v}</div><div class="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">${l}</div></div>`;
+        // Neutral tiles; only a small coloured bar on top. The colours match the "Eaten today" card on the home screen.
+        const tile = (v, l, c) => `<div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 pt-0 pb-3 text-center overflow-hidden"><div style="height:4px;background:${c};margin-bottom:10px"></div><div class="font-display font-extrabold text-xl text-slate-900 dark:text-white">${v}</div><div class="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">${l}</div></div>`;
         const cooked = Number(r.cooked) > 0;
         document.getElementById('detailStats').innerHTML = `
-          <div class="grid grid-cols-4 gap-2">${tile((r.prepTime || 0) + 'm', 'Time')}${tile(cal, 'kcal')}${tile(pro + 'g', 'Protein')}${tile(carbs + 'g', 'Carbs')}</div>
-          <div class="flex flex-wrap items-center justify-between gap-2 mt-2.5">
-            <details class="text-sm text-slate-600 dark:text-slate-300"><summary class="cursor-pointer select-none font-bold py-1.5">More nutrition ▾</summary><div class="grid grid-cols-3 gap-2 mt-2 min-w-[260px]">${tile(fat + 'g', 'Fat')}${tile(fibre + 'g', 'Fibre')}${tile(sodium + 'mg', 'Sodium')}</div></details>
+          <div class="grid grid-cols-4 gap-2">${tile((r.prepTime || 0) + 'm', 'Time', '#94A3B8')}${tile(cal, 'kcal', '#E8691E')}${tile(pro + 'g', 'Protein', '#2B7BD1')}${tile(carbs + 'g', 'Carbs', '#D99A06')}</div>
+          <div class="flex flex-wrap items-center justify-between gap-2 mt-3">
+            <button type="button" id="btnMoreNutrition" class="text-sm font-bold text-slate-600 dark:text-slate-300 py-1.5">More nutrition ▾</button>
             <button type="button" data-cooked="${esc(r.id)}" class="text-sm font-bold px-3.5 py-2 rounded-full ${cooked ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}">${cooked ? '✓ Cooked' + (r.cooked > 1 ? ' ' + r.cooked + '×' : '') + ' · tap to undo' : '+ Mark as cooked before'}</button>
-          </div>`;
+          </div>
+          <div id="moreNutritionBox" class="hidden grid grid-cols-3 gap-2 mt-2">${tile(fat + 'g', 'Fat', '#D6336C')}${tile(fibre + 'g', 'Fibre', '#1F6B4A')}${tile(sodium + 'mg', 'Sodium', '#8B5CF6')}</div>`;
+        document.getElementById('btnMoreNutrition')?.addEventListener('click', (ev) => {
+          const box = document.getElementById('moreNutritionBox'); box.classList.toggle('hidden');
+          ev.currentTarget.textContent = box.classList.contains('hidden') ? 'More nutrition ▾' : 'Less nutrition ▴';
+        });
 
         ['Healthy', 'Halal', 'Protein'].forEach(k => {
           const btn = document.getElementById(`btnTweak${k}`);
