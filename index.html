@@ -1583,7 +1583,17 @@ kemiri|candlenut;石栗;buah keras|2.5|100|g|620|19|8|57|5|20|3|
 daun salam|indonesian bay leaf;salam leaf;印尼月桂叶|1.5|20|g|313|7.6|75|8.4|26|23|0.3|
 bakso|indonesian meatball;印尼肉丸;bakso sapi|6.5|500|g|180|10|12|10|0.5|600|25|
 sirup ros|rose syrup;sirap bandung;玫瑰糖浆|3.5|1000|g|260|0|65|0|0|10||1.3
-cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
+cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||
+kidney beans|red kidney beans;canned kidney beans;kidney bean;rajma|1.8|400|g|84|5.4|15|0.3|4.5|240|240|
+black beans|canned black beans;black bean|1.9|400|g|91|6|16|0.3|5|250|240|
+chickpeas|canned chickpeas;garbanzo beans;chick peas;kacang kuda|1.7|400|g|120|6.5|19|2|5|230|240|
+canned tomatoes|crushed tomatoes;diced tomatoes;chopped tomatoes;tinned tomatoes;canned tomato;crushed tomato;diced tomato|1.6|400|g|21|1.2|4.3|0.1|1.3|130|400|
+beef broth|beef stock;beef bouillon|2.5|1000|g|7|1|0.5|0.2|0|350||1
+chicken broth|chicken stock;chicken bouillon;kaldu ayam|2.5|1000|g|8|1|0.6|0.3|0|340||1
+vegetable broth|vegetable stock;veggie broth;veg stock|2.5|1000|g|6|0.3|1|0.1|0|300||1
+bell pepper|capsicum;red pepper;green pepper;yellow pepper;paprika segar|1.5|1|pc|26|1|6|0.2|2|3|150|
+jalapeno|jalapeño;jalapeños;jalapenos;green chilli pepper|0.5|1|pc|29|0.9|6.5|0.4|2.8|3|14|
+paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68||`;
     const Lex = (() => {
       const num = (v) => { const n = parseFloat(v); return isFinite(n) ? n : null; };
       const entries = [];
@@ -1670,9 +1680,11 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
         const tot = { kcal: 0, p: 0, c: 0, f: 0, fi: 0, na: 0 };
         let matched = 0;
         ings.forEach(ing => {
-          const e = Lex.find(ing.name);
+          let e = Lex.find(ing.name);
+          let saltToTaste = false;
+          if (/\bsalt\b/i.test(ing.name) && (!ing.unit || ing.unit === 'pcs')) { e = Lex.find('salt'); saltToTaste = true; }   // "salt, to taste" counts as about 3 g
           if (!e || !e.n) return;
-          const g = this.gramsOf(ing, e);
+          const g = saltToTaste ? 3 : this.gramsOf(ing, e);
           if (g == null) return;
           const k = g / 100; matched++;
           for (const x of Object.keys(tot)) tot[x] += e.n[x] * k;
@@ -3231,6 +3243,26 @@ cincau|grass jelly;仙草;cincau hitam|1.8|300|g|20|0.2|5|0|0.5|10||`;
           let rest = (leading[3] || '').trim();
           if (/^[.)]\s+/.test(rest) && rest.length > 40) return null;
           rest = rest.replace(/^[.)]\s*/, '').trim();
+          // "1 (15-ounce) can kidney beans" or "1 tin chickpeas (400g)": turn the pack size into grams / ml
+          {
+            const SZ = /^(\d+(?:\.\d+)?)[\s-]*(oz|ounces?|g|grams?|kg|ml|l|lb|pounds?)\b/i;
+            const CW = /^(cans?|tins?|jars?|packs?|packets?|bottles?|cartons?|boxes)\b[\s,]*(?:of\s+)?(.*)$/i;
+            const sizeOf = (txt) => {
+              const m = String(txt || '').match(SZ); if (!m) return null;
+              const u = m[2].toLowerCase(), n = parseFloat(m[1]);
+              const f = /^(oz|ounce)/.test(u) ? 28.35 : /^(lb|pound)/.test(u) ? 454 : u === 'kg' ? 1000 : u === 'l' ? 1000 : 1;
+              return { amt: n * f, unit: (u === 'ml' || u === 'l') ? 'ml' : 'g' };
+            };
+            const cw = rest.match(CW);
+            if (cw) {
+              let sz = sizeOf(parenNote), nm = cw[2];
+              if (!sz) { const t = nm.match(/\(\s*([^)]+?)\s*\)\s*$/); if (t && sizeOf(t[1])) { sz = sizeOf(t[1]); nm = nm.replace(t[0], ''); } }
+              nm = nm.replace(/,?\s*\((?:[^)]*)\)\s*$/, '').replace(/,\s*(drained|rinsed|undrained|divided|optional)[^,]*$/i, '').replace(/^[-–—,:\s]+/, '').trim();
+              if (sz && nm && nm.length <= 90) {
+                return { name: nm.charAt(0).toUpperCase() + nm.slice(1), qty: Math.round(qty * sz.amt), unit: sz.unit, store: 'FairPrice' };
+              }
+            }
+          }
           const wordMatch = rest.match(/^([a-zA-Z.]+)\b\s*(.*)$/);
           let unit = 'pcs', name = rest, factor = 1;
           if (wordMatch) {
