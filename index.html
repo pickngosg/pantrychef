@@ -4664,7 +4664,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           this.paint(); showToast('Reminder set for ' + this.pretty(), '⏰');
         });
         document.addEventListener('visibilitychange', () => { if (!document.hidden) { this.paint(); this.check(false); } });
-        setInterval(() => this.check(false), 15 * 60 * 1000);
+        setInterval(() => this.check(false), 60 * 1000);
         this.paint(); setTimeout(() => this.check(false), 4000);
       }
     };
