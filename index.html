@@ -223,7 +223,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
         <section class="dash-card bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6">
           <div class="flex items-center justify-between mb-2 gap-2">
-            <h2 class="dash-sec font-display font-extrabold text-lg text-slate-900 dark:text-white"><span class="dash-ico tn-orange !w-10 !h-10 !text-xl" data-noicon="1" aria-hidden="true">🍲</span>Ready to cook</h2>
+            <h2 class="dash-sec font-display font-extrabold text-lg text-slate-900 dark:text-white"><span class="dash-ico tn-orange !w-10 !h-10 !text-xl" data-noicon="1" aria-hidden="true">🍲</span><span id="dashTonightTitle">Ready to cook</span></h2>
             <button onclick="switchView('recipes')" class="text-sm font-bold text-brand-600 dark:text-brand-400 hover:underline">All recipes</button>
           </div>
           <div id="dashboardTopRecipes"></div>
@@ -3542,7 +3542,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         };
         // Our own Supabase page-fetcher comes first (reliable); the free public go-betweens are the backup.
         let ownWhy = '';
-        const ownFetch = fromHtml(async () => {
+        const ownFetchInner = fromHtml(async () => {
           try {
           if (typeof Sync === 'undefined' || !Sync.user || !Sync.sb) throw new Error('not signed in');
           const { data } = await Sync.sb.auth.getSession();
@@ -3562,6 +3562,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           } finally { clearTimeout(timer); }
           } catch (e) { ownWhy = String((e && e.message) || e); throw e; }
         });
+        const ownFetch = async () => { try { return await ownFetchInner(); } catch (e) { if (!ownWhy) ownWhy = String((e && e.message) || e); throw e; } };
         const sources = [
           ownFetch,
           fromHtml(async () => (await fetchWithTimeout('https://api.allorigins.win/raw?url=' + encodeURIComponent(url), 10000)).text()),
@@ -3591,6 +3592,8 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           const why = ownWhy === 'not signed in' ? ' (Sign in first, then try again.)'
             : ownWhy === 'function not deployed' ? ' (The fetch-page function is not set up in Supabase yet.)'
             : /daily_limit/.test(ownWhy) ? ' (You have read a lot of pages today. Please try again tomorrow, or paste the recipe text.)'
+            : ownWhy === 'no recipe' ? ' (The page opened, but no recipe could be found on it. Is it a recipe page?)'
+            : ownWhy === 'blocked' ? ' (The website showed a "checking your browser" page instead of the recipe.)'
             : /site_refused/.test(ownWhy) ? ' (That website refuses to be read automatically.)'
             : ownWhy ? ' (' + ownWhy.slice(0, 60) + ')' : '';
           showToast('Could not read that page.' + why + ' Paste the recipe text instead.', '📋');
@@ -3604,7 +3607,18 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         const imgMatch = text.match(/^(?:image|photo|thumbnail)\s*[:\-]\s*(https?:\/\/[^\s)]+)/im);
         if (imgMatch) extractedImage = this.resolveImageUrl(imgMatch[1], sourceUrl);
 
-        const lines = text.split('\n').map(l => l.replace(/^#+\s*/, '').trim()).filter(Boolean);
+        // The page-reader returns "markdown": remove picture/link/bold marks, and remember the page's first real photo
+        if (!extractedImage) {
+          const re = /!\[([^\]]*)\]\((https?:\/\/[^)\s]+)/g; let mm;
+          while ((mm = re.exec(text))) {
+            if (/logo|icon|avatar|sprite|pixel|badge|gravatar|tracking|placeholder|\.svg|\.gif|emoji|author|newsletter/i.test(mm[2] + ' ' + mm[1])) continue;
+            extractedImage = this.resolveImageUrl(mm[2], sourceUrl); break;
+          }
+        }
+        const unmark = (l) => l.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/(\*\*|__)/g, '').replace(/^\s*[*\u2022]\s+/, '').replace(/\s{2,}/g, ' ');
+        const lines = text.split('\n').map(l => unmark(l.replace(/^#+\s*/, '')).trim()).filter(Boolean);
+        // A line that is only an amount ("8 ounces", "1/2 teaspoon") belongs with the next line (the food name)
+        const qtyOnly = /^(about\s+)?[\d\s\u00BC-\u00BE\u2150-\u215E\/.\-\u2013]+\s*(ounces?|oz|pounds?|lbs?|cups?|tablespoons?|tbsp|teaspoons?|tsp|grams?|g|kg|ml|l|liters?|litres?|cloves?|cans?|tins?|packs?|packets?|sticks?|pinch(es)?|dash(es)?|slices?|pieces?|large|medium|small)?\.?$/i;
         const ingHdr = /^(ingredients?|what you'll need|for the .*)\b/i;
         const stepHdr = /^(instructions?|directions?|method|steps?|preparation|how to make)\b/i;
         const stopHdr = /^(nutrition|notes?|tips?|faq|storage|comments?|related\s+recipes?)/i;
@@ -3612,12 +3626,14 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
 
         let title = 'Imported Recipe', section = 'unknown';
         const ingredients = [], steps = [];
-        for (const l of lines) {
+        for (let li = 0; li < lines.length; li++) {
+          let l = lines[li];
           if (/^title:\s*(.+)$/i.test(l)) { title = l.replace(/^title:\s*/i, '').trim(); continue; }
           if (ingHdr.test(l)) { section = 'ingredients'; continue; }
           if (stepHdr.test(l)) { section = 'steps'; continue; }
           if (stopHdr.test(l)) { if (section === 'steps') break; section = 'unknown'; continue; }
           if (section === 'ingredients') {
+            if (qtyOnly.test(l) && /\d/.test(l) && li + 1 < lines.length && !ingHdr.test(lines[li + 1]) && !stepHdr.test(lines[li + 1]) && !stopHdr.test(lines[li + 1])) l = l + ' ' + lines[++li];
             const pi = this.parseIngredientLine(l, false);
             if (pi) ingredients.push(pi);
           } else if (section === 'steps') {
@@ -3630,9 +3646,24 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           }
         }
 
+        // Headline-style page titles ("'Too Good to Be True' Is What Everyone Says About This Pasta") are not the dish name: use the web address instead
+        const cleanTitle = (t, url) => {
+          t = String(t || '').replace(/\s+\|\s+[^|]+$/, '').trim();
+          const bad = /["\u201C\u201D]/.test(t) || t.length > 60 || /\b(everyone|you need|you'll|this is|why you|best .* ever)\b/i.test(t);
+          if (bad && url) {
+            try {
+              let seg = new URL(url).pathname.split('/').filter(Boolean).pop() || '';
+              seg = seg.replace(/\.html?$/i, '').replace(/^(how-to-(make|cook)-|recipe-|best-)/i, '').replace(/-\d{4,}$/, '').replace(/-recipe$/i, '');
+              const w = seg.split('-').filter(Boolean);
+              if (w.length >= 2) return w.map(x => x[0].toUpperCase() + x.slice(1)).join(' ');
+            } catch (e) {}
+          }
+          return t || 'Imported Recipe';
+        };
+        title = cleanTitle(title, sourceUrl);
         const recipeObj = {
           id: 'rec_' + Date.now(), title: title.slice(0, 80), category: 'Quick Weeknight',
-          image: extractedImage || getRecipeFallbackImage(title),
+          image: extractedImage || `https://placehold.co/800x500/064e3b/ecfdf5?text=${encodeURIComponent(title.slice(0, 28))}`,   // an honest placeholder, never a photo of the wrong dish
           prepTime: 25, servings: 2, cal: 450, pro: 25, carbs: 45, fat: 15, fibre: 4, sodium: 550, sugar: 4,
           ingredients: ingredients.length > 0 ? ingredients : [{ name: 'Eggs', qty: 2, unit: 'pcs', store: 'FairPrice' }],
           steps: steps.length > 0 ? steps : ['Cook and prepare according to recipe notes.'],
@@ -4481,15 +4512,18 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       const ings = recipe.ingredients || [];
       if (ings.length === 0) return { pct: 100, usesExpiring: false };
       let matched = 0, usesExpiring = false;
-      const now = Date.now();
+      const now = Date.now(), saves = [];
       ings.forEach(ing => {
         const p = findPantryItem(ing.name);
         if (p) {
           matched++;
-          if (daysLeftOf(p.expiryDate) <= 3) usesExpiring = true;
+          const d = daysLeftOf(p.expiryDate);
+          if (d <= 3) usesExpiring = true;
+          if (d >= 0 && d <= 3 && !saves.some(x => x.name === p.name)) saves.push({ name: p.name, d });   // still good, but not for long
         }
       });
-      return { pct: Math.round((matched / ings.length) * 100), usesExpiring };
+      saves.sort((a, b) => a.d - b.d);
+      return { pct: Math.round((matched / ings.length) * 100), usesExpiring, saves };
     }
 
     function findRecipeFor(name) {
@@ -4748,10 +4782,15 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
 
       const top = document.getElementById('dashboardTopRecipes');
       if (top) {
-        top.innerHTML = scored.slice(0, 3).map(({ recipe, pct, usesExpiring }) => { const ic = guessPantryIcon(recipe.title, ''); return `
+        // Rank: recipes that use up food that is about to go off come first (and you must have most of the ingredients), then the best matches
+        const tonight = scored.filter(x => x.saves && x.saves.length && x.pct >= 50)
+          .sort((a, b) => (b.saves.length * 30 + b.pct) - (a.saves.length * 30 + a.pct));
+        const picks = tonight.length ? tonight.concat(scored.filter(x => !tonight.includes(x))).slice(0, 3) : scored.slice(0, 3);
+        const tt = document.getElementById('dashTonightTitle'); if (tt) tt.textContent = tonight.length ? 'Cook this tonight' : 'Ready to cook';
+        top.innerHTML = picks.map(({ recipe, pct, usesExpiring, saves }) => { const ic = guessPantryIcon(recipe.title, ''); return `
           <div data-open-recipe="${esc(recipe.id)}" class="flex items-center gap-3 py-3.5 border-b last:border-0 border-slate-200 dark:border-slate-800 cursor-pointer">
             <img src="${esc(getRecipeImage(recipe))}" alt="" loading="lazy" data-ic="${ic === '🥫' ? '🍲' : ic}" style="width:60px;height:60px" class="rounded-2xl object-cover flex-shrink-0 bg-[#FDDCC4]" onerror="this.onerror=null;var s=document.createElement('span');s.className='dash-ico tn-orange';s.setAttribute('data-noicon','1');s.style.cssText='width:60px;height:60px;font-size:28px';s.textContent=this.dataset.ic;this.replaceWith(s);">
-            <div class="min-w-0 flex-1"><div class="font-bold truncate text-slate-900 dark:text-white">${esc(recipe.title)}</div><div class="text-sm text-slate-500">${recipe.prepTime} min · ${recipe.cal} kcal${usesExpiring ? ' · <span class="font-bold text-amber-600">Uses expiring items</span>' : ''}</div></div>
+            <div class="min-w-0 flex-1"><div class="font-bold truncate text-slate-900 dark:text-white">${esc(recipe.title)}</div><div class="text-sm text-slate-500">${recipe.prepTime} min · ${recipe.cal} kcal${saves && saves.length ? ' · <span class="font-bold text-amber-600">Uses your ' + esc(saves[0].name) + (saves[0].d <= 0 ? ' (use today)' : ' (' + saves[0].d + 'd left)') + (saves.length > 1 ? ' +' + (saves.length - 1) + ' more' : '') + '</span>' : usesExpiring ? ' · <span class="font-bold text-amber-600">Uses expiring items</span>' : ''}</div></div>
             <span class="px-2.5 py-1 rounded-full font-bold text-xs whitespace-nowrap ${pct >= 75 ? 'bg-[#DCEBE1] text-[#145238]' : 'bg-[#F6E3A8] text-[#4F4420]'}">${pct}% match</span>
           </div>`; }).join('');
       }
