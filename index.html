@@ -96,6 +96,7 @@
     #searchRecipeInput,#searchPantryInput{font-size:16px!important;padding-top:14px!important;padding-bottom:14px!important;padding-left:46px!important}
     #view-recipes svg.absolute,#view-pantry svg.absolute{width:20px;height:20px;left:16px}
     #recipeCategoryFilterSelect{font-size:16px!important;padding:14px 18px!important}
+    @media (min-width:1024px){#dashboardCartCompare{column-count:2;column-gap:2.5rem}#dashboardCartCompare>*{break-inside:avoid}}
     #btnOpenCategoryManagerModal,#btnOpenRecipeImport,#btnOpenNewRecipeModal,#btnOpenAddPantryModal{font-size:16px!important;padding:14px 20px!important;gap:8px}
     #btnOpenCategoryManagerModal,#btnOpenRecipeImport span:first-child,#btnOpenNewRecipeModal span:first-child,#btnOpenAddPantryModal span:first-child{font-size:18px}
     .recipe-filter-pill{font-size:16px!important;padding:11px 20px!important;border-radius:14px!important}
@@ -213,7 +214,7 @@
         <div id="dashboardExpiringList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"></div>
       </section>
 
-      <div class="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr_1.1fr] gap-5 items-start">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
         <section class="dash-card bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6">
           <div class="flex items-center justify-between mb-2 gap-2">
             <h2 class="dash-sec font-display font-extrabold text-lg text-slate-900 dark:text-white"><span class="dash-ico tn-orange !w-10 !h-10 !text-xl" data-noicon="1" aria-hidden="true">🍲</span>Ready to cook</h2>
@@ -242,7 +243,7 @@
           <div id="dailyMealsLogList" class="space-y-1 text-sm text-slate-500 dark:text-slate-400 max-h-28 overflow-y-auto"></div>
         </section>
 
-        <section class="dash-card bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6">
+        <section class="dash-card bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 lg:col-span-2">
           <div id="dashboardCartCompare"></div>
         </section>
       </div>
