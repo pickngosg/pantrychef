@@ -991,60 +991,80 @@
   </div>
 
   <div id="dataBackupModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-6">
-    <div class="w-full sm:max-w-2xl lg:max-w-5xl max-h-[94vh] overflow-y-auto bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-9 space-y-5 text-base">
-      <div class="flex items-center justify-between">
+    <div class="w-full sm:max-w-xl max-h-[94vh] overflow-y-auto bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-5 text-base">
+      <div class="flex items-start justify-between gap-3">
         <div>
-          <h3 class="font-black text-2xl text-slate-900 dark:text-white">☁️ Kitchen Data Backup & Restore</h3>
-          <p id="lastSyncedTimestamp" class="text-base text-slate-400 mt-1">All data auto-saved locally in IndexedDB</p>
+          <h3 class="font-black text-2xl text-slate-900 dark:text-white">👤 My account</h3>
+          <p id="lastSyncedTimestamp" class="text-base text-slate-500 mt-1">Signed out. Your data stays on this device.</p>
         </div>
         <button id="closeDataBackupModalBtn" aria-label="Close" class="w-12 h-12 flex-shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 text-xl font-bold">✕</button>
       </div>
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-start">
-      <div class="space-y-5">
-      <div id="planCard" class="p-4 rounded-2xl bg-[#DCEBE1] dark:bg-slate-800 text-[#145238] dark:text-brand-300 space-y-1.5">
+      <p id="syncStatusLine" class="hidden"></p>
+
+      <div id="planCard" class="p-4 rounded-2xl bg-[#DCEBE1] dark:bg-slate-800 text-[#145238] dark:text-brand-300">
         <div class="flex items-center justify-between gap-3">
-          <span class="font-bold text-xl">Your plan: <span id="planName">Free</span></span>
-          <button id="btnPlanUpgrade" type="button" class="px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-base">Upgrade</button>
-          <button id="btnPlanManage" type="button" class="hidden px-5 py-3 rounded-xl bg-slate-200 dark:bg-slate-700 font-bold text-base">Manage plan</button>
+          <div class="min-w-0">
+            <div class="font-bold text-xl">Your plan: <span id="planName">Free</span></div>
+            <p id="planUsage" class="text-base leading-snug mt-0.5">Sign in to use video imports and receipt scans.</p>
+          </div>
+          <button id="btnPlanUpgrade" type="button" class="px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-base flex-shrink-0">Upgrade</button>
+          <button id="btnPlanManage" type="button" class="hidden px-5 py-3 rounded-xl bg-slate-200 dark:bg-slate-700 font-bold text-base flex-shrink-0">Manage plan</button>
         </div>
-        <p id="planUsage" class="text-base leading-snug">Sign in to use video imports and receipt scans.</p>
-      </div>
-      <p class="text-base text-slate-500 dark:text-slate-400">By signing in you agree to the <button type="button" class="open-legal underline">Terms &amp; Privacy</button>.</p>
-      <div class="rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3.5">
-        <p class="font-black text-xl text-slate-900 dark:text-white">🔄 Sync across phone &amp; browser</p>
-        <p id="syncStatusLine" class="text-base text-slate-400"></p>
-        <div id="syncSignedOut" class="space-y-3.5">
-          <input id="syncEmail" type="email" placeholder="Email" class="w-full px-4 py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500" />
-          <input id="syncPassword" type="password" placeholder="Password (min 6 characters)" class="w-full px-4 py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500" />
-          <button id="btnSyncForgot" type="button" class="text-base font-bold text-brand-600 dark:text-brand-400 underline py-1">Forgot my password</button>
-          <div class="flex gap-3">
-            <button id="btnSyncSignIn" class="flex-1 py-4 text-lg rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">Sign in</button>
-            <button id="btnSyncSignUp" class="flex-1 py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 font-bold">Create account</button>
+        <div id="planBars" class="hidden space-y-3 mt-4">
+          <div>
+            <div class="flex justify-between text-sm font-semibold mb-1"><span>🎬 Video imports</span><span id="barAiTxt">0 of 3</span></div>
+            <div class="h-2.5 rounded-full bg-white/70 dark:bg-slate-700 overflow-hidden"><div id="barAi" class="h-full rounded-full bg-brand-500" style="width:0%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm font-semibold mb-1"><span>🧾 Receipt scans</span><span id="barScanTxt">0 of 3</span></div>
+            <div class="h-2.5 rounded-full bg-white/70 dark:bg-slate-700 overflow-hidden"><div id="barScan" class="h-full rounded-full bg-brand-500" style="width:0%"></div></div>
           </div>
         </div>
-        <div id="syncSignedIn" class="hidden space-y-3.5">
-          <p class="text-lg text-slate-600 dark:text-slate-300">Signed in as <b id="syncUserEmail"></b></p>
-          <div class="flex gap-3">
-            <button id="btnSyncNow" class="flex-1 py-4 text-lg rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">Sync now</button>
-            <button id="btnSyncSignOut" class="flex-1 py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 font-bold">Sign out</button>
+      </div>
+
+      <div id="syncSignedOut" class="space-y-4">
+        <div>
+          <p class="font-black text-xl text-slate-900 dark:text-white">Keep your kitchen on every device</p>
+          <ul class="mt-2 space-y-1 text-base text-slate-600 dark:text-slate-300">
+            <li>🔄 Same pantry on your phone and laptop</li>
+            <li>🎬 Turn video recipes into your own recipes</li>
+            <li>🧾 Add groceries by scanning a receipt</li>
+          </ul>
+        </div>
+        <input id="syncEmail" type="email" placeholder="Email" class="w-full px-4 py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500" />
+        <input id="syncPassword" type="password" placeholder="Password (min 6 characters)" class="w-full px-4 py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500" />
+        <button id="btnSyncSignIn" class="w-full py-4 text-lg rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">Sign in</button>
+        <div class="flex items-center justify-between gap-3 text-base">
+          <button id="btnSyncSignUp" type="button" class="font-bold text-brand-600 dark:text-brand-400 underline py-1">New here? Create account</button>
+          <button id="btnSyncForgot" type="button" class="font-bold text-slate-500 dark:text-slate-400 underline py-1">Forgot password</button>
+        </div>
+        <p class="text-sm text-slate-500 dark:text-slate-400">By signing in you agree to the <button type="button" class="open-legal underline">Terms &amp; Privacy</button>.</p>
+      </div>
+
+      <div id="syncSignedIn" class="hidden space-y-4">
+        <p class="text-lg text-slate-600 dark:text-slate-300">Signed in as <b id="syncUserEmail" class="break-all"></b></p>
+        <div class="flex items-center gap-4">
+          <button id="btnSyncNow" class="flex-1 py-4 text-lg rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">🔄 Sync now</button>
+          <button id="btnSyncSignOut" type="button" class="px-3 py-3 text-base font-bold text-slate-500 dark:text-slate-400 underline">Sign out</button>
+        </div>
+      </div>
+
+      <details id="accountMore" class="rounded-2xl border border-slate-200 dark:border-slate-700">
+        <summary class="cursor-pointer select-none list-none px-4 py-3.5 text-base font-bold text-slate-600 dark:text-slate-300 flex items-center justify-between">More options <span class="text-slate-400">▾</span></summary>
+        <div class="px-4 pb-4 space-y-3">
+          <button id="btnExportJsonBackup" class="w-full py-3.5 text-base rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-100 font-bold">⬇️ Save a backup file (.json)</button>
+          <label class="w-full py-3.5 text-base rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-100 font-bold flex items-center justify-center cursor-pointer">
+            <span>⬆️ Restore from a backup file</span>
+            <input type="file" id="inputRestoreJsonBackup" accept=".json" class="hidden">
+          </label>
+          <div id="safetyRow" class="hidden p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-base">
+            <div id="safetyText" class="font-semibold text-amber-900 dark:text-amber-200"></div>
+            <button id="btnUndoSafety" type="button" class="mt-3 px-5 py-3 text-base rounded-xl bg-amber-500 text-slate-950 font-black">↩️ Go back to my earlier data</button>
           </div>
-          <button id="btnOpenDeleteAccount" type="button" class="pt-2 text-base text-rose-500 underline">Delete my account</button>
+          <button id="btnLoadDemoKitchenData" class="hidden w-full py-3.5 text-base rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold">🌱 Fill with sample SG pantry stock (owner only)</button>
+          <div id="accountDanger" class="hidden pt-1"><button id="btnOpenDeleteAccount" type="button" class="text-sm text-rose-500 underline">Delete my account</button></div>
         </div>
-      </div>
-      </div>
-      <div class="space-y-3">
-        <button id="btnExportJsonBackup" class="w-full py-4 text-lg rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">⬇️ Download Full Kitchen Backup (.json)</button>
-        <label class="w-full py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold flex items-center justify-center cursor-pointer">
-          <span>⬆️ Restore from Backup File (.json)</span>
-          <input type="file" id="inputRestoreJsonBackup" accept=".json" class="hidden">
-        </label>
-        <div id="safetyRow" class="hidden p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-base">
-          <div id="safetyText" class="font-semibold text-amber-900 dark:text-amber-200"></div>
-          <button id="btnUndoSafety" type="button" class="mt-3 px-5 py-3 text-base rounded-xl bg-amber-500 text-slate-950 font-black">↩️ Go back to my earlier data</button>
-        </div>
-        <button id="btnLoadDemoKitchenData" class="w-full py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold">🌱 Populate Sample SG Pantry Stock</button>
-      </div>
-      </div>
+      </details>
     </div>
   </div>
 
@@ -2006,6 +2026,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         const on = !!this.user;
         document.getElementById('syncSignedOut')?.classList.toggle('hidden', on);
         document.getElementById('syncSignedIn')?.classList.toggle('hidden', !on);
+        document.getElementById('accountDanger')?.classList.toggle('hidden', !on);
         try { Plan.load(); } catch (e) {}
         const e = document.getElementById('syncUserEmail'); if (e) e.textContent = this.user?.email || '';
       },
@@ -2026,7 +2047,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       async paintSafety() {
         const sb = await Safety.info(); const row = document.getElementById('safetyRow'); if (!row) return;
         if (!sb || !sb.data) { row.classList.add('hidden'); return; }
-        document.getElementById('safetyText').textContent = 'Earlier data saved ' + new Date(sb.at).toLocaleString() + ' (' + sb.label + ').';
+        document.getElementById('safetyText').textContent = 'Your earlier data was saved on ' + new Date(sb.at).toLocaleString() + ' (' + sb.label + '). You can go back to it.';
         row.classList.remove('hidden');
       },
       async tick() { if (this.user && this.ready) { await this.push(); await this.pull(); } },
@@ -3645,8 +3666,23 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         let usage;
         if (!i.signed_in) usage = 'Sign in to use video imports and receipt scans.';
         else if (i.plan === 'owner') usage = 'Full access. No limits.';
-        else usage = `Video credits: ${i.ai_used} of ${i.ai_limit} used this month (YouTube 1, Instagram or TikTok 2).` + (i.plan !== 'owner' ? ` Receipt scans: ${i.scan_used} of ${i.scan_limit}.` : '');
+        else usage = 'Your allowance starts again every month.';
         set('planUsage', usage);
+        {
+          const bars = document.getElementById('planBars'), show = !!(i.signed_in && i.plan !== 'owner');
+          if (bars) bars.classList.toggle('hidden', !show);
+          if (show) {
+            const paintBar = (bar, txt, used, lim) => {
+              used = Number(used) || 0; lim = Number(lim) || 1;
+              const b = document.getElementById(bar), t = document.getElementById(txt);
+              if (t) t.textContent = `${used} of ${lim}`;
+              if (b) { b.style.width = Math.min(100, Math.round(used / lim * 100)) + '%'; b.className = 'h-full rounded-full ' + (used / lim >= 0.8 ? 'bg-amber-500' : 'bg-brand-500'); }
+            };
+            paintBar('barAi', 'barAiTxt', i.ai_used, i.ai_limit);
+            paintBar('barScan', 'barScanTxt', i.scan_used, i.scan_limit);
+          }
+          document.getElementById('btnLoadDemoKitchenData')?.classList.toggle('hidden', i.plan !== 'owner');
+        }
         document.getElementById('btnPlanUpgrade')?.classList.toggle('hidden', this.isPlus());
         document.getElementById('btnPlanManage')?.classList.toggle('hidden', !(i.plan === 'plus' && MANAGE_SUBSCRIPTION_URL));
         const chip = document.getElementById('navPlanChip');
