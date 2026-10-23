@@ -990,56 +990,56 @@
     </div>
   </div>
 
-  <div id="dataBackupModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 text-xs">
+  <div id="dataBackupModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-6">
+    <div class="w-full sm:max-w-2xl max-h-[94vh] overflow-y-auto bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-9 space-y-5 text-base">
       <div class="flex items-center justify-between">
         <div>
-          <h3 class="font-black text-sm text-slate-900 dark:text-white">☁️ Kitchen Data Backup & Restore</h3>
-          <p id="lastSyncedTimestamp" class="text-[10px] text-slate-400">All data auto-saved locally in IndexedDB</p>
+          <h3 class="font-black text-2xl text-slate-900 dark:text-white">☁️ Kitchen Data Backup & Restore</h3>
+          <p id="lastSyncedTimestamp" class="text-base text-slate-400 mt-1">All data auto-saved locally in IndexedDB</p>
         </div>
-        <button id="closeDataBackupModalBtn" class="text-slate-400 hover:text-slate-600">✕</button>
+        <button id="closeDataBackupModalBtn" aria-label="Close" class="w-12 h-12 flex-shrink-0 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 text-xl font-bold">✕</button>
       </div>
       <div id="planCard" class="p-4 rounded-2xl bg-[#DCEBE1] dark:bg-slate-800 text-[#145238] dark:text-brand-300 space-y-1.5">
         <div class="flex items-center justify-between gap-3">
-          <span class="font-bold text-base">Your plan: <span id="planName">Free</span></span>
-          <button id="btnPlanUpgrade" type="button" class="px-3.5 py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white font-bold text-sm">Upgrade</button>
-          <button id="btnPlanManage" type="button" class="hidden px-3.5 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 font-bold text-sm">Manage plan</button>
+          <span class="font-bold text-xl">Your plan: <span id="planName">Free</span></span>
+          <button id="btnPlanUpgrade" type="button" class="px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-bold text-base">Upgrade</button>
+          <button id="btnPlanManage" type="button" class="hidden px-5 py-3 rounded-xl bg-slate-200 dark:bg-slate-700 font-bold text-base">Manage plan</button>
         </div>
-        <p id="planUsage" class="text-sm leading-snug">Sign in to use video imports and receipt scans.</p>
+        <p id="planUsage" class="text-base leading-snug">Sign in to use video imports and receipt scans.</p>
       </div>
-      <p class="text-sm text-slate-500 dark:text-slate-400">By signing in you agree to the <button type="button" class="open-legal underline">Terms &amp; Privacy</button>.</p>
-      <div class="rounded-2xl border border-slate-200 dark:border-slate-700 p-3 space-y-2">
-        <p class="font-black text-slate-900 dark:text-white">🔄 Sync across phone &amp; browser</p>
-        <p id="syncStatusLine" class="text-[10px] text-slate-400"></p>
-        <div id="syncSignedOut" class="space-y-2">
-          <input id="syncEmail" type="email" placeholder="Email" class="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 outline-none" />
-          <input id="syncPassword" type="password" placeholder="Password (min 6 characters)" class="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 outline-none" />
-          <button id="btnSyncForgot" type="button" class="text-sm font-bold text-brand-600 dark:text-brand-400 underline">Forgot my password</button>
-          <div class="flex gap-2">
-            <button id="btnSyncSignIn" class="flex-1 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">Sign in</button>
-            <button id="btnSyncSignUp" class="flex-1 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold">Create account</button>
+      <p class="text-base text-slate-500 dark:text-slate-400">By signing in you agree to the <button type="button" class="open-legal underline">Terms &amp; Privacy</button>.</p>
+      <div class="rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3.5">
+        <p class="font-black text-xl text-slate-900 dark:text-white">🔄 Sync across phone &amp; browser</p>
+        <p id="syncStatusLine" class="text-base text-slate-400"></p>
+        <div id="syncSignedOut" class="space-y-3.5">
+          <input id="syncEmail" type="email" placeholder="Email" class="w-full px-4 py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500" />
+          <input id="syncPassword" type="password" placeholder="Password (min 6 characters)" class="w-full px-4 py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 outline-none focus:ring-2 focus:ring-brand-500" />
+          <button id="btnSyncForgot" type="button" class="text-base font-bold text-brand-600 dark:text-brand-400 underline py-1">Forgot my password</button>
+          <div class="flex gap-3">
+            <button id="btnSyncSignIn" class="flex-1 py-4 text-lg rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">Sign in</button>
+            <button id="btnSyncSignUp" class="flex-1 py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 font-bold">Create account</button>
           </div>
         </div>
-        <div id="syncSignedIn" class="hidden space-y-2">
-          <p class="text-slate-600 dark:text-slate-300">Signed in as <b id="syncUserEmail"></b></p>
-          <div class="flex gap-2">
-            <button id="btnSyncNow" class="flex-1 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">Sync now</button>
-            <button id="btnSyncSignOut" class="flex-1 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold">Sign out</button>
+        <div id="syncSignedIn" class="hidden space-y-3.5">
+          <p class="text-lg text-slate-600 dark:text-slate-300">Signed in as <b id="syncUserEmail"></b></p>
+          <div class="flex gap-3">
+            <button id="btnSyncNow" class="flex-1 py-4 text-lg rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">Sync now</button>
+            <button id="btnSyncSignOut" class="flex-1 py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 font-bold">Sign out</button>
           </div>
-          <button id="btnOpenDeleteAccount" type="button" class="pt-2 text-sm text-rose-500 underline">Delete my account</button>
+          <button id="btnOpenDeleteAccount" type="button" class="pt-2 text-base text-rose-500 underline">Delete my account</button>
         </div>
       </div>
-      <div class="space-y-2">
-        <button id="btnExportJsonBackup" class="w-full py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">⬇️ Download Full Kitchen Backup (.json)</button>
-        <label class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold flex items-center justify-center cursor-pointer">
+      <div class="space-y-3">
+        <button id="btnExportJsonBackup" class="w-full py-4 text-lg rounded-xl bg-brand-500 hover:bg-brand-600 text-slate-950 font-black">⬇️ Download Full Kitchen Backup (.json)</button>
+        <label class="w-full py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold flex items-center justify-center cursor-pointer">
           <span>⬆️ Restore from Backup File (.json)</span>
           <input type="file" id="inputRestoreJsonBackup" accept=".json" class="hidden">
         </label>
-        <div id="safetyRow" class="hidden p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-sm">
+        <div id="safetyRow" class="hidden p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-base">
           <div id="safetyText" class="font-semibold text-amber-900 dark:text-amber-200"></div>
-          <button id="btnUndoSafety" type="button" class="mt-2 px-4 py-2 rounded-xl bg-amber-500 text-slate-950 font-black">↩️ Go back to my earlier data</button>
+          <button id="btnUndoSafety" type="button" class="mt-3 px-5 py-3 text-base rounded-xl bg-amber-500 text-slate-950 font-black">↩️ Go back to my earlier data</button>
         </div>
-        <button id="btnLoadDemoKitchenData" class="w-full py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold">🌱 Populate Sample SG Pantry Stock</button>
+        <button id="btnLoadDemoKitchenData" class="w-full py-4 text-lg rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold">🌱 Populate Sample SG Pantry Stock</button>
       </div>
     </div>
   </div>
