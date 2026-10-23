@@ -3100,7 +3100,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           updated[idx] = { ...p, qty: remaining };
         });
         AppState.setPantry(updated.filter(p => p.qty > 0));
-        if (rescued) { try { Saved.add(rescued, rescuedValue); } catch (e) {} }
+        try { Saved.add(rescued, rescuedValue); } catch (e) {}
         try { RecipeMarks.markCooked(r.id); } catch (e) {}
 
         const intake = { ...AppState.state.dailyIntake };
@@ -4738,11 +4738,12 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           if (localStorage.getItem(this.DAY) === today) return;
           if (!force) { const [th, tm] = this.time().split(':').map(Number); if (now.getHours() * 60 + now.getMinutes() < th * 60 + tm) return; }
           const soon = (AppState.state.pantry || []).map(i => ({ n: i.name, d: daysLeftOf(i.expiryDate) })).filter(x => x.d <= 2).sort((a, b) => a.d - b.d);
-          if (!soon.length) return;
+          const sunday = now.getDay() === 0, wk = sunday ? Saved.text() : '';
+          if (!soon.length && !wk) return;
           const names = soon.slice(0, 3).map(x => x.n).join(', ') + (soon.length > 3 ? ' and ' + (soon.length - 3) + ' more' : '');
           const gone = soon.filter(x => x.d < 0).length;
-          const title = gone ? '⚠️ Some food has expired' : '⏰ Use these up soon';
-          const body = names + (gone ? ' – check and cook what you can.' : ' – tap to find a recipe.');
+          const title = !soon.length ? '🌱 Your week in the kitchen' : gone ? '⚠️ Some food has expired' : '⏰ Use these up soon';
+          const body = !soon.length ? wk : names + (gone ? ' – check and cook what you can.' : ' – tap to find a recipe.') + (wk ? ' ' + wk : '');
           localStorage.setItem(this.DAY, today);
           const reg = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration() : null;
           if (reg && reg.showNotification) await reg.showNotification(title, { body, icon: 'icon-192.png', badge: 'icon-192.png', tag: 'pcsg-daily', data: { url: './index.html' } });
@@ -4769,20 +4770,31 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         const mk = new Date().toISOString().slice(0, 7);
         const o = (AppState.state.settings && AppState.state.settings.saved) || {};
         const m = o.month === mk;
-        return { month: mk, items: Number(o.items) || 0, value: Number(o.value) || 0, mItems: m ? (Number(o.mItems) || 0) : 0, mValue: m ? (Number(o.mValue) || 0) : 0 };
+        return { month: mk, items: Number(o.items) || 0, value: Number(o.value) || 0, mItems: m ? (Number(o.mItems) || 0) : 0, mValue: m ? (Number(o.mValue) || 0) : 0, log: Array.isArray(o.log) ? o.log : [] };
       },
+      // Called every time a recipe is cooked (n = items saved from going off, v = their value)
       add(n, v) {
-        const c = this.get();
-        AppState.state.settings.saved = { month: c.month, items: c.items + n, value: Math.round((c.value + v) * 100) / 100, mItems: c.mItems + n, mValue: Math.round((c.mValue + v) * 100) / 100 };
+        const c = this.get(), day = new Date().toISOString().slice(0, 10);
+        const log = c.log.concat([{ d: day, n: n || 0, v: Math.round((v || 0) * 100) / 100 }]).slice(-80);
+        AppState.state.settings.saved = { month: c.month, items: c.items + n, value: Math.round((c.value + v) * 100) / 100, mItems: c.mItems + n, mValue: Math.round((c.mValue + v) * 100) / 100, log };
         db.set('settings', AppState.state.settings);
         this.paint();
       },
+      // The last 7 days (today and the 6 days before)
+      week() {
+        const from = new Date(Date.now() - 6 * 864e5).toISOString().slice(0, 10);
+        const r = this.get().log.filter(x => x.d >= from);
+        return { meals: r.length, items: r.reduce((a, x) => a + (x.n || 0), 0), value: r.reduce((a, x) => a + (x.v || 0), 0) };
+      },
+      text() {
+        const w = this.week(); if (!w.meals) return '';
+        return 'This week: ' + w.meals + ' meal' + (w.meals > 1 ? 's' : '') + ' cooked' + (w.items ? ', ' + w.items + ' item' + (w.items > 1 ? 's' : '') + ' saved from going off' + (w.value >= 0.5 ? ' (about S$' + w.value.toFixed(2) + ')' : '') : '') + '.';
+      },
       paint() {
         const el = document.getElementById('dashSaved'); if (!el) return;
-        const c = this.get();
-        if (!c.mItems) { el.classList.add('hidden'); return; }
-        el.classList.remove('hidden');
-        el.textContent = '🌱 This month you saved ' + c.mItems + ' item' + (c.mItems > 1 ? 's' : '') + ' from going off' + (c.mValue >= 0.5 ? ' (about S$' + c.mValue.toFixed(2) + ' of food)' : '') + '.';
+        const t = this.text();
+        if (!t) { el.classList.add('hidden'); return; }
+        el.classList.remove('hidden'); el.textContent = '🌱 ' + t;
       }
     };
 
