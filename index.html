@@ -194,6 +194,7 @@
             <h1 id="dashTitle" class="font-display font-extrabold text-3xl sm:text-4xl text-slate-900 dark:text-white leading-tight">Good morning</h1>
             <p id="dashSub" class="mt-1 text-base sm:text-lg text-slate-600 dark:text-slate-300">Here is what is in your kitchen today.</p>
             <p id="dashSummary" class="mt-1 text-sm sm:text-base font-bold text-brand-700 dark:text-brand-400">&nbsp;</p>
+            <p id="dashSaved" class="hidden mt-1 text-sm sm:text-base font-bold text-emerald-700 dark:text-emerald-400"></p>
           </div>
         </div>
         <div class="flex gap-2.5">
@@ -301,6 +302,8 @@
         <button data-filter="halal" class="recipe-filter-pill px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold flex-shrink-0">🌙 Halal-Friendly</button>
         <button data-filter="healthy" class="recipe-filter-pill px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold flex-shrink-0">💚 HPB Healthier Choice</button>
         <button data-filter="quick" class="recipe-filter-pill px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold flex-shrink-0">⚡ ≤20 Mins</button>
+        <button data-filter="fav" class="recipe-filter-pill px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold flex-shrink-0">♥ Favourites</button>
+        <button data-filter="cooked" class="recipe-filter-pill px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold flex-shrink-0">✓ Cooked before</button>
       </div>
       <div id="recipeGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
     </section>
@@ -2224,7 +2227,24 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       setTimeout(() => { if (!done) { t.style.opacity = '0'; t.style.transition = 'opacity .25s'; setTimeout(() => t.remove(), 250); } }, 7000);
     }
     // One click handler for recipe cards (replaces inline onclick, which could be hijacked by a crafted recipe id)
+    // Favourite and "I have cooked this" marks on a recipe
+    const RecipeMarks = {
+      change(id, fn) {
+        const list = AppState.state.recipes.map(r => r.id === id ? { ...r, ...fn(r) } : r);
+        AppState.setRecipes(list);
+        const cur = list.find(r => r.id === id);
+        const dm = document.getElementById('recipeDetailModal');
+        if (cur && recipeDetailModal.currentRecipe && recipeDetailModal.currentRecipe.id === id && dm && !dm.classList.contains('hidden')) { recipeDetailModal.currentRecipe = cur; recipeDetailModal.render(); }
+      },
+      toggleFav(id) { this.change(id, r => ({ fav: !r.fav })); },
+      toggleCooked(id) { this.change(id, r => Number(r.cooked) > 0 ? { cooked: 0, lastCooked: '' } : { cooked: 1, lastCooked: new Date().toISOString().slice(0, 10) }); },
+      markCooked(id) { this.change(id, r => ({ cooked: (Number(r.cooked) || 0) + 1, lastCooked: new Date().toISOString().slice(0, 10) })); }
+    };
     document.addEventListener('click', (e) => {
+      const fv = e.target.closest && e.target.closest('[data-fav]');
+      if (fv) { e.stopPropagation(); RecipeMarks.toggleFav(fv.dataset.fav); return; }
+      const ck = e.target.closest && e.target.closest('[data-cooked]');
+      if (ck) { e.stopPropagation(); RecipeMarks.toggleCooked(ck.dataset.cooked); return; }
       const ed = e.target.closest && e.target.closest('[data-edit-recipe]');
       if (ed) { e.stopPropagation(); recipeEditor.openModal(ed.dataset.editRecipe); return; }
       const op = e.target.closest && e.target.closest('[data-open-recipe]');
@@ -2983,7 +3003,9 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         document.getElementById('detailBadges').innerHTML = `
           ${(recipeTags(r).length ? recipeTags(r) : ['SG Recipe']).map(t => `<span class="px-2 py-0.5 rounded-md bg-brand-500 text-slate-950 font-black text-[10px] shadow-sm">${esc(t)}</span>`).join('')}
           ${chip(`⏱️ ${r.prepTime}m`)}${chip(`🔥 ${cal} kcal`)}${chip(`💪 ${pro}g pro`)}${chip(`🌾 ${carbs}g carbs`)}${chip(`🥑 ${fat}g fat`)}${chip(`🥗 ${fibre}g fibre`)}${chip(`🧂 ${sodium}mg Na`)}
-          ${isHalal ? '<span class="px-2 py-0.5 rounded-md bg-emerald-500 text-slate-950 font-black text-[10px]">🌙 Halal</span>' : ''}`;
+          ${isHalal ? '<span class="px-2 py-0.5 rounded-md bg-emerald-500 text-slate-950 font-black text-[10px]">🌙 Halal</span>' : ''}
+          <button type="button" data-fav="${esc(r.id)}" class="px-2.5 py-1 rounded-md font-black text-[11px] ${r.fav ? 'bg-rose-500 text-white' : 'bg-white/90 text-slate-800'}">${r.fav ? '♥ Favourite' : '♡ Favourite'}</button>
+          <button type="button" data-cooked="${esc(r.id)}" class="px-2.5 py-1 rounded-md font-black text-[11px] ${Number(r.cooked) > 0 ? 'bg-emerald-500 text-slate-950' : 'bg-white/90 text-slate-800'}">${Number(r.cooked) > 0 ? '✓ Cooked' + (r.cooked > 1 ? ' ' + r.cooked + '×' : '') + ' (tap to undo)' : '+ I have cooked this'}</button>`;
 
         ['Healthy', 'Halal', 'Protein'].forEach(k => {
           const btn = document.getElementById(`btnTweak${k}`);
@@ -3042,6 +3064,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         if (!r) return;
         const scale = this.currentPax / (r.servings || 2);
         const updated = [...AppState.state.pantry];
+        let rescued = 0, rescuedValue = 0;
         (r.ingredients || []).forEach(ing => {
           const reqQty = (parseFloat(ing.qty) || 0) * scale;
           const idx = findPantryIndex(ing.name, updated);
@@ -3051,9 +3074,17 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           const converted = UnitNormalizer.convert(reqQty, ing.unit, p.unit);
           const deduction = converted !== null ? converted : reqQty;
           const remaining = Math.max(0, Math.round((p.qty - deduction) * 1000) / 1000);
+          // Food saved: it was still good but close to its date (0-3 days left) and now got cooked
+          const dl = daysLeftOf(p.expiryDate);
+          if (deduction > 0 && dl >= 0 && dl <= 3) {
+            rescued++;
+            if (p.packPrice > 0 && p.packQty > 0) rescuedValue += Math.min(p.packPrice, deduction * p.packPrice / p.packQty);   // only from the real price on your receipt
+          }
           updated[idx] = { ...p, qty: remaining };
         });
         AppState.setPantry(updated.filter(p => p.qty > 0));
+        if (rescued) { try { Saved.add(rescued, rescuedValue); } catch (e) {} }
+        try { RecipeMarks.markCooked(r.id); } catch (e) {}
 
         const intake = { ...AppState.state.dailyIntake };
         intake.cal += (r.cal || 450); intake.pro += (r.pro || 25); intake.carbs += (r.carbs || 45);
@@ -4715,6 +4746,29 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       }
     };
 
+    // "Food you saved": things you cooked while they were still good but close to their date
+    const Saved = {
+      get() {
+        const mk = new Date().toISOString().slice(0, 7);
+        const o = (AppState.state.settings && AppState.state.settings.saved) || {};
+        const m = o.month === mk;
+        return { month: mk, items: Number(o.items) || 0, value: Number(o.value) || 0, mItems: m ? (Number(o.mItems) || 0) : 0, mValue: m ? (Number(o.mValue) || 0) : 0 };
+      },
+      add(n, v) {
+        const c = this.get();
+        AppState.state.settings.saved = { month: c.month, items: c.items + n, value: Math.round((c.value + v) * 100) / 100, mItems: c.mItems + n, mValue: Math.round((c.mValue + v) * 100) / 100 };
+        db.set('settings', AppState.state.settings);
+        this.paint();
+      },
+      paint() {
+        const el = document.getElementById('dashSaved'); if (!el) return;
+        const c = this.get();
+        if (!c.mItems) { el.classList.add('hidden'); return; }
+        el.classList.remove('hidden');
+        el.textContent = '🌱 This month you saved ' + c.mItems + ' item' + (c.mItems > 1 ? 's' : '') + ' from going off' + (c.mValue >= 0.5 ? ' (about S$' + c.mValue.toFixed(2) + ' of food)' : '') + '.';
+      }
+    };
+
     function dashGreeting() {
       const h = new Date().getHours();
       const g = h >= 5 && h < 12 ? ['☀️', 'Good morning', 'Here is what is in your kitchen today.']
@@ -4740,7 +4794,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       const navBadge = document.getElementById('navCartBadge');
       if (navBadge) { navBadge.textContent = uncheckedCart; navBadge.classList.toggle('hidden', uncheckedCart === 0); }
 
-      dashGreeting();
+      dashGreeting(); try { Saved.paint(); } catch (e) {}
       const sumEl = document.getElementById('dashSummary');
       if (sumEl) sumEl.textContent = expiring.length ? `${expiring.length} item${expiring.length > 1 ? 's' : ''} need cooking in the next 3 days.` : 'Nothing in your pantry is close to expiring.';
 
@@ -4872,10 +4926,12 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       if (activeFilter === 'halal') list = list.filter(x => HalalEngine.checkRecipe(x.recipe).length === 0);
       if (activeFilter === 'healthy') list = list.filter(x => (x.recipe.cal || 500) <= 450);
       if (activeFilter === 'quick') list = list.filter(x => (x.recipe.prepTime || 30) <= 20);
+      if (activeFilter === 'fav') list = list.filter(x => x.recipe.fav);
+      if (activeFilter === 'cooked') list = list.filter(x => Number(x.recipe.cooked) > 0);
       list.sort((a, b) => b.pct - a.pct);
 
       container.innerHTML = list.length === 0
-        ? `<div class="col-span-full p-8 text-center bg-white dark:bg-slate-900 rounded-3xl border"><p class="font-bold text-xs">No matching recipes found</p></div>`
+        ? `<div class="col-span-full p-8 text-center bg-white dark:bg-slate-900 rounded-3xl border"><p class="font-bold text-xs">${activeFilter === 'fav' ? 'No favourites yet. Tap the ♡ on a recipe to add it here.' : activeFilter === 'cooked' ? 'Nothing here yet. Recipes you cook in the app appear here.' : 'No matching recipes found'}</p></div>`
         : list.map(({ recipe, pct, usesExpiring }) => `
             <div data-open-recipe="${esc(recipe.id)}" class="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-brand-500 cursor-pointer transition overflow-hidden flex flex-col group">
               <div class="relative h-48 w-full bg-slate-200 dark:bg-slate-800 overflow-hidden flex-shrink-0">
@@ -4886,6 +4942,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
                   <span class="text-sm font-bold px-3.5 py-1.5 rounded-xl ${pct >= 75 ? 'bg-brand-500 text-white' : 'bg-amber-500 text-slate-950'}">${pct}% match</span>
                 </div>
                 ${usesExpiring ? '<span class="absolute bottom-3 left-3 text-sm font-bold px-3 py-1 rounded-lg bg-amber-500 text-slate-950">Rescues expiring items</span>' : ''}
+                ${Number(recipe.cooked) > 0 ? '<span class="absolute bottom-3 right-3 text-sm font-bold px-3 py-1 rounded-lg bg-white/90 text-emerald-800">✓ Cooked' + (recipe.cooked > 1 ? ' ' + recipe.cooked + '×' : '') + '</span>' : ''}
               </div>
               <div class="p-5 flex flex-col gap-4 flex-1">
                 <h3 class="font-display font-extrabold text-lg leading-snug text-slate-900 dark:text-white">${esc(recipe.title)}</h3>
@@ -4897,7 +4954,10 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
                 </div>
                 <div class="flex items-center justify-between mt-auto pt-1">
                   <span class="text-[15px] text-slate-500 dark:text-slate-400">⏱️ ${recipe.prepTime} min</span>
+                  <span class="flex items-center gap-2">
+                    <button type="button" data-fav="${esc(recipe.id)}" aria-label="Favourite" class="w-11 h-11 rounded-xl text-2xl leading-none ${recipe.fav ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}">${recipe.fav ? '♥' : '♡'}</button>
                   <button type="button" data-edit-recipe="${esc(recipe.id)}" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-[15px] hover:bg-brand-500 hover:text-white transition inline-flex items-center gap-2">✏️ Edit</button>
+                  </span>
                 </div>
               </div>
             </div>`).join('');
