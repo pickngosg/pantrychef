@@ -1988,13 +1988,14 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       markLocal(key) {
         if (this.applying || !SYNC_KEYS.includes(key)) return;
         try { if (HH.owns(key)) { HH.touch(key); return; } } catch (e) {}
+        try { if (PD.owns(key)) { PD.touch(); return; } } catch (e) {}
         localStorage.setItem('pcsg_ts_' + key, Date.now());
         this.setDirty([...this.dirty(), key]);
         if (this.ready) { clearTimeout(this.timer); this.timer = setTimeout(() => this.push(), 800); }
       },
       async push() {
         if (!this.ready || !this.user) return;
-        const keys = this.dirty().filter(k => { try { return !HH.owns(k); } catch (e) { return true; } }); if (!keys.length) return;
+        const keys = this.dirty().filter(k => { try { return !HH.owns(k) && !PD.owns(k); } catch (e) { return true; } }); if (!keys.length) return;
         const snap = {}, rows = [], empty = [];
         for (const k of keys) {
           snap[k] = this.ts(k);
@@ -2020,7 +2021,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         try {
           for (const r of data) {
             if (!SYNC_KEYS.includes(r.key) || r.value === null || r.value === undefined) continue;
-            try { if (HH.owns(r.key)) continue; } catch (e) {}
+            try { if (HH.owns(r.key) || PD.owns(r.key)) continue; } catch (e) {}
             const rts = new Date(r.updated_at).getTime();
             if (fresh || (rts > this.ts(r.key) && !dirty.includes(r.key))) {
               const cv = Safe.value(r.key, r.value); if (cv === undefined) continue;     // ignore wrongly shaped cloud data instead of crashing
@@ -2090,13 +2091,15 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           await Safety.snapshot('before switching accounts');
           this.applying = true;
           try { for (const k of SYNC_KEYS) await db.set(k, null); } finally { this.applying = false; }
-          Object.keys(localStorage).filter(k => k.startsWith('pcsg_ts_') || k === 'pcsg_dirty' || k.startsWith('pcsg_synced_') || k.startsWith('pcsg_hhbase_') || k === 'pcsg_hh_me').forEach(k => localStorage.removeItem(k));
+          Object.keys(localStorage).filter(k => k.startsWith('pcsg_ts_') || k === 'pcsg_dirty' || k.startsWith('pcsg_synced_') || k.startsWith('pcsg_hhbase_') || k.startsWith('pcsg_pdbase_') || k === 'pcsg_hh_me').forEach(k => localStorage.removeItem(k));
           await this.refreshUI();
         }
         try { localStorage.setItem('pcsg_owner_uid', this.user.id); } catch (e) {}
         try { HH.restore(); await HH.load(); } catch (e) {}
+        try { await PD.probe(); } catch (e) {}
         await this.pull(); this.ready = true; await this.push(); this.paintSafety();
         try { await HH.tick(); } catch (e) {}
+        try { await PD.tick(); } catch (e) {}
         try { Push.sync(); } catch (e) {}
       },
       async paintSafety() {
@@ -2105,7 +2108,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         document.getElementById('safetyText').textContent = 'Your earlier data was saved on ' + new Date(sb.at).toLocaleString() + ' (' + sb.label + '). You can go back to it.';
         row.classList.remove('hidden');
       },
-      async tick() { if (this.user && this.ready) { await this.push(); await this.pull(); try { await HH.tick(); } catch (e) {} } },
+      async tick() { if (this.user && this.ready) { await this.push(); await this.pull(); try { await HH.tick(); } catch (e) {} try { await PD.tick(); } catch (e) {} } },
       async auth(mode) {
         if (!this.sb) return showToast('Cloud sync is not set up yet', '⚠️');
         const email = document.getElementById('syncEmail').value.trim();
@@ -2149,7 +2152,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         document.getElementById('btnUndoSafety')?.addEventListener('click', async () => { if (await Safety.undo()) { showToast('Your earlier data is back', '↩️'); this.paintSafety(); } });
         document.getElementById('btnOpenDataBackupModal')?.addEventListener('click', () => this.paintSafety());
         document.getElementById('btnSyncNow')?.addEventListener('click', async () => { await this.tick(); showToast('Synced', '☁️'); });
-        document.getElementById('btnSyncSignOut')?.addEventListener('click', async () => { await this.sb.auth.signOut(); this.user = null; this.ready = false; try { HH.me = null; } catch (e) {} this.renderAuth(); this.status('Signed out – data stays on this device'); });
+        document.getElementById('btnSyncSignOut')?.addEventListener('click', async () => { await this.sb.auth.signOut(); this.user = null; this.ready = false; try { HH.me = null; PD.ok = false; } catch (e) {} this.renderAuth(); this.status('Signed out – data stays on this device'); });
         if (!this.enabled()) { this.status('Cloud sync not set up (works offline on this device only)'); this.renderAuth(); return; }
         this.sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         this.sb.auth.onAuthStateChange((ev) => { if (ev === 'PASSWORD_RECOVERY') document.getElementById('resetPwModal')?.classList.remove('hidden'); });
@@ -2162,6 +2165,101 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         setInterval(() => { if (!document.hidden) this.tick(); }, 45000);
       }
     };
+    // ===== Item-by-item merging (used by household sharing and by your own devices) =====
+    const ItemMerge = {
+      async run(k, io) {
+        const rnd = () => 'hh_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+        for (let attempt = 0; attempt < 4; attempt++) {
+          const got = await io.get(k);
+          const ver = (got && got.version) || 0;
+          const remote = (got && got.value) || { items: [], stamps: {}, gone: {} };
+          const rItems = new Map((remote.items || []).map(i => [i.id, i]));
+          const stamps = Object.assign({}, remote.stamps), gone = Object.assign({}, remote.gone);
+          let local = await db.get(k, null); if (!Array.isArray(local)) local = null;
+          const base = io.baseGet(k);
+          const now = Date.now(); let dirtyRemote = false, fixedIds = false; const added = [];
+          if (local) {
+            local.forEach(it => { if (it && typeof it === 'object' && !it.id) { it.id = rnd(); fixedIds = true; } });
+            const bMap = new Map((base || []).map(i => [i.id, JSON.stringify(i)]));
+            const lIds = new Set();
+            for (const it of local) {
+              if (!it || typeof it !== 'object') continue;
+              lIds.add(it.id);
+              const js = JSON.stringify(it);
+              if (base) {
+                if (bMap.get(it.id) === js) continue;                           // not changed here
+                if (!rItems.has(it.id)) added.push(it); else rItems.set(it.id, it);
+                stamps[it.id] = now; delete gone[it.id]; dirtyRemote = true;
+              } else if (!rItems.has(it.id) && !gone[it.id]) {                  // first time: add what we have
+                added.push(it); stamps[it.id] = now; dirtyRemote = true;
+              }
+            }
+            if (base) for (const b of base) if (!lIds.has(b.id) && rItems.has(b.id)) {   // removed here
+              rItems.delete(b.id); delete stamps[b.id]; gone[b.id] = now; dirtyRemote = true;
+            }
+          }
+          const merged = [...added, ...rItems.values()];
+          Object.keys(gone).forEach(id => { if (now - gone[id] > 30 * 864e5) delete gone[id]; });
+          if (dirtyRemote) {
+            const put = await io.put(k, { items: merged, stamps, gone }, ver);
+            if (!put || !put.ok) continue;                                      // someone saved first: merge again
+          }
+          let changed = false;
+          if (fixedIds || JSON.stringify(merged) !== JSON.stringify(local || [])) {
+            if (local || merged.length) {
+              Sync.applying = true;
+              try { await db.set(k, merged); } finally { Sync.applying = false; }
+              changed = true;
+            }
+          }
+          io.baseSet(k, merged);
+          return changed;
+        }
+        return false;
+      }
+    };
+
+    // ===== Your own lists, merged item by item between your devices =====
+    const PD = {
+      KEYS: ['pantry', 'shoppingList', 'recipes'], ok: false, busy: false, again: false, timer: null, mem: {}, io: null,
+      owns(k) { try { return this.ok && !!Sync.user && this.KEYS.includes(k) && !HH.me; } catch (e) { return false; } },
+      baseGet(k) { try { const r = localStorage.getItem('pcsg_pdbase_' + k); if (r) return JSON.parse(r); } catch (e) {} return this.mem[k] || null; },
+      baseSet(k, v) { this.mem[k] = v; try { localStorage.setItem('pcsg_pdbase_' + k, JSON.stringify(v)); } catch (e) {} },
+      touch() { if (this.busy) { this.again = true; return; } clearTimeout(this.timer); this.timer = setTimeout(() => this.tick(), 1500); },
+      async probe() {
+        this.ok = false;
+        try { if (!Sync.sb || !Sync.user) return false; const { error } = await Sync.sb.rpc('pd_get', { p_key: 'pantry' }); this.ok = !error; } catch (e) { this.ok = false; }
+        return this.ok;
+      },
+      async syncKey(k) {
+        if (!this.io) this.io = {
+          get: async (key) => {
+            const { data, error } = await Sync.sb.rpc('pd_get', { p_key: key }); if (error) throw error;
+            if (data && data.version === 0) {      // first time: start from the copy your older app version saved
+              const { data: old } = await Sync.sb.from('kitchen_data').select('value').eq('key', key).maybeSingle();
+              if (old && Array.isArray(old.value)) return { version: 0, value: { items: old.value, stamps: {}, gone: {} } };
+            }
+            return data;
+          },
+          put: async (key, value, base) => { const { data, error } = await Sync.sb.rpc('pd_put', { p_key: key, p_value: value, p_base: base }); if (error) throw error; return data; },
+          baseGet: (key) => this.baseGet(key), baseSet: (key, v) => this.baseSet(key, v)
+        };
+        return ItemMerge.run(k, this.io);
+      },
+      async tick() {
+        if (!this.ok || !Sync.user || !Sync.ready || this.busy || HH.me) return;
+        this.busy = true; let changed = false;
+        try {
+          for (const k of this.KEYS) { if (await this.syncKey(k)) changed = true; }
+          if (changed) await Sync.refreshUI();
+          Sync.status('☁️ Synced ' + new Date().toLocaleTimeString());
+        } catch (e) {} finally {
+          this.busy = false;
+          if (this.again) { this.again = false; this.timer = setTimeout(() => this.tick(), 800); }
+        }
+      }
+    };
+
     // ===== Household sharing: up to 10 people share one pantry, shopping list and recipes =====
     const HH = {
       KEYS: ['pantry', 'shoppingList', 'recipes'], me: null, busy: false, again: false, timer: null, n: 0, mem: {},
@@ -2212,58 +2310,15 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           if (this.again) { this.again = false; this.timer = setTimeout(() => this.tick(), 800); }
         }
       },
+      io: null,
       // Merge one shared list item by item, so two people editing different things never overwrite each other
       async syncKey(k) {
-        const rnd = () => 'hh_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
-        for (let attempt = 0; attempt < 4; attempt++) {
-          const { data: got, error } = await Sync.sb.rpc('hh_get', { p_key: k });
-          if (error) throw error;
-          const ver = (got && got.version) || 0;
-          const remote = (got && got.value) || { items: [], stamps: {}, gone: {} };
-          const rItems = new Map((remote.items || []).map(i => [i.id, i]));
-          const stamps = Object.assign({}, remote.stamps), gone = Object.assign({}, remote.gone);
-          let local = await db.get(k, null); if (!Array.isArray(local)) local = null;
-          const base = this.baseGet(k);
-          const now = Date.now(); let dirtyRemote = false, fixedIds = false; const added = [];
-          if (local) {
-            local.forEach(it => { if (it && typeof it === 'object' && !it.id) { it.id = rnd(); fixedIds = true; } });
-            const bMap = new Map((base || []).map(i => [i.id, JSON.stringify(i)]));
-            const lIds = new Set();
-            for (const it of local) {
-              if (!it || typeof it !== 'object') continue;
-              lIds.add(it.id);
-              const js = JSON.stringify(it);
-              if (base) {
-                if (bMap.get(it.id) === js) continue;                           // not changed here
-                if (!rItems.has(it.id)) added.push(it); else rItems.set(it.id, it);
-                stamps[it.id] = now; delete gone[it.id]; dirtyRemote = true;
-              } else if (!rItems.has(it.id) && !gone[it.id]) {                  // first time: add what we have
-                added.push(it); stamps[it.id] = now; dirtyRemote = true;
-              }
-            }
-            if (base) for (const b of base) if (!lIds.has(b.id) && rItems.has(b.id)) {   // removed here
-              rItems.delete(b.id); delete stamps[b.id]; gone[b.id] = now; dirtyRemote = true;
-            }
-          }
-          const merged = [...added, ...rItems.values()];
-          Object.keys(gone).forEach(id => { if (now - gone[id] > 30 * 864e5) delete gone[id]; });
-          if (dirtyRemote) {
-            const { data: put, error: e2 } = await Sync.sb.rpc('hh_put', { p_key: k, p_value: { items: merged, stamps, gone }, p_base: ver });
-            if (e2) throw e2;
-            if (!put || !put.ok) continue;                                      // someone saved first: merge again
-          }
-          let changed = false;
-          if (fixedIds || JSON.stringify(merged) !== JSON.stringify(local || [])) {
-            if (local || merged.length) {
-              Sync.applying = true;
-              try { await db.set(k, merged); } finally { Sync.applying = false; }
-              changed = true;
-            }
-          }
-          this.baseSet(k, merged);
-          return changed;
-        }
-        return false;
+        if (!this.io) this.io = {
+          get: async (key) => { const { data, error } = await Sync.sb.rpc('hh_get', { p_key: key }); if (error) throw error; return data; },
+          put: async (key, value, base) => { const { data, error } = await Sync.sb.rpc('hh_put', { p_key: key, p_value: value, p_base: base }); if (error) throw error; return data; },
+          baseGet: (key) => this.baseGet(key), baseSet: (key, v) => this.baseSet(key, v)
+        };
+        return ItemMerge.run(k, this.io);
       },
       async create() {
         const name = (document.getElementById('hhNameInput')?.value || '').trim();
@@ -2293,7 +2348,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         if (error) return showToast(this.err(error), '⚠️');
         this.me = null; this.baseClear();
         try { const t = Date.now(); this.KEYS.forEach(k => localStorage.setItem('pcsg_ts_' + k, t)); Sync.setDirty([...Sync.dirty(), ...this.KEYS]); } catch (e) {}
-        this.paint(); showToast('You left the household', '👋'); Sync.push();
+        this.paint(); showToast('You left the household', '👋'); Sync.push(); try { PD.tick(); } catch (e) {}
       },
       async kick(uid) {
         if (!confirm('Remove this person from the household?')) return;
