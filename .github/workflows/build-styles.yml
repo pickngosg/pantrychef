@@ -2,7 +2,7 @@ name: Build styles
 on:
   push:
     branches: [main, master]
-    paths: ['index.html', 'tailwind.config.js', 'tailwind-input.css']
+    paths: ['index.html', 'classes.html', 'tailwind.config.js', 'tailwind-input.css']
   workflow_dispatch:
 permissions:
   contents: write
