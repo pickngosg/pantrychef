@@ -654,8 +654,14 @@
           <form id="addPantryCategoryForm" class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
             <span class="font-extrabold text-slate-700 dark:text-slate-200 block text-sm uppercase tracking-wider">➕ Add a food type</span>
             <div class="flex gap-2">
-              <input type="text" id="inputNewCatIcon" maxlength="4" placeholder="Icon" value="🥫" class="w-14 px-2 py-2 text-center rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-sm outline-none">
+              <button type="button" id="btnNewCatIcon" data-noicon="1" aria-label="Choose a picture for this food type" class="w-16 h-[3.25rem] flex-shrink-0 flex items-center justify-center text-3xl rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700">🥫</button>
+              <input type="hidden" id="inputNewCatIcon" value="🥫">
               <input type="text" id="inputNewCatName" required placeholder="Name (e.g. Bakery, Snacks, Drinks)" class="flex-1 px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-base outline-none focus:ring-1 focus:ring-brand-500">
+            </div>
+            <div id="newCatIconPanel" data-noicon="1" class="hidden p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 space-y-2">
+              <div class="text-sm font-bold text-slate-500">Tap a picture:</div>
+              <div id="newCatIconTabs" class="flex gap-1.5 overflow-x-auto no-scrollbar"></div>
+              <div id="newCatIconGrid" class="grid grid-cols-6 sm:grid-cols-8 gap-1.5 max-h-44 overflow-y-auto"></div>
             </div>
             <div class="grid grid-cols-2 gap-2">
               <div>
@@ -663,7 +669,7 @@
                 <input type="number" id="inputNewCatDays" min="1" max="999" value="14" required class="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-base">
               </div>
               <div>
-                <label class="block text-sm font-bold text-slate-500 mb-0.5">Usually kept in</label>
+                <div class="flex items-center justify-between gap-2 mb-0.5"><label for="inputNewCatZone" class="block text-sm font-bold text-slate-500">Usually kept in</label><button type="button" id="btnCatEditPlaces" class="text-sm font-bold text-brand-600 dark:text-brand-400 underline">Edit list</button></div>
                 <select id="inputNewCatZone" class="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-base"></select>
               </div>
             </div>
@@ -2685,7 +2691,7 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         const photo = this.el('inputPantryPhoto').value, icon = this.el('inputPantryIcon').value;
         const cur = { photo, icon, name: this.el('inputPantryName').value, category: this.el('inputPantryCategory').value };
         this.el('pantryPicPreview').innerHTML = pantryThumb(cur, 64);
-        this.el('pantryPicLabel').textContent = photo ? 'Your photo' : icon ? 'Chosen icon' : 'Auto icon from the name';
+        this.el('pantryPicLabel').textContent = photo ? 'Your photo' : icon ? 'Chosen picture' : (cur.name.trim() ? 'Automatic: picked from the name' : 'Automatic: type the name first');
       },
       renderPicker() {
         const cur = this.el('inputPantryIcon').value;
@@ -2709,9 +2715,12 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
           this.el('inputPantryIcon').value = b.dataset.pico; this.el('inputPantryPhoto').value = '';
           this.renderPicker(); this.preview();
         });
-        this.el('btnPantryPicClear').addEventListener('click', () => { this.el('inputPantryIcon').value = ''; this.el('inputPantryPhoto').value = ''; this.renderPicker(); this.preview(); });
+        this.el('btnPantryPicClear').addEventListener('click', () => {
+          this.el('inputPantryIcon').value = ''; this.el('inputPantryPhoto').value = ''; this.renderPicker(); this.preview();
+          showToast(this.el('inputPantryName').value.trim() ? 'Picture chosen from the name' : 'Type what the food is first. The picture follows the name.', '🖼️');
+        });
         ['inputPantryPhotoFile', 'inputPantryPhotoCam'].forEach(id => this.el(id).addEventListener('change', (e) => { this.setPhotoFrom(e.target.files[0]); e.target.value = ''; }));
-        this.el('inputPantryName').addEventListener('input', () => this.preview());
+        ['input', 'change', 'blur'].forEach(ev => this.el('inputPantryName').addEventListener(ev, () => this.preview()));
         this.el('inputPantryCategory').addEventListener('change', () => this.preview());
       }
     };
@@ -2792,6 +2801,8 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
             document.getElementById('inputPantryUnit').value = s.unit;
             document.getElementById('inputPantryZone').value = s.zone;
             document.getElementById('inputPantryCategory').value = s.category;
+            document.getElementById('inputPantryIcon').value = ''; document.getElementById('inputPantryPhoto').value = '';
+            try { PantryPics.renderPicker(); PantryPics.preview(); } catch (e) {}
             this.autoInferExpiry();
           });
           container.appendChild(btn);
@@ -5830,7 +5841,27 @@ Divide blanched noodles into serving bowls and ladle the hot laksa broth over. S
         e.preventDefault();
         pantryConfigManager.addCategory($('inputNewCatName').value, $('inputNewCatIcon').value, $('inputNewCatDays').value, $('inputNewCatZone').value);
         $('inputNewCatName').value = '';
+        try { NewCatIcon.set('🥫'); document.getElementById('newCatIconPanel').classList.add('hidden'); } catch (e2) {}
       });
+      on('btnCatEditPlaces', 'click', () => pantryConfigManager.switchTab('zones'));
+      // Picture for a new food type: tap the box, then tap a picture
+      const NewCatIcon = {
+        cat: 0,
+        set(ic) { document.getElementById('inputNewCatIcon').value = ic; document.getElementById('btnNewCatIcon').textContent = ic; },
+        render() {
+          const cur = document.getElementById('inputNewCatIcon').value;
+          document.getElementById('newCatIconTabs').innerHTML = PANTRY_ICON_SETS.map((g, n) =>
+            `<button type="button" data-ncat="${n}" class="px-3.5 py-2 rounded-full text-sm font-bold whitespace-nowrap ${n === this.cat ? 'bg-brand-500 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}">${esc(g.n)}</button>`).join('');
+          document.getElementById('newCatIconGrid').innerHTML = PANTRY_ICON_SETS[this.cat].i.map(ic =>
+            `<button type="button" data-nico="${ic}" aria-label="Picture ${ic}" class="h-11 rounded-xl text-2xl ${ic === cur ? 'bg-[#DCEBE1] ring-2 ring-brand-500' : 'bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700'}">${ic}</button>`).join('');
+        },
+        init() {
+          on('btnNewCatIcon', 'click', () => { const p = document.getElementById('newCatIconPanel'); p.classList.toggle('hidden'); if (!p.classList.contains('hidden')) this.render(); });
+          on('newCatIconTabs', 'click', (e) => { const b = e.target.closest('[data-ncat]'); if (b) { this.cat = +b.dataset.ncat; this.render(); } });
+          on('newCatIconGrid', 'click', (e) => { const b = e.target.closest('[data-nico]'); if (b) { this.set(b.dataset.nico); this.render(); } });
+        }
+      };
+      NewCatIcon.init();
 
       document.querySelectorAll('.recipe-filter-pill').forEach(btn => btn.addEventListener('click', () => {
         document.querySelectorAll('.recipe-filter-pill').forEach(b => b.className = 'recipe-filter-pill px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold flex-shrink-0');
