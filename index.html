@@ -399,7 +399,7 @@
 
   <!-- MODALS -->
   <div id="pantryItemModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="w-full sm:max-w-xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 text-base">
+    <div class="w-full sm:max-w-3xl lg:max-w-5xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[92vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-5 space-y-4 text-base">
       <div class="flex items-center justify-between">
         <h3 id="pantryModalTitle" class="font-black text-2xl text-slate-900 dark:text-white">Add food to Pantry</h3>
         <button type="button" id="closePantryModalBtn" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 font-bold">✕</button>
@@ -419,7 +419,7 @@
             <label class="block font-bold text-slate-700 dark:text-slate-300">What is it? *</label>
             <button type="button" id="btnToggleQuickStaples" class="text-sm text-brand-600 dark:text-brand-400 font-bold hover:underline">✨ Common items</button>
           </div>
-          <input type="text" id="inputPantryName" required placeholder="e.g. Chicken thigh, eggs, kailan" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white">
+          <div class="relative" id="pantryNameWrap"><input type="text" id="inputPantryName" autocomplete="off" role="combobox" aria-expanded="false" required placeholder="e.g. Chicken thigh, eggs, kailan" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-slate-900 dark:text-white"><div id="pantryNameSuggest" class="hidden absolute left-0 right-0 top-full mt-1 z-50 max-h-72 overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 shadow-xl"></div></div>
         </div>
         <div id="pantryQuickPickerTray" class="hidden p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 space-y-2">
           <span class="text-sm font-bold text-slate-400 uppercase tracking-wider block">Tap one to fill in the form:</span>
@@ -488,7 +488,7 @@
   </div>
 
   <div id="batchPantryModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="w-full sm:max-w-2xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-7 space-y-5 text-base">
+    <div class="w-full sm:max-w-3xl lg:max-w-5xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-7 space-y-5 text-base">
       <div class="flex items-start justify-between gap-3">
         <div>
           <h3 class="font-black text-2xl text-slate-900 dark:text-white">🧾 Add food from a photo</h3>
@@ -529,7 +529,7 @@
   </div>
 
   <div id="productFinderModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="w-full sm:max-w-2xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-7 space-y-4 text-base">
+    <div class="w-full sm:max-w-3xl lg:max-w-5xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-7 space-y-4 text-base">
       <div class="flex items-start justify-between gap-3">
         <div>
           <h3 class="font-black text-2xl text-slate-900 dark:text-white">🔎 Find the exact product</h3>
@@ -562,7 +562,7 @@
   </div>
 
   <div id="priceScanModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="w-full sm:max-w-2xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-7 space-y-5 text-base">
+    <div class="w-full sm:max-w-3xl lg:max-w-5xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-7 space-y-5 text-base">
       <div class="flex items-start justify-between gap-3">
         <div>
           <h3 class="font-black text-2xl text-slate-900 dark:text-white">🏷️ Add shop prices from a photo</h3>
@@ -605,7 +605,7 @@
   </div>
 
   <div id="pantryConfigModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="w-full sm:max-w-2xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-base">
+    <div class="w-full sm:max-w-3xl lg:max-w-5xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-base">
       <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
         <div class="flex items-center space-x-2">
           <span class="text-lg">⚙️</span>
@@ -685,7 +685,7 @@
   </div>
 
   <div id="recipeDetailModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="w-full sm:max-w-4xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-xs">
+    <div class="w-full sm:max-w-4xl lg:max-w-6xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-xs">
       <div id="detailRecipeImageWrap" class="relative w-full h-48 sm:h-64 bg-slate-200 dark:bg-slate-800 overflow-hidden flex-shrink-0">
         <img id="detailRecipeImage" src="" alt="Recipe Photo" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='https://placehold.co/800x450/064e3b/ecfdf5?text=PantryChef+SG+Recipe';">
         <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"></div>
@@ -735,7 +735,7 @@
   </div>
 
   <div id="recipeEditorModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-6">
-    <div class="w-full sm:max-w-5xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] flex flex-col overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 text-sm">
+    <div class="w-full sm:max-w-5xl lg:max-w-6xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] flex flex-col overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 text-sm">
       <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
         <h3 id="recipeEditorModalTitle" class="font-display font-extrabold text-xl sm:text-2xl text-slate-900 dark:text-white">Create Recipe</h3>
         <button id="closeRecipeEditorModalBtn" type="button" aria-label="Close" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 font-bold">✕</button>
@@ -911,7 +911,7 @@
   </div>
 
   <div id="recipeImportUrlModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-6">
-    <div class="w-full sm:max-w-3xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-9 space-y-6 text-lg text-slate-800 dark:text-slate-100">
+    <div class="w-full sm:max-w-3xl lg:max-w-5xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[94vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-9 space-y-6 text-lg text-slate-800 dark:text-slate-100">
       <div class="flex items-start justify-between gap-4">
         <div>
           <h3 class="font-display font-extrabold text-3xl text-slate-900 dark:text-white">🌐 Add a Recipe</h3>
@@ -2634,10 +2634,68 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       { n: 'Dairy & eggs', i: ['🥚','🍳','🥛','🧀','🧈','🍦'] },
       { n: 'Grains', i: ['🍚','🍙','🍜','🍝','🍞','🥖','🥐','🥯','🥞','🌾','🫓','🍘','🥟'] },
       { n: 'Sauces', i: ['🧂','🫙','🍯','🍶','🥜','🫒','🥫','🧴','🌶️'] },
-      { n: 'Drinks & snacks', i: ['☕','🍵','🧋','🧃','🥤','🍺','🍷','🍪','🍫','🍿','🍩','🧁','🍰','🥨','🍬'] },
-      { n: 'Meals & other', i: ['🧊','❄️','🍕','🍟','🥡','🍱','🍲','🥘','🍛','🥣','📦','🛒','🧻','🧼'] }
+      { n: 'Drinks & snacks', i: ['☕','🍵','🧋','🧃','🥤','🍺','🍷','🍸','🍹','🍾','🧉','🫖','🍼','💧','🍪','🍫','🍿','🍩','🧁','🍰','🥧','🍮','🍭','🍡','🍧','🍨','🥨','🍬','🥠'] },
+      { n: 'Meals & other', i: ['🧊','❄️','🍕','🍟','🌮','🌯','🥪','🥙','🧆','🥗','🍝','🫕','🫔','🥡','🍱','🍲','🥘','🍛','🥣','🥢','📦','🛒','🧻','🧼'] }
+    ];
+    // Extra pictures for everyday foods (English, Malay, Chinese, Indonesian names). The LAST word of a name wins, so "chicken soup" is soup and "orange juice" is juice.
+    const PANTRY_ICON_MORE = [
+      [/ice ?cream|gelato|sundae|frozen yogurt|soft serve/, '🍨'], [/coconut (milk|cream|water)|santan/, '🥥'], [/peanut butter|nut butter|almond butter|tahini/, '🫙'],
+      [/prawn cracker|fish cracker|keropok|kerepek|rice cracker/, '🍿'], [/blueberr(y|ies)/, '🫐'], [/watermelon|tembikai/, '🍉'], [/pasta/, '🍝'], [/soda water|club soda|soda\b/, '🥤'],
+      [/fish ?ball|fish ?cake|otah|surimi|crab stick/, '🍥'], [/luncheon meat|spam|corned beef/, '🥩'], [/char siu|siew yok|roast pork|roast duck|bak kwa|bakkwa|jerky|pork floss|rousong/, '🍖'],
+      [/satay|sate\b|kebab|skewer|yakitori/, '🍢'], [/chicken rice|nasi lemak|nasi goreng|fried rice|biryani|briyani|claypot/, '🍚'], [/rice ball|onigiri|rice cracker|senbei/, '🍙'],
+      [/roti|prata|naan|chapati|paratha|flatbread|pita|tortilla|wrap\b|murtabak/, '🫓'], [/baguette|french bread|ciabatta|sourdough/, '🥖'], [/bagel/, '🥯'], [/croissant|danish|puff pastry|pastry/, '🥐'],
+      [/donut|doughnut/, '🍩'], [/pie\b|tart\b|quiche/, '🥧'], [/pudding|custard|flan|creme caramel|panna cotta/, '🍮'], [/lollipop/, '🍭'], [/dango|mochi|kueh|kuih|ondeh|ang ku/, '🍡'],
+      [/shaved ice|ice kachang|cendol|bingsu/, '🍧'], [/soft serve|popsicle|ice lolly/, '🍦'], [/fortune cookie/, '🥠'], [/bubble tea|boba|pearl milk tea/, '🧋'], [/yerba|mate\b/, '🧉'],
+      [/cocktail|mocktail/, '🍸'], [/tropical drink|punch/, '🍹'], [/champagne|prosecco|sparkling wine/, '🍾'], [/sake|soju|baijiu|spirits|whisky|whiskey|vodka|rum\b|brandy|gin\b/, '🍶'],
+      [/baby food|formula|infant|baby milk/, '🍼'], [/teapot/, '🫖'], [/salad|coleslaw|kale|rocket|arugula/, '🥗'], [/sandwich|panini|sub\b/, '🥪'], [/burrito|fajita|quesadilla|kebab wrap/, '🌯'],
+      [/falafel|hummus/, '🧆'], [/fondue|raclette/, '🫕'], [/tamale|zongzi|bak chang|rice dumpling/, '🫔'], [/spaghetti|macaroni|penne|fusilli|linguine|lasagna|lasagne|fettuccine|carbonara/, '🍝'],
+      [/bento|set meal|lunch box|ready meal/, '🍱'], [/takeout|take-away|takeaway|leftover/, '🥡'], [/paella|shakshuka|pad thai|stir fry|stir-fry/, '🥘'], [/hotpot|steamboat|tom yam|tomyum|sup\b|bak kut teh/, '🍲'],
+      [/maggi|instant noodle|indomie|cup noodle|mi goreng|mee goreng|mi sedaap|ramyun|shin ramyun/, '🍜'], [/glutinous|pulut|sticky rice|congee|porridge|bubur|jook/, '🥣'],
+      [/sweet potato|ubi|yam\b|keladi|taro/, '🍠'], [/pumpkin|labu|squash|butternut|kabocha/, '🎃'], [/lotus|bamboo|water chestnut|radish|daikon|turnip|beetroot|beet\b/, '🥕'],
+      [/bitter gourd|gourd|zucchini|courgette|okra|ladies finger|long bean|french bean|green bean|string bean|kacang panjang/, '🥒'],
+      [/kailan|kai lan|chye sim|choy sum|bayam|sawi|pak choi|bok choy|kangkung|kang kong|nai bai|celery|leek|spring onion|scallion|chives|daun bawang|lettuce|spinach|cabbage|kale\b/, '🥬'],
+      [/enoki|shiitake|shimeji|oyster mushroom|king oyster|portobello|button mushroom|cendawan|jamur/, '🍄'], [/ginger|halia|jahe|galangal|lengkuas|turmeric root|kunyit/, '🫚'],
+      [/lemongrass|serai|pandan|curry leaf|daun kari|basil|kemangi|mint|daun pudina|coriander|cilantro|parsley|dill|thyme|rosemary|oregano|sage\b|herb/, '🌿'],
+      [/bawang|shallot|red onion|spring onion bulb/, '🧅'], [/blueberr/, '🫐'], [/olive/, '🫒'], [/chickpea|kidney bean|red bean|mung bean|lentil|dhal|dal\b|black bean|baked bean|soybean|adzuki|kacang\b/, '🫘'],
+      [/\bpeas?\b|edamame|snow pea|sugar snap/, '🫛'], [/peanut|cashew|almond|walnut|pistachio|hazelnut|pecan|macadamia|chestnut|nuts?\b|kacang tanah|groundnut/, '🥜'], [/jar|preserve|pickle|kimchi|achar|acar|sauerkraut/, '🫙'],
+      [/tangerine|mandarin|clementine|satsuma|orange|jeruk|calamansi|kalamansi|pomelo|grapefruit/, '🍊'], [/lemon|lime|limau/, '🍋'], [/green apple/, '🍏'], [/apple|epal/, '🍎'], [/melon|honeydew|rockmelon|cantaloupe|tembikai/, '🍈'],
+      [/watermelon/, '🍉'], [/grape|anggur|raisin|sultana/, '🍇'], [/strawberr|raspberr|cranberr|mulberr|berry|berries/, '🍓'], [/cherry|cherries|cheri/, '🍒'], [/peach|nectarine|apricot|plum|prune/, '🍑'],
+      [/pear\b|nashi|pir\b/, '🍐'], [/mango|mangga|papaya|betik|guava|jambu|durian|jackfruit|nangka|cempedak|rambutan|lychee|longan|mangosteen|dragon ?fruit|passion ?fruit|persimmon|fig\b|dates?\b|kurma/, '🥭'],
+      [/pineapple|nanas/, '🍍'], [/banana|pisang|plantain/, '🍌'], [/kiwi/, '🥝'], [/avocado|alpukat/, '🥑'], [/coconut|kelapa|santan|coconut milk|coconut cream/, '🥥'],
+      [/tomato|tomat\b|passata|puree/, '🍅'], [/eggplant|aubergine|brinjal|terung/, '🍆'], [/capsicum|bell pepper|paprika/, '🫑'], [/chilli|chili|cili|cabai|lada\b|padi|jalapeno|sriracha/, '🌶️'],
+      [/corn|jagung|maize|sweetcorn|baby corn/, '🌽'], [/cucumber|timun|gherkin|pickled cucumber/, '🥒'], [/carrot|lobak merah/, '🥕'], [/potato|kentang/, '🥔'], [/garlic|bawang putih|suan/, '🧄'], [/broccoli|cauliflower|brokoli/, '🥦'],
+      [/egg|telur|century egg|salted egg|quail egg|omelette|omelet/, '🥚'], [/butter|margarine|ghee|mentega|lard|shortening/, '🧈'], [/cheese|keju|mozzarella|cheddar|parmesan|feta|ricotta|cream cheese|halloumi/, '🧀'],
+      [/milk|susu|yogurt|yoghurt|yakult|dairy|creamer|evaporated|condensed|cream\b|kefir|lassi|soy ?milk|oat ?milk|almond ?milk/, '🥛'], [/ice cream|gelato|sundae|frozen yogurt/, '🍨'],
+      [/bacon/, '🥓'], [/ham\b|sausage|salami|pepperoni|chorizo|bratwurst|chipolata|hot ?dog|frankfurter|cheese dog/, '🌭'], [/chicken|ayam|duck|bebek|turkey|poultry|quail|goose|wing|drumstick|thigh|breast|nugget/, '🍗'],
+      [/beef|lembu|daging|steak|ribeye|sirloin|tenderloin|brisket|veal|mutton|lamb|kambing|venison|pork|babi|mince|minced|ground meat|meatball|ribs?\b|knuckle|oxtail|tripe|liver|offal|meat/, '🥩'],
+      [/bone|marrow|trotter|pig'?s? feet|bone broth/, '🦴'], [/prawn|shrimp|udang|ebi|har\b|belacan|dried shrimp|hae bi/, '🦐'], [/crab|ketam|kepiting|alaskan/, '🦀'], [/lobster|crayfish|crawfish|langoustine|yabby/, '🦞'],
+      [/squid|sotong|cuttlefish|calamari|octopus|cumi|sepia/, '🦑'], [/oyster|clam|cockle|kerang|lala|mussel|scallop|abalone|shellfish|sea cucumber|seafood/, '🦪'], [/anchov|ikan bilis|bilis|sardine|mackerel|tuna|salmon|cod\b|sea ?bass|seabass|barramundi|snapper|grouper|pomfret|tilapia|trout|stingray|fish|ikan|haddock|halibut|catfish|sotong/, '🐟'],
+      [/seaweed|nori|laver|kelp|wakame|kombu|rumput laut|agar/, '🌱'], [/tofu|taukwa|tau kwa|tauhu|tempeh|tempe|bean curd|yong tau foo|tau pok|fu pei|beancurd|fuzhu|yuba/, '🍲'],
+      [/noodle|mee\b|mie\b|bee hoon|beehoon|bihun|vermicelli|kway teow|kuey teow|laksa|ramen|udon|soba|pho\b|somen|glass noodle|tang hoon|sohun|mee pok|mee kia|hor fun|ho fun|lo mein|chow mein|yee mee|e-fu/, '🍜'],
+      [/rice|nasi|beras|basmati|jasmine|pearl rice|brown rice|wild rice|risotto|sushi rice/, '🍚'], [/bread|roti tawar|toast|loaf|bun\b|bao\b|pau\b|kaya toast|focaccia|brioche|english muffin|crumpet/, '🍞'],
+      [/flour|tepung|starch|cornflour|cornstarch|tapioca|baking|yeast|bicarb|oats?\b|granola|muesli|cereal|cornflakes|weetabix|quinoa|barley|couscous|bulgur|millet|sago|semolina|wheat|rye|grain|bran/, '🌾'],
+      [/sugar|gula|honey|madu|syrup|maple|molasses|treacle|jaggery|gula melaka|stevia|sweetener|agave/, '🍯'], [/salt|garam|msg|seasoning|stock cube|bouillon|knorr|maggi seasoning|pepper|spice|rempah|cumin|jintan|coriander seed|turmeric|cinnamon|kayu manis|clove|cengkih|cardamom|star anise|paprika|masala|curry powder|five spice|nutmeg|mustard seed|fennel|saffron|msg/, '🧂'],
+      [/sauce|sos\b|kicap|ketchup|mayo|mayonnaise|mustard|dressing|vinaigrette|dip\b|salsa|pesto|paste|sambal|belacan|tauchu|miso|gochujang|hoisin|oyster sauce|fish sauce|soy|vinegar|cuka|marinade|chutney|relish|jam\b|jelly|spread|nutella|peanut butter|kaya/, '🫙'],
+      [/oil|minyak|olive oil|sesame oil|canola|sunflower|vegetable oil|cooking oil|ghee|sesame/, '🍶'], [/coffee|kopi|espresso|latte|cappuccino|nescafe|3-in-1|3 in 1|instant coffee|cold brew|teh tarik|milo\b|horlicks|ovaltine|cocoa powder|hot chocolate/, '☕'],
+      [/tea\b|teh\b|chai|matcha|green tea|oolong|pu-?erh|jasmine tea|chrysanthemum|barley tea|herbal tea|teabag|tea bag|earl grey/, '🍵'], [/juice|jus\b|smoothie|squash|cordial|sirap|syrup drink|nectar|packet drink|vitasoy|yeo'?s|chrysanthemum drink|soya bean drink|soy drink/, '🧃'],
+      [/water|air mineral|mineral|sparkling|soda water|tonic|evian|spritzer/, '💧'], [/cola|coke|pepsi|sprite|fanta|soda|soft drink|100 ?plus|isotonic|energy drink|red bull|gatorade|pocari|ice lemon tea|f&n|ginger ale|root beer|slurpee/, '🥤'],
+      [/beer|lager|stout|ale\b|guinness|tiger|heineken|carlsberg|cider|shandy/, '🍺'], [/wine|merlot|shiraz|chardonnay|riesling|rose\b|rosé|prosecco/, '🍷'],
+      [/biscuit|cookie|cracker|oreo|wafer|digestive|shortbread|marie|cream cracker|crackers|hup seng|jacobs|tiger biscuit|kuih bangkit|pineapple tart|love letter|almond cookie/, '🍪'],
+      [/chocolate|choc\b|cocoa|cacao|kitkat|kit kat|snickers|cadbury|ferrero|toblerone|m&m|hershey|oreo bar/, '🍫'], [/candy|sweets|gummy|gummies|toffee|marshmallow|haribo|lozenge|mint candy|chewing gum|gum\b|licorice|liquorice|jelly bean|fruit gum/, '🍬'],
+      [/cake|cupcake|muffin|brownie|swiss roll|sponge|cheesecake|shortcake|tiramisu|macaron|eclair|profiterole|scone/, '🍰'], [/crisps|chips\b|popcorn|pringles|twisties|snack|keropok|kerepek|prawn cracker|nacho|tortilla chips|cheezels|seaweed snack|bugles/, '🍿'],
+      [/pretzel/, '🥨'], [/waffle/, '🧇'], [/pancake|crepe|crêpe|hotcake|apam|pau pancake/, '🥞'], [/pizza/, '🍕'], [/burger|patty|patties|hamburger|cheeseburger/, '🍔'], [/fries|french fries|wedges|hash ?brown|tater/, '🍟'],
+      [/taco|nacho|enchilada/, '🌮'], [/dumpling|gyoza|potsticker|siew mai|shumai|wonton|won ton|xiao long bao|jiaozi|har gow|momo|pelmeni|samosa|empanada|spring roll|popiah|curry puff|karipap|kuih|egg roll|lumpia/, '🥟'],
+      [/sushi|sashimi|maki|nigiri|temaki|chirashi|poke|salmon roll/, '🍣'], [/curry|rendang|kari\b|gulai|korma|masala|butter chicken|tikka|vindaloo|laksa paste|tom kha/, '🍛'], [/soup|sup\b|broth|stock\b|consomme|bisque|chowder|ramen broth|bone broth|stew|casserole|hot pot/, '🍲'],
+      [/canned|can\b|tin\b|tinned|sardines? in|tuna can|baked beans|canned tomato|chopped tomato|canned corn|condensed milk can|spam can/, '🥫'], [/frozen|beku|freezer|ice pack|ice cube|ice\b/, '🧊'],
+      [/chopstick/, '🥢'], [/foil|cling|wrap film|baking paper|parchment|tissue|napkin|toilet|kitchen towel|paper towel|bag|zip ?lock|plastic|container|bottle|cup\b|plate|bowl|cutlery|straw/, '🧻'], [/detergent|dishwashing|soap|sabun|sponge|cleaner|bleach|laundry|softener|shampoo|toothpaste|hand wash/, '🧼']
     ];
     const PANTRY_ICON_GUESS = [
+      [/french fries|fries|wedges|hash ?brown/, '🍟'], [/pizza/, '🍕'], [/burger|patty|patties/, '🍔'], [/hot ?dog|frankfurter/, '🌭'],
+      [/nugget|drumstick|wing/, '🍗'], [/dumpling|gyoza|siew mai|shumai|wonton|won ton|bao\b|baozi/, '🥟'], [/sushi/, '🍣'], [/curry leaf|curry leaves/, '🌿'], [/curry|rendang|stew/, '🍛'], [/soup|broth|stock/, '🍲'],
+      [/ice ?cream|gelato|popsicle/, '🍨'], [/cake|muffin|cupcake|brownie/, '🍰'], [/biscuit|cookie|cracker|oreo/, '🍪'], [/chocolate|choc\b|cocoa/, '🍫'], [/candy|sweets|gummy|jelly/, '🍬'],
+      [/crisps|chips\b|snack|popcorn/, '🍿'], [/cereal|oat|granola|muesli/, '🥣'], [/pancake|waffle/, '🥞'], [/croissant/, '🥐'], [/bagel|pretzel/, '🥨'], [/sandwich|wrap|tortilla/, '🥪'], [/taco/, '🌮'],
+      [/water|mineral/, '💧'], [/soda|cola|soft drink|sprite|100 ?plus|isotonic/, '🥤'], [/beer|lager/, '🍺'], [/wine/, '🍷'], [/milo|ovaltine|chocolate drink/, '🥛'], [/pear\b/, '🍐'], [/peach/, '🍑'], [/cherry|cherries/, '🍒'],
+      [/kiwi/, '🥝'], [/avocado/, '🥑'], [/pumpkin/, '🎃'], [/ginger|galangal|lengkuas/, '🫚'], [/capsicum|bell pepper/, '🫑'], [/\bpeas?\b|edamame/, '🫛'], [/bean|lentil|chickpea/, '🫘'], [/olive/, '🫒'], [/seaweed|nori/, '🌿'], [/herb|basil|mint|coriander|cilantro|parsley|pandan|curry leaf|lemongrass|serai/, '🌿'],
       [/chicken|poultry|duck/, '🍗'], [/bacon|ham\b|sausage/, '🥓'], [/beef|steak|pork|mutton|lamb|meat|mince/, '🥩'],
       [/prawn|shrimp/, '🍤'], [/crab/, '🦀'], [/squid|sotong/, '🦑'], [/fish|salmon|cod|seabass|mackerel|tuna|sardine|stingray|pomfret/, '🐟'],
       [/egg/, '🥚'], [/milk|yogurt|yoghurt|cream/, '🥛'], [/cheese/, '🧀'], [/butter|margarine/, '🧈'],
@@ -2652,8 +2710,16 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       [/canned|\btin\b/, '🥫'], [/frozen/, '🧊']
     ];
     function guessPantryIcon(name, category) {
-      const t = (String(name || '') + ' ' + Lex.english(name)).toLowerCase();
-      for (const [re, ic] of PANTRY_ICON_GUESS) if (re.test(t)) return ic;
+      // Look at the name first (the last matching word wins, because the main word of a food name comes last), then at its English meaning, then the food type
+      const rules = PANTRY_ICON_MORE.concat(PANTRY_ICON_GUESS);
+      const pick = (t) => {
+        t = String(t || '').toLowerCase(); let best = null, end = -1;
+        for (const [re, ic] of rules) { const m = re.exec(t); if (m) { const e = m.index + m[0].length; if (e > end) { end = e; best = ic; } } }
+        return best;
+      };
+      let got = pick(name);
+      if (!got) { try { got = pick(Lex.english(name)); } catch (e) {} }
+      if (got) return got;
       const cat = (AppState.state.pantryCategories || []).find(c => c.id === category || c.name === category);
       return (cat && cat.icon) || '🥫';
     }
@@ -2724,6 +2790,107 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         this.el('inputPantryCategory').addEventListener('change', () => this.preview());
       }
     };
+
+
+    // ===== Suggestions while typing the food name =====
+    const NameSuggest = {
+      seq: 0, timer: null, items: [], hi: -1, ready: false,
+      el(id) { return document.getElementById(id); },
+      guess(name) {
+        const n = name.toLowerCase();
+        const rules = [
+          [/chicken|beef|pork|mutton|lamb|duck|sausage|bacon|ham\b|mince/, 'Meat & Poultry', 'Fridge'],
+          [/fish|salmon|prawn|shrimp|squid|crab|sotong|cod\b|seabass|clam|mussel|tuna/, 'Fish & Seafood', 'Fridge'],
+          [/egg|milk|cheese|yogurt|yoghurt|butter|cream|tofu|tauhu/, 'Eggs & Dairy', 'Fridge'],
+          [/rice|noodle|mee\b|bee hoon|vermicelli|pasta|spaghetti|bread|flour|oat|cereal|macaroni/, 'Rice, Noodles & Grains', 'Pantry'],
+          [/sauce|oil|salt|sugar|pepper|spice|paste|vinegar|soy|sesame|curry|chilli sauce|seasoning|stock|powder/, 'Sauces & Spices', 'Pantry'],
+          [/can\b|canned|sardine|baked beans|luncheon|biscuit|chips|snack|cookie|chocolate|nuts/, 'Canned & Other', 'Pantry'],
+          [/cabbage|spinach|kang kong|kailan|bak choy|bai cai|tomato|onion|garlic|ginger|carrot|potato|broccoli|cucumber|capsicum|lettuce|mushroom|chilli|corn|bean|apple|banana|orange|grape|mango|lemon|lime|fruit|vegetable/, 'Fresh Vegetables', 'Fridge']
+        ];
+        const r = rules.find(x => x[0].test(n));
+        return r ? { category: r[1], zone: r[2] } : null;
+      },
+      unitOk(u) { const sel = this.el('inputPantryUnit'); return [...sel.options].some(o => o.value === u); },
+      local(q) {
+        const ql = q.toLowerCase(), out = [], seen = new Set();
+        const add = (o) => { const k = o.name.toLowerCase(); if (seen.has(k)) return; seen.add(k); out.push(o); };
+        const hit = (n) => { n = n.toLowerCase(); return n.startsWith(ql) ? 0 : n.split(/\s+/).some(w => w.startsWith(ql)) ? 1 : n.includes(ql) ? 2 : 9; };
+        const pool = [];
+        QUICK_SG_STAPLES.forEach(x => pool.push({ name: x.name, qty: x.qty, unit: x.unit, zone: x.zone, category: x.category, tag: 'Common item' }));
+        (AppState.state.pantry || []).forEach(x => pool.push({ name: x.name, qty: x.qty, unit: x.unit, zone: x.zone, category: x.category, tag: 'You had this before' }));
+        pool.map(o => [hit(o.name), o]).filter(a => a[0] < 9).sort((a, b) => a[0] - b[0] || a[1].name.length - b[1].name.length).forEach(a => add(a[1]));
+        return out.slice(0, 6);
+      },
+      fromProduct(r) {
+        const g = this.guess(r.name) || {};
+        let qty = null, unit = null;
+        if (Number(r.q) > 0 && r.b) { qty = Number(r.q); unit = r.b === 'pc' ? 'pcs' : r.b; if (!this.unitOk(unit)) { qty = null; unit = null; } }
+        return { name: r.name, qty, unit, zone: g.zone, category: g.category, tag: r.shop ? 'In ' + r.shop : 'Shop product', price: r.p, shop: r.shop };
+      },
+      async remote(q, my) {
+        if (!ProductDB.signed()) return [];
+        const d = await ProductDB.rpc('search_products', { p_q: q, p_limit: 30 });
+        if (my !== this.seq || !d || !d.ok) return [];
+        const seen = new Set(), out = [];
+        (d.rows || []).forEach(r => { const k = (r.name || '').toLowerCase(); if (!k || seen.has(k)) return; seen.add(k); out.push(this.fromProduct(r)); });
+        return out.slice(0, 8);
+      },
+      render(q) {
+        const box = this.el('pantryNameSuggest'), inp = this.el('inputPantryName');
+        const esc2 = (t) => esc(String(t));
+        let html = this.items.map((o, i) => `<button type="button" data-sg="${i}" class="w-full text-left px-4 py-3 border-b border-slate-100 dark:border-slate-800 hover:bg-brand-50 dark:hover:bg-slate-800 ${i === this.hi ? 'bg-brand-50 dark:bg-slate-800' : ''}">
+          <span class="block font-bold text-base text-slate-900 dark:text-white leading-snug">${esc2(o.name)}</span>
+          <span class="block text-sm text-slate-500">${esc2(o.tag)}${o.qty ? ' · ' + esc2(o.qty + ' ' + o.unit) : ''}${o.price ? ' · S$' + Number(o.price).toFixed(2) : ''}</span></button>`).join('');
+        html += `<button type="button" data-sg="own" class="w-full text-left px-4 py-3 hover:bg-brand-50 dark:hover:bg-slate-800"><span class="block font-bold text-base text-brand-700 dark:text-brand-400">➕ Use "${esc2(q)}" as I typed it</span><span class="block text-sm text-slate-500">Add it your own way</span></button>`;
+        box.innerHTML = html; box.classList.remove('hidden'); inp.setAttribute('aria-expanded', 'true');
+      },
+      hide() { this.el('pantryNameSuggest').classList.add('hidden'); this.el('inputPantryName').setAttribute('aria-expanded', 'false'); this.hi = -1; },
+      pick(o) {
+        const $$ = (id) => this.el(id), typedOwn = !o;
+        if (o) {
+          $$('inputPantryName').value = o.name;
+          if (o.qty) $$('inputPantryQty').value = o.qty;
+          if (o.unit && this.unitOk(o.unit)) $$('inputPantryUnit').value = o.unit;
+          const hasOpt = (id, v) => v && [...$$(id).options].some(x => x.value === v);
+          if (hasOpt('inputPantryZone', o.zone)) $$('inputPantryZone').value = o.zone;
+          if (hasOpt('inputPantryCategory', o.category)) $$('inputPantryCategory').value = o.category;
+          $$('inputPantryIcon').value = ''; $$('inputPantryPhoto').value = '';
+          try { pantryHandlers.autoInferExpiry(); } catch (e) {}
+        }
+        this.hide();
+        try { PantryPics.renderPicker(); PantryPics.preview(); } catch (e) {}
+        $$('inputPantryQty').focus();
+      },
+      async update() {
+        const q = this.el('inputPantryName').value.trim(), my = ++this.seq;
+        if (q.length < 2 || this.el('inputPantryId').value) { this.hide(); return; }
+        this.items = this.local(q); this.hi = -1; this.render(q);
+        clearTimeout(this.timer);
+        this.timer = setTimeout(async () => {
+          const more = await this.remote(q, my);
+          if (my !== this.seq || !more.length) return;
+          const seen = new Set(this.items.map(x => x.name.toLowerCase()));
+          this.items = this.items.concat(more.filter(x => !seen.has(x.name.toLowerCase()))).slice(0, 12);
+          this.render(q);
+        }, 250);
+      },
+      init() {
+        if (this.ready) return; const inp = this.el('inputPantryName'), box = this.el('pantryNameSuggest'); if (!inp || !box) return; this.ready = true;
+        inp.addEventListener('input', () => this.update());
+        inp.addEventListener('keydown', (e) => {
+          if (box.classList.contains('hidden')) return;
+          const n = this.items.length;
+          if (e.key === 'ArrowDown') { e.preventDefault(); this.hi = (this.hi + 1) % (n + 1); this.render(inp.value.trim()); }
+          else if (e.key === 'ArrowUp') { e.preventDefault(); this.hi = (this.hi - 1 + n + 1) % (n + 1); this.render(inp.value.trim()); }
+          else if (e.key === 'Enter' && this.hi >= 0) { e.preventDefault(); this.pick(this.hi < n ? this.items[this.hi] : null); }
+          else if (e.key === 'Escape') { this.hide(); }
+        });
+        box.addEventListener('mousedown', (e) => e.preventDefault());
+        box.addEventListener('click', (e) => { const b = e.target.closest('[data-sg]'); if (!b) return; this.pick(b.dataset.sg === 'own' ? null : this.items[+b.dataset.sg]); });
+        inp.addEventListener('blur', () => setTimeout(() => this.hide(), 150));
+      }
+    };
+    NameSuggest.init(); document.addEventListener('DOMContentLoaded', () => NameSuggest.init());
 
     const pantryHandlers = {
       openModal(itemId = null) {
