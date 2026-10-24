@@ -1,8 +1,8 @@
-/* PantryChef SG Pro - service worker (v9)
+/* PantryChef SG Pro - service worker (v10)
    - Opens instantly and works offline (app + styles + libraries are kept on the phone)
    - Always tries the internet first for the app page, so new versions arrive automatically
    - Never stores logins, sync data, payments or AI imports */
-const VERSION = 'pcsg-v9-2026-10-23';
+const VERSION = 'pcsg-v10-2026-10-24';
 const CORE = ['./', './index.html', './manifest.json', './privacy.html', './icon-192.png', './icon-512.png', './icon-180.png', './badge-96.png', './tailwind.css'];
 const CDN = ['cdn.tailwindcss.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com', 'placehold.co'];
 const NEVER = ['supabase.co', 'stripe.com', 'googleapis.com/v1beta', 'apify.com', 'r.jina.ai'];
@@ -11,7 +11,7 @@ self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => Promise.all(CORE.map((u) => c.add(u).catch(() => {})))).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', (e) => {
-  e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== VERSION).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
+  e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k.startsWith('pcsg-v') && k !== VERSION).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
 });
 self.addEventListener('message', (e) => { if (e.data === 'SKIP_WAITING') self.skipWaiting(); });
 
