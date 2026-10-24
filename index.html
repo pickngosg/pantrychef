@@ -152,7 +152,7 @@ body:has(#gate){padding:0 !important;margin:0 !important}
 html.dark #gate{--bg:#0F1713;--card:#162019;--ink:#F1F5F2;--mut:#A9B6AF;--line:#33433A;--field:#1E2B23}
 #gate .gbox{width:100%;max-width:380px}
 #gate .ghead{text-align:center;margin-bottom:28px}
-#gate .ghead img{width:64px;height:64px;border-radius:18px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+#gate .ghead img{display:block;margin:0 auto;width:64px;height:64px;border-radius:18px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
 #gate h1{font-family:'Bricolage Grotesque','DM Sans',sans-serif;font-weight:800;font-size:26px;margin:12px 0 0;line-height:1.2}
 #gate #gateMsg{margin:8px 0 0;font-size:16px;color:var(--mut)}
 #gate form{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 6px 24px -12px rgba(0,0,0,.35)}
@@ -161,7 +161,7 @@ html.dark #gate{--bg:#0F1713;--card:#162019;--ink:#F1F5F2;--mut:#A9B6AF;--line:#
 #gate input{padding:12px 14px;border:1px solid var(--line);background:var(--field);color:var(--ink);outline:none}
 #gate input:focus{border-color:var(--brand);box-shadow:0 0 0 2px rgba(31,107,74,.35)}
 #gate button{padding:12px;cursor:pointer;font-weight:700}
-#gate .gg{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+#gate .gg{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--card);color:var(--ink);border:1px solid var(--line)}
 #gate .gp{background:var(--brand);color:#fff;border:0;font-weight:800}
 #gate .gp:hover{background:var(--brand2)}
 #gate .gs{background:transparent;color:var(--brand);border:2px solid var(--brand)}
@@ -185,7 +185,7 @@ html.dark #gate .gs{color:#8FD0AB;border-color:#3F8F67}
     </div>
     <div id="gateBusy" class="hidden"><i></i></div>
     <form id="gateForm" class="hidden" autocomplete="on">
-      <button type="button" id="gateGoogle" class="gg">Continue with Google</button>
+      <button type="button" id="gateGoogle" class="gg"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true" style="flex:none"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg><span>Continue with Google</span></button>
       <div class="gor">or use your email</div>
       <input id="gateEmail" type="email" autocomplete="email" placeholder="Email">
       <input id="gatePass" type="password" autocomplete="current-password" placeholder="Password (8+ characters)">
