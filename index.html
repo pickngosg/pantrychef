@@ -211,6 +211,15 @@
         </div>
       </div>
 
+      <div id="dashSavedCard" class="hidden rounded-3xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 p-5 sm:p-6 flex items-center gap-4">
+        <span class="text-4xl sm:text-5xl" aria-hidden="true">🌱</span>
+        <div class="min-w-0">
+          <div class="text-sm sm:text-base font-bold text-emerald-800 dark:text-emerald-300">Food you saved from going off this month</div>
+          <div id="dashSavedBig" class="font-display font-black text-4xl sm:text-5xl text-emerald-700 dark:text-emerald-400 leading-tight"></div>
+          <div id="dashSavedSmall" class="text-sm sm:text-base text-emerald-900/80 dark:text-emerald-200"></div>
+        </div>
+      </div>
+
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <button onclick="switchView('pantry')" class="dash-tile c-green text-left bg-white dark:bg-slate-900 rounded-3xl p-4 flex items-center gap-3"><span class="dash-ico tn-green" data-noicon="1" aria-hidden="true">🥫</span><span class="min-w-0"><span id="statTotalPantry">0</span><span class="block text-sm text-slate-500 mt-0.5">In pantry</span></span></button>
         <button onclick="switchView('pantry')" class="dash-tile c-amber text-left bg-white dark:bg-slate-900 rounded-3xl p-4 flex items-center gap-3"><span class="dash-ico tn-amber" data-noicon="1" aria-hidden="true">⏰</span><span class="min-w-0"><span id="statExpiringSoon" class="text-amber-600">0</span><span class="block text-sm text-slate-500 mt-0.5">Expiring in 3 days</span></span></button>
@@ -3466,12 +3475,12 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
         document.getElementById('detailStats').innerHTML = `
           <div class="grid grid-cols-4 gap-2">${tile((r.prepTime || 0) + 'm', 'Time', '#94A3B8')}${tile(cal, 'kcal', '#E8691E')}${tile(pro + 'g', 'Protein', '#2B7BD1')}${tile(carbs + 'g', 'Carbs', '#D99A06')}</div>
           <div class="flex flex-wrap items-center justify-between gap-2 mt-3">
-            <button type="button" id="btnMoreNutrition" class="text-sm font-bold text-slate-600 dark:text-slate-300 py-1.5">More nutrition ▾</button>
+            <button type="button" id="btnMoreNutrition" class="text-sm font-bold text-slate-600 dark:text-slate-300 py-1.5">${this.nutriOpen ? 'Less nutrition ▴' : 'More nutrition ▾'}</button>
             <button type="button" data-cooked="${esc(r.id)}" class="text-sm font-bold px-3.5 py-2 rounded-full ${cooked ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}">${cooked ? '✓ Cooked' + (r.cooked > 1 ? ' ' + r.cooked + '×' : '') + ' · tap to undo' : '+ Mark as cooked before'}</button>
           </div>
-          <div id="moreNutritionBox" class="hidden grid grid-cols-3 gap-2 mt-2">${tile(fat + 'g', 'Fat', '#D6336C')}${tile(fibre + 'g', 'Fibre', '#1F6B4A')}${tile(sodium + 'mg', 'Sodium', '#8B5CF6')}</div>`;
+          <div id="moreNutritionBox" class="${this.nutriOpen ? '' : 'hidden '}grid grid-cols-3 gap-2 mt-2">${tile(fat + 'g', 'Fat', '#D6336C')}${tile(fibre + 'g', 'Fibre', '#1F6B4A')}${tile(sodium + 'mg', 'Sodium', '#8B5CF6')}</div>`;
         document.getElementById('btnMoreNutrition')?.addEventListener('click', (ev) => {
-          const box = document.getElementById('moreNutritionBox'); box.classList.toggle('hidden');
+          const box = document.getElementById('moreNutritionBox'); box.classList.toggle('hidden'); this.nutriOpen = !box.classList.contains('hidden');
           ev.currentTarget.textContent = box.classList.contains('hidden') ? 'More nutrition ▾' : 'Less nutrition ▴';
         });
 
@@ -5325,9 +5334,13 @@ paprika|smoked paprika;sweet paprika;paprika powder|3.5|40|g|282|14|54|13|35|68|
       },
       paint() {
         const el = document.getElementById('dashSaved'); if (!el) return;
-        const t = this.text();
-        if (!t) { el.classList.add('hidden'); return; }
-        el.classList.remove('hidden'); el.textContent = '🌱 ' + t;
+        el.classList.add('hidden');
+        const card = document.getElementById('dashSavedCard'); if (!card) return;
+        const c = this.get(), w = this.week();
+        if (!c.mItems && !w.meals) { card.classList.add('hidden'); return; }
+        card.classList.remove('hidden');
+        document.getElementById('dashSavedBig').textContent = c.mValue >= 0.5 ? 'S$' + c.mValue.toFixed(2) : c.mItems + (c.mItems === 1 ? ' item' : ' items');
+        document.getElementById('dashSavedSmall').textContent = c.mItems + (c.mItems === 1 ? ' item' : ' items') + ' used before they expired. ' + (w.meals ? 'This week: ' + w.meals + (w.meals > 1 ? ' meals' : ' meal') + ' cooked.' : '');
       }
     };
 
