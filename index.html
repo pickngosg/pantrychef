@@ -146,25 +146,55 @@
 <base target="_blank">
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen pb-24 sm:pb-12 transition-colors duration-200">
-<div id="gate" class="min-h-screen flex items-center justify-center p-5">
-  <div class="w-full max-w-md">
-    <div class="text-center mb-6">
-      <img src="icon-192.png" alt="" class="w-20 h-20 mx-auto rounded-3xl shadow-md">
-      <h1 class="font-display font-extrabold text-3xl mt-3 text-slate-900 dark:text-white">PantryChef SG</h1>
-      <p id="gateMsg" class="text-base text-slate-600 dark:text-slate-300 mt-1">Sign in to open your kitchen.</p>
+<style>
+body:has(#gate){padding:0 !important;margin:0 !important}
+#gate{--bg:#F6F7F3;--card:#fff;--ink:#14211C;--mut:#51605A;--line:#D5DBD7;--field:#F3F5F2;--brand:#1F6B4A;--brand2:#1A5C40;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;color:var(--ink);background:var(--bg)}
+html.dark #gate{--bg:#0F1713;--card:#162019;--ink:#F1F5F2;--mut:#A9B6AF;--line:#33433A;--field:#1E2B23}
+#gate .gbox{width:100%;max-width:380px}
+#gate .ghead{text-align:center;margin-bottom:28px}
+#gate .ghead img{width:64px;height:64px;border-radius:18px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+#gate h1{font-family:'Bricolage Grotesque','DM Sans',sans-serif;font-weight:800;font-size:26px;margin:12px 0 0;line-height:1.2}
+#gate #gateMsg{margin:8px 0 0;font-size:16px;color:var(--mut)}
+#gate form{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 6px 24px -12px rgba(0,0,0,.35)}
+#gate form.hidden,#gate #gateBusy.hidden{display:none}
+#gate input,#gate button{font:inherit;font-size:16px;width:100%;box-sizing:border-box;border-radius:14px}
+#gate input{padding:12px 14px;border:1px solid var(--line);background:var(--field);color:var(--ink);outline:none}
+#gate input:focus{border-color:var(--brand);box-shadow:0 0 0 2px rgba(31,107,74,.35)}
+#gate button{padding:12px;cursor:pointer;font-weight:700}
+#gate .gg{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+#gate .gp{background:var(--brand);color:#fff;border:0;font-weight:800}
+#gate .gp:hover{background:var(--brand2)}
+#gate .gs{background:transparent;color:var(--brand);border:2px solid var(--brand)}
+html.dark #gate .gs{color:#8FD0AB;border-color:#3F8F67}
+#gate .gl{background:none;border:0;text-decoration:underline;color:var(--mut);font-size:14px;font-weight:500;padding:4px}
+#gate .gor{text-align:center;font-size:14px;color:var(--mut)}
+#gate #gateErr{margin:0;text-align:center;font-weight:700;color:#C2334D;font-size:15px}
+#gate #gateErr.hidden{display:none}
+#gate #gateBusy{display:flex;justify-content:center;padding:26px 0}
+#gate #gateBusy i{width:34px;height:34px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--brand);animation:gspin 0.9s linear infinite}
+@keyframes gspin{to{transform:rotate(360deg)}}
+#gate .gfoot{text-align:center;font-size:13px;color:var(--mut);margin-top:18px;line-height:1.6}
+#gate .gfoot a{color:inherit}
+</style>
+<div id="gate">
+  <div class="gbox">
+    <div class="ghead">
+      <img src="icon-192.png" alt="">
+      <h1>PantryChef SG</h1>
+      <p id="gateMsg">Sign in to open your kitchen.</p>
     </div>
-    <div id="gateBusy" class="hidden text-center text-lg font-bold text-slate-600 dark:text-slate-300 py-10">Opening your kitchen…</div>
-    <form id="gateForm" class="hidden bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-md p-5 space-y-3" autocomplete="on">
-      <button type="button" id="gateGoogle" class="w-full py-3.5 rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-bold text-lg hover:border-brand-500">Continue with Google</button>
-      <div class="text-center text-sm text-slate-500">or use your email</div>
-      <input id="gateEmail" type="email" autocomplete="email" placeholder="Email" class="w-full px-4 py-3.5 text-lg rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
-      <input id="gatePass" type="password" autocomplete="current-password" placeholder="Password (8 or more characters)" class="w-full px-4 py-3.5 text-lg rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
-      <button type="submit" id="gateIn" class="w-full py-3.5 rounded-2xl bg-brand-500 hover:bg-brand-600 text-white font-black text-lg">Sign in</button>
-      <button type="button" id="gateUp" class="w-full py-3 rounded-2xl border-2 border-brand-500 text-brand-700 dark:text-brand-300 font-bold text-lg">Create a free account</button>
-      <button type="button" id="gateForgot" class="w-full text-base underline text-slate-600 dark:text-slate-300 py-1">Forgot my password</button>
-      <p id="gateErr" class="hidden text-base font-bold text-rose-600 text-center"></p>
+    <div id="gateBusy" class="hidden"><i></i></div>
+    <form id="gateForm" class="hidden" autocomplete="on">
+      <button type="button" id="gateGoogle" class="gg">Continue with Google</button>
+      <div class="gor">or use your email</div>
+      <input id="gateEmail" type="email" autocomplete="email" placeholder="Email">
+      <input id="gatePass" type="password" autocomplete="current-password" placeholder="Password (8+ characters)">
+      <button type="submit" id="gateIn" class="gp">Sign in</button>
+      <button type="button" id="gateUp" class="gs">Create a free account</button>
+      <button type="button" id="gateForgot" class="gl">Forgot my password</button>
+      <p id="gateErr" class="hidden"></p>
     </form>
-    <p class="text-center text-sm text-slate-500 mt-5">By continuing you agree to the <a class="underline" href="privacy.html">Terms and Privacy</a>.<br>&copy; 2026 PantryChef SG Pro. All rights reserved.</p>
+    <p class="gfoot">By continuing you agree to the <a href="privacy.html">Terms and Privacy</a>.<br>&copy; 2026 PantryChef SG Pro. All rights reserved.</p>
   </div>
 </div>
 <script>
@@ -180,7 +210,7 @@
     if (msg) $('gateMsg').textContent = msg;
   }
   function err(t) { var e = $('gateErr'); e.textContent = t || ''; e.classList.toggle('hidden', !t); }
-  if (!window.supabase) { show('busy'); $('gateBusy').textContent = 'Could not load. Please check your internet and reopen the app.'; return; }
+  if (!window.supabase) { show('busy'); $('gateMsg').textContent = 'Could not load. Please check your internet and reopen the app.'; return; }
   var sb = supabase.createClient(URL_, KEY);
   window.__pcsgSb = sb;
   sb.auth.onAuthStateChange(function (ev, session) {
