@@ -109,6 +109,9 @@
     @media (min-width:1024px){#dashboardCartCompare{column-count:2;column-gap:2.5rem}#dashboardCartCompare>*{break-inside:avoid}}
     #btnOpenCategoryManagerModal,#btnOpenRecipeImport,#btnOpenNewRecipeModal,#btnOpenAddPantryModal{font-size:16px!important;padding:14px 20px!important;gap:8px}
     #btnOpenCategoryManagerModal,#btnOpenRecipeImport span:first-child,#btnOpenNewRecipeModal span:first-child,#btnOpenAddPantryModal span:first-child{font-size:18px}
+    #recipeFilterRow{-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent);mask-image:linear-gradient(90deg,#000 92%,transparent)}
+    @media (min-width:768px){#recipeFilterRow{-webkit-mask-image:none;mask-image:none}}
+    #recipeSortSelect{font-size:16px!important;padding:14px 18px!important}
     .recipe-filter-pill{font-size:16px!important;padding:11px 20px!important;border-radius:14px!important}
     #view-pantry select,#view-planner select{font-size:15px!important;padding-top:11px!important;padding-bottom:11px!important}
 
@@ -136,8 +139,9 @@
       header>div{max-width:1240px!important;justify-content:flex-end!important}
       header>div>div:first-child{display:none!important}
       main,main>section{max-width:1240px!important}
-      header nav{position:fixed;left:0;top:0;bottom:0;width:232px;display:flex!important;flex-direction:column;align-items:stretch;gap:6px;padding:84px 18px 28px!important;background:#1E232A!important;border:0!important;border-radius:0!important;box-shadow:none!important}
-      header nav::before{content:"PantryChef SG";position:absolute;top:28px;left:32px;font:800 24px 'Bricolage Grotesque',sans-serif;letter-spacing:-0.02em;color:#F9F8F6}
+      header nav{position:fixed;left:0;top:0;bottom:0;width:232px;display:flex!important;flex-direction:column;align-items:stretch;gap:6px;padding:138px 18px 28px!important;background:#1E232A!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+      header nav::after{content:"";position:absolute;top:26px;left:32px;width:56px;height:56px;border-radius:16px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 11h18v3a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6zM8 7c0-1.5 1.5-1.5 1.5-3M13 7c0-1.5 1.5-1.5 1.5-3'/%3E%3C/svg%3E") center/30px 30px no-repeat,#D14A38;box-shadow:0 6px 16px -6px rgba(209,74,56,.7)}
+      header nav::before{content:"PantryChef SG";position:absolute;top:92px;left:32px;font:800 24px 'Bricolage Grotesque',sans-serif;letter-spacing:-0.02em;color:#F9F8F6}
       header nav .nav-tab-btn{display:flex!important;align-items:center;gap:12px;width:100%;padding:11px 14px!important;border-radius:10px!important;font-size:15px!important;font-weight:500!important;color:#D5D9DE!important;background:none!important;box-shadow:none!important;text-align:left}
       header nav .nav-tab-btn:hover{background:#2A3039!important}
       header nav .nav-tab-btn.shadow-sm{background:#F9F8F6!important;color:#1E232A!important;font-weight:700!important}
