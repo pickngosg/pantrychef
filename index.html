@@ -6,7 +6,7 @@
   <meta name="referrer" content="no-referrer" />
   <title>PantryChef SG Pro — Smart Kitchen, Expiry & Recipe OS</title>
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#14211C" />
+  <meta name="theme-color" content="#1E232A" />
   <meta name="copyright" content="PantryChef SG Pro. All rights reserved.">
   <meta name="robots" content="noindex,nofollow">
   <meta name="description" content="PantryChef SG: track your pantry, cut food waste, plan meals and compare Singapore supermarket prices." />
@@ -28,7 +28,7 @@
     window.tailwind = window.tailwind || {};
     tailwind.config = {
       darkMode: 'class',
-      theme: { extend: { colors: { brand: { 50: '#EAF3ED', 100: '#DCEBE1', 200: '#BBD6C4', 300: '#8FBBA0', 400: '#5FAF86', 500: '#1F6B4A', 600: '#1A5C40', 700: '#145238', 800: '#0F4030', 900: '#0B3023', 950: '#14211C' } } } }
+      theme: { extend: { colors: { brand: { 50: '#FEF1EF', 100: '#FBE0DB', 200: '#F7C6BD', 300: '#EE8F80', 400: '#E05A47', 500: '#D14A38', 600: '#B93F2F', 700: '#9E3326', 800: '#7C281D', 900: '#5A1D15', 950: '#1E232A' } } } }
     };
   </script>
   <style>
@@ -43,24 +43,24 @@
     .font-display{font-family:'Bricolage Grotesque','DM Sans',sans-serif}
     /* ---- Dashboard look ---- */
     #view-dashboard{position:relative;isolation:isolate}
-    #view-dashboard::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%231F6B4A' stroke-opacity='.08' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 32c10-13 25-11 29 2-12 5-23 4-29-2z'/%3E%3Cpath d='M82 88c10-13 25-11 29 2-12 5-23 4-29-2z'/%3E%3Ccircle cx='90' cy='26' r='5'/%3E%3Ccircle cx='28' cy='94' r='4'/%3E%3Cpath d='M60 54v12M54 60h12'/%3E%3Cpath d='M104 56l6 6M110 56l-6 6'/%3E%3C/g%3E%3C/svg%3E");background-size:120px 120px}
+    #view-dashboard::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23D14A38' stroke-opacity='.08' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 32c10-13 25-11 29 2-12 5-23 4-29-2z'/%3E%3Cpath d='M82 88c10-13 25-11 29 2-12 5-23 4-29-2z'/%3E%3Ccircle cx='90' cy='26' r='5'/%3E%3Ccircle cx='28' cy='94' r='4'/%3E%3Cpath d='M60 54v12M54 60h12'/%3E%3Cpath d='M104 56l6 6M110 56l-6 6'/%3E%3C/g%3E%3C/svg%3E");background-size:120px 120px}
     html.dark #view-dashboard::before{filter:invert(1);opacity:.55}
-    .dash-hero{background:linear-gradient(135deg,#E3F1E8 0%,#FFF4D9 100%);border:1px solid rgba(31,107,74,.14);box-shadow:0 6px 24px -12px rgba(20,82,56,.35)}
-    html.dark .dash-hero{background:linear-gradient(135deg,#12301F 0%,#2B2410 100%);border-color:rgba(255,255,255,.08)}
+    .dash-hero{background:linear-gradient(135deg,#FDEAE5 0%,#FFF4D9 100%);border:1px solid rgba(209,74,56,.14);box-shadow:0 6px 24px -12px rgba(158,51,38,.35)}
+    html.dark .dash-hero{background:linear-gradient(135deg,#2A2220 0%,#2B2410 100%);border-color:rgba(255,255,255,.08)}
     .dash-hero-ico{width:64px;height:64px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:34px;background:rgba(255,255,255,.7);flex-shrink:0}
     html.dark .dash-hero-ico{background:rgba(255,255,255,.08)}
     .dash-ico{width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:23px;flex-shrink:0}
-    .tn-green{background:#DCEBE1}.tn-amber{background:#FBEBC3}.tn-orange{background:#FDDCC4}.tn-blue{background:#D6E8FA}.tn-rose{background:#FADADD}.tn-violet{background:#E8DDF8}
+    .tn-green{background:#FBE0DB}.tn-amber{background:#FBEBC3}.tn-orange{background:#FDDCC4}.tn-blue{background:#D6E8FA}.tn-rose{background:#FADADD}.tn-violet{background:#E8DDF8}
     html.dark .tn-green,html.dark .tn-amber,html.dark .tn-orange,html.dark .tn-blue,html.dark .tn-rose,html.dark .tn-violet{background:rgba(255,255,255,.09)}
     .dash-tile{border-bottom:4px solid transparent;transition:transform .15s,box-shadow .15s;box-shadow:0 2px 10px -6px rgba(15,23,42,.35)}
     .dash-tile:active{transform:scale(.97)}
-    .dash-tile.c-green{border-bottom-color:#1F6B4A}.dash-tile.c-amber{border-bottom-color:#D99A06}.dash-tile.c-orange{border-bottom-color:#E8691E}.dash-tile.c-blue{border-bottom-color:#2B7BD1}
+    .dash-tile.c-green{border-bottom-color:#3D7D54}.dash-tile.c-amber{border-bottom-color:#D99A06}.dash-tile.c-orange{border-bottom-color:#E8691E}.dash-tile.c-blue{border-bottom-color:#2B7BD1}
     .dash-card{box-shadow:0 2px 12px -8px rgba(15,23,42,.4)}
     .dash-sec{display:flex;align-items:center;gap:10px}
-    .cal-ring{--p:0;--c:#1F6B4A;width:132px;height:132px;border-radius:50%;background:conic-gradient(var(--c) calc(var(--p) * 1%),#E4E7E2 0);display:grid;place-items:center;flex-shrink:0}
-    html.dark .cal-ring{background:conic-gradient(var(--c) calc(var(--p) * 1%),#2A3631 0)}
+    .cal-ring{--p:0;--c:#D14A38;width:132px;height:132px;border-radius:50%;background:conic-gradient(var(--c) calc(var(--p) * 1%),#E4E7E2 0);display:grid;place-items:center;flex-shrink:0}
+    html.dark .cal-ring{background:conic-gradient(var(--c) calc(var(--p) * 1%),#353C45 0)}
     .cal-ring-in{width:102px;height:102px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.2}
-    html.dark .cal-ring-in{background:#0E1713}
+    html.dark .cal-ring-in{background:#15191E}
     .macro-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
 
     .bg-brand-500.text-slate-950{color:#fff!important}
@@ -69,7 +69,7 @@
     @media (min-width:768px){
       #btnOpenDataBackupModal,#btnOpenCommandPalette{display:none!important}
       header nav .side-extra.side-top{margin-top:0;margin-bottom:10px}
-      header nav .side-extra{display:flex;align-items:center;gap:12px;width:100%;margin-top:auto;padding:12px 14px;border-radius:10px;border:1px solid #2E4A3C;background:#1E3128;color:#F6F7F3;font-size:15px;font-weight:700;text-align:left;cursor:pointer}
+      header nav .side-extra{display:flex;align-items:center;gap:12px;width:100%;margin-top:auto;padding:12px 14px;border-radius:10px;border:1px solid #3A424D;background:#2A3039;color:#F9F8F6;font-size:15px;font-weight:700;text-align:left;cursor:pointer}
       header nav .side-extra:hover{background:#27402F}
       #navPlanChip{margin-top:auto}
       #navBackupSync{margin-top:0}
@@ -83,8 +83,8 @@
     #detailRecipeTitle{font-family:'Bricolage Grotesque','DM Sans',sans-serif;font-size:clamp(26px,3.2vw,38px)!important;line-height:1.15;letter-spacing:-0.02em}
     #detailBadges{gap:8px!important;margin-bottom:10px!important}
     #detailBadges > *{font-size:14px!important;padding:6px 12px!important;border-radius:10px!important}
-    #recipeDetailModal h4{font-family:'Bricolage Grotesque','DM Sans',sans-serif;font-size:20px!important;font-weight:700!important;text-transform:none!important;letter-spacing:-0.01em!important;color:#14211C!important;margin-bottom:12px!important}
-    html.dark #recipeDetailModal h4{color:#F6F7F3!important}
+    #recipeDetailModal h4{font-family:'Bricolage Grotesque','DM Sans',sans-serif;font-size:20px!important;font-weight:700!important;text-transform:none!important;letter-spacing:-0.01em!important;color:#1E232A!important;margin-bottom:12px!important}
+    html.dark #recipeDetailModal h4{color:#F9F8F6!important}
     #recipeDetailModal [class*="overflow-y-auto"]{padding:24px!important}
     #detailIngredientsList{gap:10px;display:flex;flex-direction:column}
     #detailIngredientsList > *{padding:14px 18px!important;font-size:17px!important}
@@ -115,32 +115,32 @@
     .ico{color:var(--ic,inherit);display:inline-block;width:1.15em;height:1.15em;vertical-align:-0.2em;flex-shrink:0}
     .ico svg{width:100%;height:100%;display:block}
 
-    .bg-brand-500 .ico,.bg-slate-900 .ico,#btnLogAndDeductRecipe .ico,#btnStartCookingMode .ico,[class*="bg-black"] .ico,#cookingModeModal .ico,.bg-\[\#1F6B4A\] .ico{color:inherit!important}
+    .bg-brand-500 .ico,.bg-slate-900 .ico,#btnLogAndDeductRecipe .ico,#btnStartCookingMode .ico,[class*="bg-black"] .ico,#cookingModeModal .ico,.bg-\[\#D14A38\] .ico{color:inherit!important}
     #view-planner h2{font-family:'Bricolage Grotesque','DM Sans',sans-serif}
     /* ===== PantryChef redesign layer: pandan green, ink, kaya gold ===== */
     h1,h2,h3{font-family:'Bricolage Grotesque','DM Sans',sans-serif;letter-spacing:-0.02em}
-    html:not(.dark) body{background:#F6F7F3!important}
-    html.dark body{background:#0E1713!important}
+    html:not(.dark) body{background:#F9F8F6!important}
+    html.dark body{background:#15191E!important}
     main .shadow-sm{box-shadow:none!important}
     html:not(.dark) main div.border.rounded-3xl,html:not(.dark) main div.border.rounded-2xl{border-color:#E8ECE5!important}
     #statTotalPantry,#statExpiringSoon,#statReadyRecipes,#statCartCount{font-family:'Bricolage Grotesque',sans-serif;font-size:34px!important;letter-spacing:-0.03em;line-height:1.1}
-    #navCartBadge{background:#E9B949!important;color:#14211C!important;margin-left:auto}
-    body>nav{background:#14211C!important;border:0!important;backdrop-filter:none!important;padding-top:6px!important;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px))!important}
-    body>nav .nav-tab-btn{color:#C9D8CE!important}
+    #navCartBadge{background:#E9B949!important;color:#1E232A!important;margin-left:auto}
+    body>nav{background:#1E232A!important;border:0!important;backdrop-filter:none!important;padding-top:6px!important;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px))!important}
+    body>nav .nav-tab-btn{color:#D5D9DE!important}
     body>nav .nav-tab-btn.font-black{color:#E9B949!important}
     @media (min-width:768px){
       body{padding-left:232px}
       header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-bottom:0!important}
-      html:not(.dark) header{background:#F6F7F3!important}
-      html.dark header{background:#0E1713!important}
+      html:not(.dark) header{background:#F9F8F6!important}
+      html.dark header{background:#15191E!important}
       header>div{max-width:1240px!important;justify-content:flex-end!important}
       header>div>div:first-child{display:none!important}
       main,main>section{max-width:1240px!important}
-      header nav{position:fixed;left:0;top:0;bottom:0;width:232px;display:flex!important;flex-direction:column;align-items:stretch;gap:6px;padding:84px 18px 28px!important;background:#14211C!important;border:0!important;border-radius:0!important;box-shadow:none!important}
-      header nav::before{content:"PantryChef SG";position:absolute;top:28px;left:32px;font:800 24px 'Bricolage Grotesque',sans-serif;letter-spacing:-0.02em;color:#F6F7F3}
-      header nav .nav-tab-btn{display:flex!important;align-items:center;gap:12px;width:100%;padding:11px 14px!important;border-radius:10px!important;font-size:15px!important;font-weight:500!important;color:#C9D8CE!important;background:none!important;box-shadow:none!important;text-align:left}
-      header nav .nav-tab-btn:hover{background:#1E3128!important}
-      header nav .nav-tab-btn.shadow-sm{background:#F6F7F3!important;color:#14211C!important;font-weight:700!important}
+      header nav{position:fixed;left:0;top:0;bottom:0;width:232px;display:flex!important;flex-direction:column;align-items:stretch;gap:6px;padding:84px 18px 28px!important;background:#1E232A!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+      header nav::before{content:"PantryChef SG";position:absolute;top:28px;left:32px;font:800 24px 'Bricolage Grotesque',sans-serif;letter-spacing:-0.02em;color:#F9F8F6}
+      header nav .nav-tab-btn{display:flex!important;align-items:center;gap:12px;width:100%;padding:11px 14px!important;border-radius:10px!important;font-size:15px!important;font-weight:500!important;color:#D5D9DE!important;background:none!important;box-shadow:none!important;text-align:left}
+      header nav .nav-tab-btn:hover{background:#2A3039!important}
+      header nav .nav-tab-btn.shadow-sm{background:#F9F8F6!important;color:#1E232A!important;font-weight:700!important}
     }
   </style>
 <base target="_blank">
@@ -148,7 +148,7 @@
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen pb-24 sm:pb-12 transition-colors duration-200">
 <style>
 body:has(#gate){padding:0 !important;margin:0 !important}
-#gate{--bg:#F6F7F3;--card:#fff;--ink:#14211C;--mut:#51605A;--line:#D5DBD7;--field:#F3F5F2;--brand:#1F6B4A;--brand2:#1A5C40;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;color:var(--ink);background:var(--bg)}
+#gate{--bg:#F9F8F6;--card:#fff;--ink:#1E232A;--mut:#51605A;--line:#D5DBD7;--field:#F3F5F2;--brand:#D14A38;--brand2:#B93F2F;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;color:var(--ink);background:var(--bg)}
 html.dark #gate{--bg:#0F1713;--card:#162019;--ink:#F1F5F2;--mut:#A9B6AF;--line:#33433A;--field:#1E2B23}
 #gate .gbox{width:100%;max-width:380px}
 #gate .ghead{text-align:center;margin-bottom:28px}
@@ -159,7 +159,7 @@ html.dark #gate{--bg:#0F1713;--card:#162019;--ink:#F1F5F2;--mut:#A9B6AF;--line:#
 #gate form.hidden,#gate #gateBusy.hidden{display:none}
 #gate input,#gate button{font:inherit;font-size:16px;width:100%;box-sizing:border-box;border-radius:14px}
 #gate input{padding:12px 14px;border:1px solid var(--line);background:var(--field);color:var(--ink);outline:none}
-#gate input:focus{border-color:var(--brand);box-shadow:0 0 0 2px rgba(31,107,74,.35)}
+#gate input:focus{border-color:var(--brand);box-shadow:0 0 0 2px rgba(209,74,56,.35)}
 #gate button{padding:12px;cursor:pointer;font-weight:700}
 #gate .gg{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--card);color:var(--ink);border:1px solid var(--line)}
 #gate .gp{background:var(--brand);color:#fff;border:0;font-weight:800}

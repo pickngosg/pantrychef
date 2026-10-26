@@ -2,5 +2,5 @@
 module.exports = {
   content: ['./index.html', './classes.html'],
   darkMode: 'class',
-  theme: { extend: { colors: { brand: { 50: '#EAF3ED', 100: '#DCEBE1', 200: '#BBD6C4', 300: '#8FBBA0', 400: '#5FAF86', 500: '#1F6B4A', 600: '#1A5C40', 700: '#145238', 800: '#0F4030', 900: '#0B3023', 950: '#14211C' } } } }
+  theme: { extend: { colors: { brand: { 50: '#FEF1EF', 100: '#FBE0DB', 200: '#F7C6BD', 300: '#EE8F80', 400: '#E05A47', 500: '#D14A38', 600: '#B93F2F', 700: '#9E3326', 800: '#7C281D', 900: '#5A1D15', 950: '#1E232A' } } } }
 };
