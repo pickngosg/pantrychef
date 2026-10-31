@@ -5,7 +5,8 @@
       "namespace": "android_app",
       "package_name": "com.pantrychefsg.app",
       "sha256_cert_fingerprints": [
-        "54:A1:60:6D:42:02:4D:CD:3C:1C:4C:95:42:21:F8:EB:2F:F0:94:A5:D3:28:5E:FE:D4:1D:3D:71:E8:9D:2A:3C"
+        "54:A1:60:6D:42:02:4D:CD:3C:1C:4C:95:42:21:F8:EB:2F:F0:94:A5:D3:28:5E:FE:D4:1D:3D:71:E8:9D:2A:3C",
+        "16:9C:97:6E:E9:43:6B:AB:68:04:70:B2:75:17:74:A4:53:1F:EA:15:6E:C1:46:FF:7A:2E:78:2E:BF:B8:4E:D1"
       ]
     }
   }
