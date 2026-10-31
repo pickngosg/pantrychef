@@ -1,8 +1,12 @@
-   [{
-     "relation": ["delegate_permission/common.handle_all_urls"],
-     "target": {
-       "namespace": "android_app",
-       "package_name": "io.github.pickngosg.twa",
-       "sha256_cert_fingerprints": ["7C:FD:30:62:BC:B7:54:D7:56:07:56:31:AC:EA:8E:A3:7D:B0:C7:D9:B3:EF:A8:49:38:0D:64:1A:4E:3B:A7:6B"]
-     }
-   }]  
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.pantrychefsg.app",
+      "sha256_cert_fingerprints": [
+        "54:A1:60:6D:42:02:4D:CD:3C:1C:4C:95:42:21:F8:EB:2F:F0:94:A5:D3:28:5E:FE:D4:1D:3D:71:E8:9D:2A:3C"
+      ]
+    }
+  }
+]
