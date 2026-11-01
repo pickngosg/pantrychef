@@ -161,6 +161,18 @@
     html.dark body{background:#15191E!important}
     main .shadow-sm{box-shadow:none!important}
     html:not(.dark) main div.border.rounded-3xl,html:not(.dark) main div.border.rounded-2xl{border-color:#E8ECE5!important}
+    /* Shape scale by role: big cards and sheets 14px, inner cards 10px, buttons and fields 8px, small chips 6px, pills stay round */
+    .rounded-3xl{border-radius:14px!important}
+    .rounded-t-3xl{border-top-left-radius:14px!important;border-top-right-radius:14px!important}
+    .rounded-2xl{border-radius:10px!important}
+    .rounded-xl{border-radius:8px!important}
+    .rounded-lg{border-radius:6px!important}
+    @media (min-width:640px){.sm\:rounded-3xl{border-radius:14px!important}}
+    .dash-ico{border-radius:10px}
+    /* Quieter home page: the three lower sections sit on the page with a hairline above, not in boxes */
+    section.dash-card{background:transparent!important;box-shadow:none!important;border-radius:0!important;border-top:1px solid #E3D8D0;padding:20px 0 0!important}
+    html.dark section.dash-card{border-top-color:rgba(255,255,255,.1)}
+    #view-dashboard::before{display:none!important}
     #statTotalPantry,#statExpiringSoon,#statReadyRecipes,#statCartCount{font-family:'Bricolage Grotesque',sans-serif;font-size:34px!important;letter-spacing:-0.03em;line-height:1.1}
     #navCartBadge{background:#E9B949!important;color:#1E232A!important;margin-left:auto}
     body>nav{background:#1E232A!important;border:0!important;backdrop-filter:none!important;padding-top:6px!important;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px))!important}
