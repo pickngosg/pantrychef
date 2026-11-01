@@ -49,6 +49,35 @@
     html.dark .dash-hero{background:linear-gradient(135deg,#2A2220 0%,#2B2410 100%);border-color:rgba(255,255,255,.08)}
     .dash-hero-ico{width:64px;height:64px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:34px;background:rgba(255,255,255,.7);flex-shrink:0}
     html.dark .dash-hero-ico{background:rgba(255,255,255,.08)}
+
+    .dash-pot{width:92px;height:92px;flex-shrink:0;display:block}
+    .dash-pot svg{width:100%;height:100%;overflow:visible;display:block}
+    .dash-pot svg *{transform-box:fill-box;transform-origin:center}
+    .dash-pot .pt-pot{transform-origin:50% 100%}
+    .pt-b{stroke:#E6D9D2;stroke-width:2.5;stroke-linejoin:round}
+    .pt-calm .pt-pot,.pt-sleepy .pt-pot{animation:ptBreathe 4s ease-in-out infinite}
+    .pt-calm .pt-lid{animation:ptLid 4s ease-in-out infinite}
+    .pt-calm .pt-curl{animation:ptDrift 4s ease-in-out infinite}.pt-calm .pt-curl.r{animation-delay:-2s}
+    .pt-worried .pt-lid{animation:ptRattle 2s linear infinite}
+    .pt-worried .pt-mouth{animation:ptWob 2s linear infinite}
+    .pt-worried .pt-ring{animation:ptPulse 1s ease-in-out infinite}
+    .pt-worried .pt-wisp{animation:ptRise 2s ease-out infinite}.pt-worried .pt-wisp.b{animation-delay:-.67s}.pt-worried .pt-wisp.c{animation-delay:-1.33s}
+    .pt-happy .pt-pot{animation:ptHop 2s ease-in-out infinite}
+    .pt-happy .pt-spark{animation:ptTwinkle 1s ease-in-out infinite}.pt-happy .pt-spark.b{animation-delay:-.5s}
+    .pt-sleepy .pt-z{animation:ptZ 4s ease-in-out infinite}.pt-sleepy .pt-z.b{animation-delay:-2s}
+    .pt-sleepy .pt-snore{animation:ptSnore 4s ease-in-out infinite}
+    @keyframes ptBreathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.015,.985)}}
+    @keyframes ptLid{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
+    @keyframes ptDrift{0%,100%{transform:translateY(2px);opacity:.55}50%{transform:translateY(-4px);opacity:1}}
+    @keyframes ptRattle{0%{transform:translate(0,0) rotate(0)}4%{transform:translate(-1px,-3px) rotate(-3deg)}8%{transform:translate(1px,-1px) rotate(3deg)}12%{transform:translate(-1px,-4px) rotate(-3deg)}16%{transform:translate(1px,-1px) rotate(3deg)}20%{transform:translate(-1px,-3px) rotate(-2deg)}24%{transform:translate(1px,-1px) rotate(2deg)}28%{transform:translate(0,-2px) rotate(-1deg)}34%,100%{transform:translate(0,0) rotate(0)}}
+    @keyframes ptWob{0%{transform:translateX(0)}4%{transform:translateX(-1.5px)}8%{transform:translateX(1.5px)}12%{transform:translateX(-1.5px)}16%{transform:translateX(1.5px)}20%{transform:translateX(-1px)}24%{transform:translateX(1px)}30%,100%{transform:translateX(0)}}
+    @keyframes ptPulse{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.12)}}
+    @keyframes ptRise{0%{transform:translateY(8px);opacity:0}25%{opacity:1}100%{transform:translateY(-14px);opacity:0}}
+    @keyframes ptHop{0%,40%,100%{transform:translateY(0) scale(1,1)}8%{transform:translateY(0) scale(1.05,.93)}22%{transform:translateY(-10px) scale(.97,1.04)}36%{transform:translateY(0) scale(1.04,.95)}}
+    @keyframes ptTwinkle{0%,100%{transform:scale(.6) rotate(0);opacity:.5}50%{transform:scale(1.15) rotate(20deg);opacity:1}}
+    @keyframes ptZ{0%{transform:translate(0,8px);opacity:0}30%{opacity:1}100%{transform:translate(8px,-14px);opacity:0}}
+    @keyframes ptSnore{0%,100%{transform:scale(.8)}50%{transform:scale(1.15)}}
+    @media (prefers-reduced-motion:reduce){.dash-pot *{animation:none!important}}
     .dash-ico{width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:23px;flex-shrink:0}
     .tn-green{background:#FBE0DB}.tn-amber{background:#FBEBC3}.tn-orange{background:#FDDCC4}.tn-blue{background:#D6E8FA}.tn-rose{background:#FADADD}.tn-violet{background:#E8DDF8}
     html.dark .tn-green,html.dark .tn-amber,html.dark .tn-orange,html.dark .tn-blue,html.dark .tn-rose,html.dark .tn-violet{background:rgba(255,255,255,.09)}
