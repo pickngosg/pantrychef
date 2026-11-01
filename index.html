@@ -173,6 +173,11 @@
     section.dash-card{background:transparent!important;box-shadow:none!important;border-radius:0!important;border-top:1px solid #E3D8D0;padding:20px 0 0!important}
     html.dark section.dash-card{border-top-color:rgba(255,255,255,.1)}
     #view-dashboard::before{display:none!important}
+    /* Shopping list: narrower reading column, outlined action buttons */
+    #view-shopping{max-width:780px!important}
+    #btnFindProduct,#btnScanPrices{background:transparent!important;border:1.5px solid #D14A38;color:#B03A2A!important}
+    #btnFindProduct:hover,#btnScanPrices:hover{background:rgba(209,74,56,.08)!important}
+    html.dark #btnFindProduct,html.dark #btnScanPrices{color:#F0907F!important}
     #statTotalPantry,#statExpiringSoon,#statReadyRecipes,#statCartCount{font-family:'Bricolage Grotesque',sans-serif;font-size:34px!important;letter-spacing:-0.03em;line-height:1.1}
     #navCartBadge{background:#E9B949!important;color:#1E232A!important;margin-left:auto}
     body>nav{background:#1E232A!important;border:0!important;backdrop-filter:none!important;padding-top:6px!important;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px))!important}
