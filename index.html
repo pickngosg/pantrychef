@@ -50,11 +50,16 @@
     .dash-hero-ico{width:64px;height:64px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:34px;background:rgba(255,255,255,.7);flex-shrink:0}
     html.dark .dash-hero-ico{background:rgba(255,255,255,.08)}
 
-    .dash-pot{width:92px;height:92px;flex-shrink:0;display:block}
+    .dash-pot{width:104px;height:104px;flex-shrink:0;display:block}
     .dash-pot svg{width:100%;height:100%;overflow:visible;display:block}
     .dash-pot svg *{transform-box:fill-box;transform-origin:center}
     .dash-pot .pt-pot{transform-origin:50% 100%}
-    .pt-b{stroke:#E6D9D2;stroke-width:2.5;stroke-linejoin:round}
+    .pt-b{stroke:#B9958A;stroke-width:3;stroke-linejoin:round}
+    .dash-pot [stroke="#EDA99B"]{stroke:#D8715E}
+    .dash-pot svg{filter:drop-shadow(0 3px 4px rgba(158,51,38,.22))}
+    html.dark .pt-b{stroke:#E6D9D2;stroke-width:2.5}
+    html.dark .dash-pot [stroke="#EDA99B"]{stroke:#EDA99B}
+    html.dark .dash-pot svg{filter:none}
     .pt-calm .pt-pot,.pt-sleepy .pt-pot{animation:ptBreathe 4s ease-in-out infinite}
     .pt-calm .pt-lid{animation:ptLid 4s ease-in-out infinite}
     .pt-calm .pt-curl{animation:ptDrift 4s ease-in-out infinite}.pt-calm .pt-curl.r{animation-delay:-2s}
@@ -68,7 +73,7 @@
     .pt-sleepy .pt-snore{animation:ptSnore 4s ease-in-out infinite}
     @keyframes ptBreathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.015,.985)}}
     @keyframes ptLid{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
-    @keyframes ptDrift{0%,100%{transform:translateY(2px);opacity:.55}50%{transform:translateY(-4px);opacity:1}}
+    @keyframes ptDrift{0%,100%{transform:translateY(2px);opacity:.8}50%{transform:translateY(-4px);opacity:1}}
     @keyframes ptRattle{0%{transform:translate(0,0) rotate(0)}4%{transform:translate(-1px,-3px) rotate(-3deg)}8%{transform:translate(1px,-1px) rotate(3deg)}12%{transform:translate(-1px,-4px) rotate(-3deg)}16%{transform:translate(1px,-1px) rotate(3deg)}20%{transform:translate(-1px,-3px) rotate(-2deg)}24%{transform:translate(1px,-1px) rotate(2deg)}28%{transform:translate(0,-2px) rotate(-1deg)}34%,100%{transform:translate(0,0) rotate(0)}}
     @keyframes ptWob{0%{transform:translateX(0)}4%{transform:translateX(-1.5px)}8%{transform:translateX(1.5px)}12%{transform:translateX(-1.5px)}16%{transform:translateX(1.5px)}20%{transform:translateX(-1px)}24%{transform:translateX(1px)}30%,100%{transform:translateX(0)}}
     @keyframes ptPulse{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.12)}}
