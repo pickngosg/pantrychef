@@ -191,6 +191,32 @@
     #btnLogAndDeductRecipe,#btnStartCookingMode{font-size:16px!important;padding:12px 10px!important}
     #btnPushMissingToCart,#btnTidyIngredients{font-size:14px!important;padding:9px 14px!important}
     #btnTidyIngredients{display:none!important}
+    /* Pantry redesign (rows 53-55) */
+    .pc-strip{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}
+    .pc-strip::-webkit-scrollbar{display:none}
+    .pc-chip{flex:none;padding:9px 14px;border-radius:999px;font-weight:800;font-size:15px;background:#F1F3EF;color:#334;border:0;white-space:nowrap}
+    html.dark .pc-chip{background:#1E2B23;color:#D5DDD8}
+    .pc-chip[aria-pressed=true]{background:#D14A38;color:#fff}
+    .pc-chip.warn{background:#FBE0DB;color:#9E3326}.pc-chip.warn[aria-pressed=true]{background:#D14A38;color:#fff}
+    .pc-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .pc-sel,.pc-tbtn{height:42px;padding:0 14px;border-radius:12px;font-weight:700;font-size:15px;background:#fff;color:#1E232A;border:1px solid #D5DBD7}
+    html.dark .pc-sel,html.dark .pc-tbtn{background:#162019;color:#F1F5F2;border-color:#33433A}
+    .pc-tbtn[aria-pressed=true]{background:#FBE0DB;color:#9E3326;border-color:#D14A38}
+    .pc-cook{margin-left:auto;background:#D14A38;color:#fff;border-color:#D14A38}
+    .pc-need{grid-column:1/-1;border:1px solid #F3C2BA;background:#FDF1EE;border-radius:18px;padding:4px 14px}
+    html.dark .pc-need{background:#2A1A17;border-color:#5A2E27}
+    .pc-need>summary{cursor:pointer;list-style:none;font-weight:800;font-size:17px;padding:12px 0;color:#9E3326}
+    html.dark .pc-need>summary{color:#F5B5AA}
+    .pc-need>summary::-webkit-details-marker{display:none}
+    .pc-nrow{padding:10px 0;border-top:1px solid rgba(158,51,38,.18)}
+    .pc-nact{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+    .pc-nact button{padding:9px 14px;border-radius:12px;font-weight:700;font-size:14px;background:#fff;color:#1E232A;border:1px solid #D5DBD7}
+    html.dark .pc-nact button{background:#162019;color:#F1F5F2;border-color:#33433A}
+    .pc-grp{grid-column:1/-1;font-weight:800;font-size:15px;color:#51605A;padding:8px 2px 0}
+    .pc-bar{height:5px;border-radius:3px;background:#E4E7E2;margin-top:6px;overflow:hidden}
+    html.dark .pc-bar{background:#353C45}
+    .pc-bar i{display:block;height:100%;border-radius:3px}
+    .pc-stp{width:38px!important;height:38px!important;font-size:18px!important;border-radius:12px!important}
     /* Row 63: hover and press reactions */
     .recipe-filter-pill,.pstore-btn,[data-open-recipe].rounded-3xl,[data-open-recipe] .grid-cols-4>div,[data-fav],[data-edit-recipe]{transition:transform .18s var(--pc-ease,ease-out),box-shadow .18s ease,background-color .18s ease,color .18s ease}
     @media (hover:hover) and (pointer:fine){
