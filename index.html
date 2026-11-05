@@ -262,10 +262,13 @@
     html.dark .pc-menu{background:#162019;color:#F1F5F2}
     .pc-menu button{display:block;width:100%;text-align:left;padding:15px 16px;font-size:17px;font-weight:700;border-radius:14px;background:none;border:0;color:inherit;min-height:48px}
     .pc-menu button:active{background:rgba(209,74,56,.12)}
+    .pc-menu button{display:flex;align-items:center;white-space:nowrap}
+    @media (min-width:640px){.pc-menu{width:350px}}
+    #pantryItemModal #btnQuickManageUnits{display:block;margin-left:auto}
     .pc-menu .ico{display:inline-flex;vertical-align:middle;margin-right:14px;color:#D14A38}
     .pc-menu .ico svg{width:22px;height:22px}
     .pc-menu[hidden],.pc-menu-back[hidden],.pc-menu button[hidden]{display:none!important}
-    @media (min-width:640px){.pc-menu{left:auto;right:calc(50% - 440px);top:calc(50% - 250px);bottom:auto;width:290px;border-radius:16px;padding:6px;animation:pcFade .15s ease-out}.pc-menu button{padding:11px 14px;font-size:15px;min-height:0}}
+    @media (min-width:640px){.pc-menu{left:auto;right:calc(50% - 440px);top:calc(50% - 250px);bottom:auto;width:350px;border-radius:16px;padding:6px;animation:pcFade .15s ease-out}.pc-menu button{padding:11px 14px;font-size:15px;min-height:0}}
     @media (prefers-reduced-motion:reduce){.pc-menu{animation:none}}
     @media (max-width:639px){
       #detailRecipeImageWrap{height:170px!important}
