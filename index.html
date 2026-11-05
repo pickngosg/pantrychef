@@ -191,6 +191,14 @@
     #btnLogAndDeductRecipe,#btnStartCookingMode{font-size:16px!important;padding:12px 10px!important}
     #btnPushMissingToCart,#btnTidyIngredients{font-size:14px!important;padding:9px 14px!important}
     #btnTidyIngredients{display:none!important}
+    /* Round B last group: popups ease in, drag-down, swipe, pull-to-refresh */
+    div.fixed.inset-0[id$="Modal"]:not(.hidden):not(#recipeDetailModal)>div{animation:pcFade .2s ease-out}
+    .pc-dragging{transition:none!important}
+    .pc-snap{transition:transform .22s var(--pc-ease,ease-out)}
+    .pc-swiping{transition:none!important}
+    #pcPtr{position:fixed;left:50%;top:0;z-index:70;width:40px;height:40px;margin-left:-20px;border-radius:50%;background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;transform:translateY(-60px);pointer-events:none;font-size:18px;color:#D14A38}
+    html.dark #pcPtr{background:#162019}
+    html,body{overscroll-behavior-y:contain}
     /* Round B step 3/4: skeletons and empty screens */
     @keyframes pcShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
     .pc-skel i{display:block;border-radius:10px;background:linear-gradient(90deg,#E6E9E5 25%,#F3F5F2 50%,#E6E9E5 75%);background-size:200% 100%;animation:pcShimmer 1.4s linear infinite}
