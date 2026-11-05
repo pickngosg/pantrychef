@@ -191,6 +191,31 @@
     #btnLogAndDeductRecipe,#btnStartCookingMode{font-size:16px!important;padding:12px 10px!important}
     #btnPushMissingToCart,#btnTidyIngredients{font-size:14px!important;padding:9px 14px!important}
     #btnTidyIngredients{display:none!important}
+    /* Row 63: hover and press reactions */
+    .recipe-filter-pill,.pstore-btn,[data-open-recipe].rounded-3xl,[data-open-recipe] .grid-cols-4>div,[data-fav],[data-edit-recipe]{transition:transform .18s var(--pc-ease,ease-out),box-shadow .18s ease,background-color .18s ease,color .18s ease}
+    @media (hover:hover) and (pointer:fine){
+      .recipe-filter-pill:not([class*="bg-brand"]):hover,.pstore-btn:not([class*="bg-slate-900"]):not([class*="bg-white"]):hover{background-color:#FBE0DB!important;color:#9E3326!important;transform:translateY(-1px);box-shadow:0 4px 10px -4px rgba(209,74,56,.35)}
+      html.dark .recipe-filter-pill:not([class*="bg-brand"]):hover{background-color:#3A2420!important;color:#F5B5AA!important}
+      [data-open-recipe].rounded-3xl:hover{transform:translateY(-3px);box-shadow:0 14px 30px -12px rgba(30,35,42,.35)}
+      [data-open-recipe] .grid-cols-4>div:hover{background-color:#FBE0DB;transform:translateY(-1px)}
+      html.dark [data-open-recipe] .grid-cols-4>div:hover{background-color:#3A2420}
+      [data-edit-recipe]:hover{background-color:#FBE0DB!important;color:#9E3326!important}
+      [data-fav]:hover{background-color:#FBE0DB!important;color:#D14A38!important}
+    }
+    .recipe-filter-pill:active,[data-open-recipe].rounded-3xl:active,[data-fav]:active,[data-edit-recipe]:active{transform:scale(.97)}
+    @keyframes pcHeart{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+    .pc-heart{animation:pcHeart .34s var(--pc-ease,ease-out)}
+    @media (prefers-reduced-motion:reduce){.pc-heart{animation:none}[data-open-recipe].rounded-3xl:hover,.recipe-filter-pill:hover{transform:none}}
+    /* Row 61: Add food to pantry */
+    #pantryItemModal .pc-fl{display:block;font-weight:700;margin-bottom:6px}
+    #pantryItemModal .pc-el{display:inline-block;margin-top:6px;font-size:14px;font-weight:600;color:#9E3326;background:none;border:0;padding:4px 0;text-decoration:underline;text-underline-offset:3px}
+    html.dark #pantryItemModal .pc-el{color:#F5B5AA}
+    #pantryItemModal select,#pantryItemModal input[type=number],#pantryItemModal input[type=date]{height:52px;min-width:0}
+    #pantryItemModal .pc-pic>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;list-style:none;font-weight:700;padding:2px 0}
+    #pantryItemModal .pc-pic>summary::-webkit-details-marker{display:none}
+    #pantryItemModal .pc-pic[open]>summary{margin-bottom:10px}
+    #pantryItemModal .pc-save{position:sticky;bottom:0;background:linear-gradient(to top,#fff 70%,rgba(255,255,255,0));padding:14px 0 4px;margin-top:6px}
+    html.dark #pantryItemModal .pc-save{background:linear-gradient(to top,#0F172A 70%,rgba(15,23,42,0))}
     /* Round B last group: popups ease in, drag-down, swipe, pull-to-refresh */
     div.fixed.inset-0[id$="Modal"]:not(.hidden):not(#recipeDetailModal)>div{animation:pcFade .2s ease-out}
     .pc-dragging{transition:none!important}
