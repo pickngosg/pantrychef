@@ -191,6 +191,14 @@
     #btnLogAndDeductRecipe,#btnStartCookingMode{font-size:16px!important;padding:12px 10px!important}
     #btnPushMissingToCart,#btnTidyIngredients{font-size:14px!important;padding:9px 14px!important}
     #btnTidyIngredients{display:none!important}
+    /* Round B step 3/4: skeletons and empty screens */
+    @keyframes pcShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .pc-skel i{display:block;border-radius:10px;background:linear-gradient(90deg,#E6E9E5 25%,#F3F5F2 50%,#E6E9E5 75%);background-size:200% 100%;animation:pcShimmer 1.4s linear infinite}
+    html.dark .pc-skel i{background:linear-gradient(90deg,#1E2B23 25%,#2A3A30 50%,#1E2B23 75%);background-size:200% 100%}
+    @media (prefers-reduced-motion:reduce){.pc-skel i{animation:none}}
+    .pc-empty-t{font-family:'Bricolage Grotesque','DM Sans',sans-serif;font-weight:800;font-size:19px;margin-top:4px}
+    .pc-empty-b{display:inline-block;margin-top:14px;padding:12px 24px;border-radius:14px;background:#D14A38;color:#fff;font-weight:800;font-size:16px;border:0}
+    .pc-empty-b:active{transform:scale(.97)}
     /* Round B step 3: rings and bars fill in, rows slide away, toasts slide in */
     @property --p{syntax:'<number>';inherits:false;initial-value:0}
     .cal-ring{transition:--p .9s var(--pc-ease,ease-out)}
