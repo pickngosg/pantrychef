@@ -191,6 +191,15 @@
     #btnLogAndDeductRecipe,#btnStartCookingMode{font-size:16px!important;padding:12px 10px!important}
     #btnPushMissingToCart,#btnTidyIngredients{font-size:14px!important;padding:9px 14px!important}
     #btnTidyIngredients{display:none!important}
+    /* Round B step 3: rings and bars fill in, rows slide away, toasts slide in */
+    @property --p{syntax:'<number>';inherits:false;initial-value:0}
+    .cal-ring{transition:--p .9s var(--pc-ease,ease-out)}
+    #view-dashboard .h-full.rounded-full,#planBars .h-full.rounded-full{transition:width .8s var(--pc-ease,ease-out)}
+    @keyframes pcToastIn{from{transform:translateY(16px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+    .pc-toast{animation:pcToastIn .28s var(--pc-ease,ease-out)}
+    .pc-toast.pc-leave{transition:transform .25s ease,opacity .25s ease;transform:translateY(10px);opacity:0}
+    .pc-rowout{transition:transform .24s ease,opacity .24s ease,max-height .24s ease,padding .24s ease;transform:translateX(40px);opacity:0;max-height:0!important;overflow:hidden;padding-top:0!important;padding-bottom:0!important}
+    @media (prefers-reduced-motion:reduce){.cal-ring,#view-dashboard .h-full.rounded-full{transition:none}.pc-toast{animation:none}.pc-rowout,.pc-toast.pc-leave{transition:none}}
     /* Look (row 33 step 1) + buttons (row 36) + pill, stepper (row 37) */
     body{font-variant-numeric:tabular-nums}
     #recipeDetailModal>div:not(.pc-menu):not(.pc-menu-back),#dataBackupModal>div{box-shadow:0 1px 2px rgba(30,35,42,.06),0 8px 24px -6px rgba(30,35,42,.18),0 24px 60px -12px rgba(30,35,42,.28)!important}
