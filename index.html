@@ -14,15 +14,8 @@
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <!-- Styles: the ready-made file loads fast. If it is missing, the slower online builder is used instead. -->
+  <!-- Styles: the ready-made file (tailwind.css, built by GitHub). No online fallback any more (safer). -->
   <link rel="stylesheet" href="tailwind.css" />
-  <script>
-    (function () {
-      var ok = false;
-      try { ok = getComputedStyle(document.documentElement).getPropertyValue('--pcsg-built').trim() === '1'; } catch (e) {}
-      if (!ok) document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
-    })();
-  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script>
   <script>
     window.tailwind = window.tailwind || {};
@@ -391,6 +384,8 @@
     html.dark .pc-cb{border-color:#33433A;color:#C5CEC8}
     .pc-cb.on{border-color:#7DBE98;background:#E4F4EA;color:#1F5A38}
     html.dark .pc-cb.on{background:#1B3326;color:#9FD6B2;border-color:#2F6B47}
+    .pc-pnote{font-size:12px;line-height:1.45;color:#78716c;margin:8px 0 0}
+    html.dark .pc-pnote{color:#a8a29e}
     /* Row 63: hover and press reactions */
     .recipe-filter-pill,.pstore-btn,[data-open-recipe].rounded-3xl,[data-open-recipe] .grid-cols-4>div,[data-fav],[data-edit-recipe]{transition:transform .18s var(--pc-ease,ease-out),box-shadow .18s ease,background-color .18s ease,color .18s ease}
     @media (hover:hover) and (pointer:fine){
