@@ -15,4 +15,4 @@ Pages
 - [FAQ](https://pantrychefpro.com/faq.html): common questions with short answers
 - [Privacy and terms](https://pantrychefpro.com/privacy.html): how data is handled
 
-Last updated: [DATE]
+Last updated: 8 November 2026
