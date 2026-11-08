@@ -1,31 +1,18 @@
 # PantryChef SG
 
-> PantryChef SG is a kitchen app for Singapore households. It tracks what is in your pantry and fridge, reminds you before food expires, and suggests recipes to use ingredients up. Made by MAG-AMG Pte Ltd, Singapore.
+> PantryChef SG is a kitchen app for Singapore households. It tracks what is in your fridge and pantry with expiry dates, suggests what to use up first, helps plan meals, builds a shopping list and shows estimated shop prices. Made by MAG-AMG Pte Ltd, Singapore.
 
-PantryChef SG also publishes free, sourced food storage guides and grocery price comparisons for Singapore.
+Key facts
+- Website and web app: https://pantrychefpro.com
+- Android app: https://play.google.com/store/apps/details?id=com.pantrychefsg.app
+- iPhone: no App Store app; use the web version
+- Prices shown are estimates from the app's own shop price list, not live shelf prices
+- Free to download; optional Plus plan at S$3.98 a month or S$29.90 a year
+- Support: cook@pantrychefpro.com
 
-## Guides (food storage and safety)
-- [All guides](https://pantrychefpro.com/guides/)
-- [How long can cooked rice stay in the fridge?](https://pantrychefpro.com/guides/how-long-cooked-rice-keeps-in-fridge.html)
-- [How to freeze cooked rice](https://pantrychefpro.com/guides/how-to-freeze-cooked-rice.html)
-- [How long do eggs last in the fridge?](https://pantrychefpro.com/guides/how-long-eggs-last-in-fridge-singapore.html)
-- [How long can raw chicken stay in the fridge?](https://pantrychefpro.com/guides/how-long-raw-chicken-lasts-in-fridge.html)
-- [How long can cooked chicken stay in the fridge?](https://pantrychefpro.com/guides/how-long-cooked-chicken-lasts-in-fridge.html)
-- [Can you freeze tofu?](https://pantrychefpro.com/guides/can-you-freeze-tofu.html)
-- [How to store kangkong and leafy vegetables](https://pantrychefpro.com/guides/storing-kangkong-and-leafy-vegetables.html)
-- [How to store ginger and garlic](https://pantrychefpro.com/guides/storing-ginger-and-garlic.html)
-- [Can you refreeze thawed food?](https://pantrychefpro.com/guides/refreezing-thawed-food.html)
-- ["Use by" vs "best before" in Singapore](https://pantrychefpro.com/guides/use-by-vs-best-before-singapore.html)
+Pages
+- [About](https://pantrychefpro.com/about.html): what the app is and who it is for
+- [FAQ](https://pantrychefpro.com/faq.html): common questions with short answers
+- [Privacy and terms](https://pantrychefpro.com/privacy.html): how data is handled
 
-## Grocery prices (Singapore supermarkets, dated snapshots, per-unit)
-- [All price comparisons](https://pantrychefpro.com/prices/)
-- [Eggs](https://pantrychefpro.com/prices/eggs.html)
-- [Jasmine rice](https://pantrychefpro.com/prices/jasmine-rice.html)
-- [Cooking oil](https://pantrychefpro.com/prices/cooking-oil.html)
-- [Fresh milk](https://pantrychefpro.com/prices/fresh-milk.html)
-- [Onions](https://pantrychefpro.com/prices/onions.html)
-
-## About
-- [About PantryChef SG](https://pantrychefpro.com/about.html)
-- [Privacy](https://pantrychefpro.com/privacy.html)
-- Contact: cook@pantrychefpro.com
+Last updated: [DATE]
