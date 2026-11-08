@@ -578,6 +578,14 @@ html.dark #gate .gs{color:#8FD0AB;border-color:#3F8F67}
 #gate #gateSlow button{margin-top:10px;padding:10px 22px;width:auto}
 @media (prefers-reduced-motion:reduce){#gate .gbar u{animation:none;width:100%}}
 @keyframes gspin{to{transform:rotate(360deg)}}
+/* While opening, look the same as the phone start screen: warm cream, logo about 28% of the width, name and tagline */
+#gate .gtag{display:none;margin:6px 0 0;font-size:16px;color:#8A7A6E}
+html:not(.dark) #gate:has(#gateForm.hidden){--bg:#F8F3ED}
+#gate:has(#gateForm.hidden) .ghead img{width:clamp(96px,28vw,168px);height:auto;aspect-ratio:1/1;border-radius:22%;box-shadow:0 6px 22px rgba(60,40,30,.18)}
+#gate:has(#gateForm.hidden) h1{margin-top:18px;font-size:28px}
+#gate:has(#gateForm.hidden) .gtag{display:block}
+html.dark #gate .gtag{color:var(--mut)}
+#gate:has(#gateForm.hidden) #gateMsg{font-size:14px;margin-top:22px}
 #gate .gfoot{text-align:center;font-size:13px;color:var(--mut);margin-top:18px;line-height:1.6}
 #gate .gfoot a{color:inherit}
 </style>
@@ -586,6 +594,7 @@ html.dark #gate .gs{color:#8FD0AB;border-color:#3F8F67}
     <div class="ghead">
       <img src="icon-192.png" alt="">
       <h1>PantryChef SG</h1>
+      <p class="gtag">Your smart Singapore kitchen</p>
       <p id="gateMsg">Opening your kitchen…</p>
     </div>
     <div id="gateBusy"><b class="gbar"><u></u></b><p id="gateSlow" class="hidden">This is taking longer than usual.<br><button type="button" id="gateRetry" class="gs">Try again</button></p></div>
