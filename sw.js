@@ -1,9 +1,9 @@
-/* PantryChef SG Pro - service worker (v10)
+/* PantryChef SG Pro - service worker (v11)
    - Opens instantly and works offline (app + styles + libraries are kept on the phone)
    - Always tries the internet first for the app page, so new versions arrive automatically
    - Never stores logins, sync data, payments or AI imports */
-const VERSION = 'pcsg-v11-2026-11-01';
-const CORE = ['./', './index.html', './manifest.json', './privacy.html', './icon-192.png', './icon-512.png', './icon-180.png', './badge-96.png', './tailwind.css'];
+const VERSION = 'pcsg-v11-2026-11-08';
+const CORE = ['./', './index.html', './manifest.json', './privacy.html', './icon-192.png', './icon-512.png', './icon-180.png', './badge-96.png', './tailwind.css', './supabase.js'];
 const CDN = ['cdn.tailwindcss.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com', 'placehold.co'];
 const NEVER = ['supabase.co', 'stripe.com', 'googleapis.com/v1beta', 'apify.com', 'r.jina.ai'];
 
@@ -20,8 +20,7 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (NEVER.some((h) => url.href.includes(h))) return;
-  // Content pages (guides, prices, about, privacy) are normal web pages, not the app
-  if (req.mode === 'navigate' && /^\/(guides|prices|ms|zh)(\/|$)|^\/(about|privacy|classes)\.html$/.test(url.pathname)) return;
+
   // The app page itself (also used when a recipe is shared to the app): internet first, saved copy if offline
   if (req.mode === 'navigate') {
     e.respondWith(
