@@ -9,7 +9,7 @@
   "display": "standalone",
   "orientation": "any",
   "background_color": "#F8F3ED",
-  "theme_color": "#1E232A",
+  "theme_color": "#F8F3ED",
   "categories": [
     "food",
     "lifestyle",
