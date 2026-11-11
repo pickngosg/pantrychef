@@ -535,7 +535,7 @@
       header nav,header nav.rounded-2xl{border-radius:0!important}
       header nav{position:fixed;left:0;top:0;bottom:0;width:232px;display:flex!important;flex-direction:column;align-items:stretch;gap:6px;padding:138px 18px 28px!important;background:#2B2420!important;border:0!important;border-radius:0!important;box-shadow:none!important}
       header nav::after{content:"";position:absolute;top:26px;left:50%;margin-left:-28px;width:56px;height:56px;border-radius:16px;background:url(icon-192.png) center/cover no-repeat;box-shadow:0 6px 16px -6px rgba(180,83,42,.6)}
-      header nav::before{content:"PantryChef SG";position:absolute;top:92px;left:0;right:0;text-align:center;font:800 24px 'Fraunces',Georgia,serif;letter-spacing:-0.02em;color:#F8F3ED}
+      header nav::before{content:"PantryChef";position:absolute;top:92px;left:0;right:0;text-align:center;font:800 24px 'Fraunces',Georgia,serif;letter-spacing:-0.02em;color:#F8F3ED}
       header nav .nav-tab-btn{display:flex!important;align-items:center;gap:12px;width:100%;padding:11px 14px!important;border-radius:10px!important;font-size:15px!important;font-weight:500!important;color:#E5D9CE!important;background:none!important;box-shadow:none!important;text-align:left}
       header nav .nav-tab-btn:hover{background:#38312B!important}
       header nav .nav-tab-btn.shadow-sm{background:#F8F3ED!important;color:#2B2420!important;font-weight:700!important}
@@ -608,6 +608,272 @@
     }
     html.dark .bg-white{background-color:#26201C}
     @media (min-width:768px) and (max-width:1100px){#pantryGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}#recipeGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+      /* ===== Premium layout (stage 2): screens arranged like the design board ===== */
+    main{max-width:1120px!important}
+    @media (max-width:767px){
+      header>div{padding:14px 20px 6px!important}
+      header img{display:none!important}
+      header h1{font-size:20px!important;white-space:nowrap}
+      #btnToggleDarkMode{display:none!important}
+      header button:not(.nav-tab-btn):not(.side-extra):not(.hidden){width:44px;height:44px;min-width:44px;padding:0!important;display:inline-flex;align-items:center;justify-content:center;font-size:17px!important}
+      header button svg{width:20px!important;height:20px!important}
+      main>section{padding:8px 20px 28px!important}
+      body>nav .nav-tab-btn svg{width:22px;height:22px}
+    }
+    .pm-h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:30px;line-height:1.12;letter-spacing:-.02em;color:var(--pm-ink);margin:0}
+    .pm-sub{font-size:15px;color:var(--pm-mut);margin-top:8px;line-height:1.4}
+    .pm-sticky{position:sticky;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:20;margin:16px -20px 0;padding:12px 20px;background:#F8F3ED;border-top:1px solid var(--pm-line);display:flex;gap:10px;align-items:center}
+    html.dark .pm-sticky{background:#1B1714}
+    .pm-sticky[hidden]{display:none}
+    .pm-sticky .pc-main{flex:1;height:48px;font-size:15px;font-weight:600;border:0;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+    @media (min-width:768px){.pm-sticky{bottom:0;margin:16px 0 0;border:0;background:transparent;padding:0}.pm-sticky .pc-main{flex:none;padding:0 24px}}
+    /* Planner */
+    #view-planner .pc-pcard{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;position:relative;gap:16px}
+    #view-planner .pc-pico{display:none}
+    #view-planner .pc-phead h2{font-size:30px;line-height:1.12;letter-spacing:-.02em;padding-right:56px}
+    #view-planner .pc-phead p{font-size:15px;margin-top:8px}
+    #view-planner .pc-tgc{background:var(--pm-card)!important;border:0!important;border-radius:20px!important;box-shadow:var(--pm-sh);padding:12px 14px!important}
+    html.dark #view-planner .pc-tgc{box-shadow:var(--pm-sh)}
+    #view-planner .pc-tgc>span{font-size:12px;font-weight:600;color:var(--pm-mut)}
+    #view-planner .pc-tgc input{background:transparent!important;box-shadow:none!important;font-family:'Fraunces',Georgia,serif;font-size:24px;font-weight:600;padding:0!important;border-radius:0!important}
+    #view-planner .pc-tgc em{font-style:normal;font-size:13px;font-weight:400;color:var(--pm-mut)}
+    #view-planner .pc-pact{display:block}
+    #view-planner .pc-more{position:absolute;top:0;right:0}
+    .pc-more>button{width:44px!important;height:44px!important;border-radius:22px!important;border:0!important;background:var(--pm-card)!important;box-shadow:var(--pm-sh1);font-size:18px!important;display:inline-flex;align-items:center;justify-content:center}
+    .pc-more .pc-mm{top:52px!important;border:0!important;border-radius:20px!important;padding:8px!important;box-shadow:0 18px 50px rgba(43,36,32,.2)!important}
+    .pc-more .pc-mm button{border-radius:12px!important;min-height:46px;font-weight:500}
+    #btnAutoPlanWeek{width:100%;height:52px;font-size:16px;font-weight:600;border:0;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+    .pp-meals{border:0!important;border-radius:20px!important;box-shadow:var(--pm-sh);padding:14px 16px!important}
+    .pp-meals>.pp-ml{flex-basis:100%;font-size:12px!important;letter-spacing:.08em;text-transform:uppercase;color:var(--pm-mut);font-weight:600!important}
+    .pp-chip{background:#F8F3ED!important;font-weight:500!important;min-height:38px;padding:0 14px!important;display:inline-flex;align-items:center}
+    html.dark .pp-chip{background:#322A25!important}
+    .pp-chip[aria-pressed=true]{background:#2B2420!important;color:#F8F3ED!important;font-weight:600!important}
+    html.dark .pp-chip[aria-pressed=true]{background:#E0775A!important;color:#1B1714!important}
+    .pp-meals .pp-pre{flex-basis:100%;display:flex;gap:8px;border-top:1px solid var(--pm-line);padding-top:10px;margin-top:2px}
+    .pp-strip{display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px!important;overflow:visible!important}
+    .pp-day{min-width:0!important;background:var(--pm-card)!important;box-shadow:var(--pm-sh1);border-radius:16px!important;padding:10px 0 8px!important;font-weight:600!important;font-size:12px!important;color:var(--pm-mut)!important;gap:6px!important}
+    .pp-day[aria-pressed=true]{border-color:var(--pm-acc)!important;color:var(--pm-acc)!important}
+    .pp-day .pp-pb{display:none}
+    .pp-ring{width:28px!important;height:28px!important}.pp-ring i{width:18px!important;height:18px!important;background:var(--pm-card)!important}
+    .pp-sum{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px!important;padding:0!important}
+    .pp-sum .pp-st{background:var(--pm-card);border-radius:20px;box-shadow:var(--pm-sh);padding:12px;display:block}
+    .pp-sum .pp-st b{display:block;font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:600;line-height:1.1}
+    .pp-sum .pp-st small{display:block;font-size:12px;font-weight:400;color:var(--pm-mut);line-height:1.35;margin-top:2px}
+    .pp-col{border:0!important;border-radius:20px!important;box-shadow:var(--pm-sh);padding:16px 18px!important}
+    html.dark .pp-col{box-shadow:var(--pm-sh)}
+    .pp-col h4{font-family:'Fraunces',Georgia,serif;font-size:21px!important;font-weight:600!important;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+    .pp-col h4 small{font-family:'Inter',sans-serif;font-size:13px!important;font-weight:400!important;color:var(--pm-mut)!important}
+    .pp-col .pp-ml{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--pm-mut);font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:8px}
+    .pp-slot{background:#F8F3ED!important;border-radius:18px!important;padding:10px 12px!important;min-height:0!important}
+    html.dark .pp-slot{background:#322A25!important}
+    .pp-slot img{border-radius:14px!important}
+    .pp-slot b{font-weight:600!important}
+    .pp-add{border:1.5px dashed #CDBFB4!important;border-radius:16px!important;min-height:52px!important;font-weight:600!important;color:var(--pm-mut)!important}
+    .pp-panel{border-radius:28px 28px 0 0!important;padding:22px 22px max(24px,env(safe-area-inset-bottom,0px))!important}
+    .pp-panel h3{font-size:24px!important;font-weight:600!important}
+    .pp-row{font-weight:500!important;border-radius:14px!important}
+    .pp-btn{border-radius:999px!important;font-weight:600!important;height:52px;padding:0 20px!important}
+    .pp-btn.alt{background:#F8F3ED!important}
+    html.dark .pp-btn.alt{background:#322A25!important}
+    /* Home */
+    #view-dashboard{display:flex;flex-direction:column;gap:16px}
+    #view-dashboard>*{margin-top:0!important;margin-bottom:0!important}
+    #view-dashboard::before{display:none!important}
+    .dash-hero{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;display:block!important;border-radius:0!important}
+    #dashIcon{display:none!important}
+    #dashTitle{font-size:30px!important;line-height:1.12!important;letter-spacing:-.02em}
+    #dashSub{font-size:15px!important;margin-top:8px!important;color:var(--pm-mut)!important}
+    #dashSummary{display:inline-flex;margin-top:10px!important;padding:4px 10px;border-radius:12px;background:#F6E7C8;color:#7A4E0C!important;font-size:12px!important;font-weight:600!important}
+    html.dark #dashSummary{background:#3A2F18;color:#E6C27A!important}
+    #dashSummary:empty{display:none}
+    #dashSaved{font-weight:600!important}
+    .pm-home-act{display:grid;gap:14px;margin-top:16px}
+    .pm-jump{display:flex;align-items:center;gap:10px;width:100%;height:50px;padding:0 18px;border:0;border-radius:25px;background:var(--pm-card);box-shadow:var(--pm-sh1);color:var(--pm-mut);font-size:15px;text-align:left}
+    .pm-two{display:flex;gap:10px}
+    .pm-two>button{flex:1;height:50px;border:0;border-radius:25px;font-size:15px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+    .pm-ghost{background:var(--pm-card);color:var(--pm-ink);box-shadow:var(--pm-sh1)}
+    #view-dashboard>.dash-hero{order:1}#dashTonightCard{order:2}#view-dashboard>section.dash-card{order:3}#view-dashboard>.pm-tiles{order:4}#view-dashboard>.pm-lower{order:5}#dashSavedCard{order:6}#view-dashboard>.pm-homefoot{order:7}
+    #dashTonightCard:empty{display:none}
+    #btnHomeScanReceipt{display:none!important}
+    .pm-homefoot{text-align:center}
+    .pm-homefoot button{color:var(--pm-acc)!important;font-weight:600!important}
+    .dash-sec .dash-ico{display:none!important}
+    .dash-sec{font-size:21px!important;line-height:1.2}
+    .dash-card{border-radius:20px!important;padding:16px 18px!important}
+    #dashTonightCard .dash-card{background:#2B2420!important;color:#F8F3ED;box-shadow:none!important;border:0!important}
+    html.dark #dashTonightCard .dash-card{background:#322A25!important}
+    #dashTonightCard .pp-ml{color:#CDBFB4!important;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+    #dashTonightCard .font-display{color:#F8F3ED;font-size:19px!important;font-weight:600!important}
+    #dashTonightCard small{color:#CDBFB4!important}
+    #dashTonightCard .pp-tn img{border-radius:14px}
+    #dashTonightCard .pp-b{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    #dashTonightCard .pp-b button{height:44px;padding:0 18px;border:0;border-radius:22px!important;background:rgba(255,255,255,.12);color:#F8F3ED;font-size:14px;font-weight:600}
+    #dashTonightCard .pp-b button.main{background:var(--pm-acc);color:#fff;order:-1}
+    html.dark #dashTonightCard .pp-b button.main{color:#1B1714}
+    #dashboardExpiringList{display:block!important}
+    #dashboardExpiringList>.dash-card{display:grid!important;grid-template-columns:44px minmax(0,1fr) auto;grid-template-areas:"ico name tag" "ico qty btn";column-gap:12px;row-gap:2px;align-items:center;padding:12px 0!important;border-radius:0!important;box-shadow:none!important;border:0!important;border-bottom:1px solid var(--pm-line)!important;background:none!important}
+    #dashboardExpiringList>.dash-card:last-child{border-bottom:0!important}
+    #dashboardExpiringList>.dash-card>div:first-child{display:contents}
+    #dashboardExpiringList>.dash-card>div:first-child>span{grid-area:tag;justify-self:end;padding:4px 10px!important;font-size:12px!important;font-weight:600!important;background:#F6E7C8!important;color:#7A4E0C!important}
+    #dashboardExpiringList>.dash-card>div:first-child>div{grid-area:ico}
+    #dashboardExpiringList>.dash-card>div:first-child>div>span{width:44px!important;height:44px!important;border-radius:14px!important;font-size:22px!important;background:var(--pm-tint)}
+    #dashboardExpiringList>.dash-card>div:nth-child(2){grid-area:name;margin:0!important;font-family:'Inter',sans-serif!important;font-size:15px!important;font-weight:600!important;line-height:1.3}
+    #dashboardExpiringList>.dash-card>div:nth-child(3){grid-area:qty;margin:0!important;font-size:13px!important;color:var(--pm-mut)}
+    #dashboardExpiringList>.dash-card>button{grid-area:btn;justify-self:end;margin:0!important;padding:0!important;background:none!important;color:var(--pm-acc)!important;font-size:13px!important;font-weight:600!important;box-shadow:none!important;border-radius:0!important;min-height:28px}
+    .pm-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .dash-tile{display:block!important;border-bottom:0!important;border-radius:20px!important;padding:14px 16px!important}
+    .dash-tile .dash-ico{display:none!important}
+    .dash-tile [id^=stat]{display:block;font-family:'Fraunces',Georgia,serif;font-size:28px;font-weight:600;line-height:1.15}
+    .dash-tile .text-sm{font-size:13px!important;margin-top:2px!important}
+    #dashboardTopRecipes>div{padding:12px 0!important;border-color:var(--pm-line)!important}
+    #dashboardTopRecipes .dash-ico{width:52px!important;height:52px!important;border-radius:14px!important;font-size:24px!important;background:var(--pm-tint)!important}
+    #dashboardTopRecipes .font-bold{font-size:15px;font-weight:600!important}
+    #dashboardTopRecipes .text-sm{font-size:13px!important}
+    #dashboardTopRecipes .text-sm>span{display:block;font-weight:600!important;color:#7A4E0C!important}
+    html.dark #dashboardTopRecipes .text-sm>span{color:#E6C27A!important}
+    #dashboardTopRecipes>div>span:last-child{background:#E4EDE2!important;color:#2F5A33!important;font-weight:600!important;white-space:nowrap}
+    #dashboardCartCompare button{background:none!important;color:var(--pm-acc)!important;box-shadow:none!important;width:auto!important;padding:0!important;font-size:13px!important;font-weight:600!important;margin-top:8px!important}
+    #dashboardCartCompare>div{background:none!important;padding:0!important}
+    #dashSavedCard{background:var(--pm-card)!important;border:0!important;border-radius:20px!important;box-shadow:var(--pm-sh);padding:16px 18px!important}
+    #dashSavedBig{font-size:24px!important;font-weight:600!important;color:var(--pm-ink)!important}
+    html.dark #dashSavedCard{background:#26201C!important}
+    .cal-ring{flex:none}
+    #btnResetDailyIntake{height:36px;padding:0 14px!important;font-size:13px!important}
+    @media (min-width:768px){
+      main>section{padding:26px 40px 44px!important}
+      #dashTitle{font-size:38px!important}
+      .pm-home-act{grid-template-columns:minmax(0,1fr) auto;max-width:720px}
+      .pm-two>button{flex:none;padding:0 24px}
+      .pm-tiles{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+      #view-dashboard>.pm-lower{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+      #view-planner .pc-phead h2,.pm-h1{font-size:38px}
+    }
+    /* Shared page head, phone-only pieces and menus */
+    .pm-head{display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative}
+    .pm-headbtns{display:flex;gap:8px}
+    .pm-headbtns button,.pm-tint,.pm-filterbtn{height:44px;padding:0 16px;border:0;border-radius:22px!important;font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+    .pm-tint{background:var(--pm-tint);color:var(--pm-deep)}
+    .pm-dark{background:#2B2420;color:#F8F3ED;border:0;border-radius:24px!important;height:48px;font-size:15px;font-weight:600;flex:1}
+    html.dark .pm-dark{background:#322A25}
+    .pm-sticky .pc-main{white-space:nowrap}
+    @media (min-width:768px){.pm-phone{display:none!important}}
+    @media (max-width:767px){
+      .pc-more .pc-mm{position:fixed!important;left:0;right:0;bottom:0;top:auto!important;z-index:70!important;min-width:0!important;border-radius:28px 28px 0 0!important;padding:22px 16px max(24px,env(safe-area-inset-bottom,0px))!important;box-shadow:0 0 0 100vmax rgba(27,23,20,.5)!important;animation:pcSheetUp .24s var(--pc-ease)}
+      .pc-more .pc-mm button{min-height:54px;font-size:16px;padding:0 12px;text-align:left}
+    }
+    /* Pantry */
+    #view-pantry,#view-recipes,#view-shopping{display:flex;flex-direction:column;gap:16px}
+    #view-pantry>*,#view-recipes>*,#view-shopping>*{margin-top:0!important;margin-bottom:0!important}
+    #view-pantry.hidden,#view-recipes.hidden,#view-shopping.hidden,#view-dashboard.hidden{display:none!important}
+    #view-pantry .pc-full input,#view-recipes .pc-full input{height:50px;font-size:15px!important;padding-left:44px!important}
+    #view-pantry .pc-full svg,#view-recipes .pc-full svg{left:16px!important}
+    #btnPantryDupes:not(.hidden){display:flex!important;flex:1 1 100%;width:100%;height:auto!important;justify-content:flex-start!important;gap:8px;background:#F6E7C8!important;color:#7A4E0C!important;border:0!important;border-radius:20px!important;padding:12px 14px!important;font-size:15px!important;font-weight:600!important;box-shadow:none!important}
+    #btnPantryDupes>span{display:inline!important;margin:0!important}
+    #btnPantryDupes #dupeCount{order:-1;background:none!important;color:inherit!important;padding:0!important;font-size:15px!important}
+    #btnPantryDupes>span:first-child{order:-2}
+    #btnPantryDupes::after{content:"Review";margin-left:auto;background:#fff;color:#2B2420;border-radius:20px;padding:9px 16px;font-size:14px;font-weight:600;box-shadow:var(--pm-sh1)}
+    html.dark #btnPantryDupes:not(.hidden){background:#3A2F18!important;color:#E6C27A!important}
+    .pc-strip{gap:8px;padding:0!important}
+    .pc-chip{background:var(--pm-card)!important;color:var(--pm-ink)!important;box-shadow:var(--pm-sh1);font-weight:500!important;font-size:14px!important;min-height:38px;padding:0 14px!important}
+    .pc-chip.warn{background:#F6E7C8!important;color:#7A4E0C!important;font-weight:600!important;box-shadow:none}
+    .pc-chip[aria-pressed=true]{background:#2B2420!important;color:#F8F3ED!important;font-weight:600!important;box-shadow:none}
+    html.dark .pc-chip[aria-pressed=true]{background:#E0775A!important;color:#1B1714!important}
+    .pantry-zone-btn{border-radius:999px!important;min-height:38px;padding:0 14px!important;font-size:14px!important;font-weight:500!important;border:0!important;box-shadow:var(--pm-sh1)}
+    #pantryZoneTabsContainer{gap:8px;padding:2px 0 4px!important}
+    #pantryZoneTabsContainer>*{margin-left:0!important}
+    .pc-sel,.pc-tbtn{border:0!important;border-radius:999px!important;height:38px!important;font-size:14px!important;font-weight:500!important;box-shadow:var(--pm-sh1)}
+    .pc-tbtn[aria-pressed=true]{background:#2B2420!important;color:#F8F3ED!important;font-weight:600!important}
+    html.dark .pc-tbtn[aria-pressed=true]{background:#E0775A!important;color:#1B1714!important}
+    .pc-cook{background:#2B2420!important;color:#F8F3ED!important;font-weight:600!important}
+    .pc-grp{font-size:12px!important;letter-spacing:.08em;text-transform:uppercase;color:var(--pm-mut)!important;font-weight:600!important;padding:6px 4px 0!important}
+    #pantryGrid{gap:10px!important}
+    #pantryGrid>div[data-pid]{border:0!important;border-radius:20px!important;box-shadow:var(--pm-sh);padding:14px 16px!important}
+    #pantryGrid>div[data-pid] [data-noicon]{width:44px!important;height:44px!important;border-radius:14px!important;font-size:22px!important;background:var(--pm-tint)}
+    #pantryGrid>div[data-pid] .pr-2{display:flex;flex-direction:column;gap:1px}
+    #pantryGrid>div[data-pid] h4{order:1;font-family:'Inter',sans-serif!important;font-size:15px!important;font-weight:600!important;line-height:1.3}
+    #pantryGrid>div[data-pid] h4+span{order:2;font-size:13px!important;font-weight:600!important;color:var(--pm-ink)!important}
+    #pantryGrid>div[data-pid] .pr-2>div:first-child{order:3;margin:0!important;gap:0 6px!important}
+    #pantryGrid>div[data-pid] .pc-pill{position:static!important;height:auto!important;display:inline!important;background:none!important;padding:0!important;font-size:12px!important;font-weight:500!important;color:var(--pm-mut);border-radius:0!important}
+    #pantryGrid>div[data-pid] .pc-bar{order:4;height:4px;margin-top:6px}
+    .pc-stp{width:40px!important;height:40px!important;border-radius:20px!important;background:#F8F3ED!important;font-size:18px!important;font-weight:500!important}
+    html.dark .pc-stp{background:#322A25!important}
+    #pantryScanBanner{border:0!important;border-radius:20px!important;box-shadow:var(--pm-sh);padding:14px 16px!important}
+    #pantryScanBanner .font-display{font-family:'Inter',sans-serif!important;font-size:15px!important;font-weight:600!important}
+    #pantryScanBanner>span:last-child{background:var(--pm-tint)!important;color:var(--pm-deep)!important;border-radius:22px!important;box-shadow:none!important;font-weight:600!important}
+    #view-pantry>.pm-head{order:0}#view-pantry>.pc-ptop{order:1}#pantryStatusStrip{order:2}#pantryZoneTabsContainer{order:4}#pantryTools{order:5}#pantryGrid{order:6}#pantryScanBanner{order:7}#view-pantry>.pm-sticky{order:8}
+    @media (max-width:767px){
+      #view-pantry .pc-ptop>#btnOpenPantryConfigModal,#view-pantry .pc-ptop>#btnOpenBatchPantryModal,#view-pantry .pc-ptop>#btnOpenAddPantryModal,#pantryCookBtn,#pantryOutBtn{display:none!important}
+      #pantryTools{justify-content:space-between}
+      #pantryTools #pantryGroupBtn{margin-left:auto}
+      #view-recipes .pc-rtop>#btnOpenRecipeImport,#view-recipes .pc-rtop>#btnOpenNewRecipeModal,#view-recipes .pc-rtop>#btnOpenCategoryManagerModal{display:none!important}
+      #view-recipes .pc-rtop>select{flex:1 1 0;min-width:0}
+      #recipeFilterRow.pm-open{flex-wrap:wrap;overflow:visible}
+    }
+    /* Recipes */
+    #view-recipes .pc-rtop select{border:0!important;border-radius:999px!important;height:44px!important;font-size:14px!important;font-weight:500!important;background-color:var(--pm-card)!important;box-shadow:var(--pm-sh1)!important;padding:0 14px!important}
+    .pm-filterbtn{background:var(--pm-card);color:var(--pm-ink);box-shadow:var(--pm-sh1);font-weight:500!important}
+    .pm-filterbtn[aria-expanded=true]{background:#2B2420;color:#F8F3ED}
+    #recipeFilterRow{gap:8px!important;padding:2px 0 4px!important}
+    .recipe-filter-pill{min-height:38px;padding:0 14px!important;font-size:14px!important;font-weight:500!important;background:var(--pm-card)!important;color:var(--pm-ink)!important;box-shadow:var(--pm-sh1)!important}
+    .recipe-filter-pill.bg-brand-500{background:#2B2420!important;color:#F8F3ED!important;font-weight:600!important;box-shadow:none!important}
+    html.dark .recipe-filter-pill.bg-brand-500{background:#E0775A!important;color:#1B1714!important}
+    #recipeGrid{gap:16px!important}
+    #recipeGrid>div{border:0!important;border-radius:20px!important;box-shadow:var(--pm-sh);overflow:hidden}
+    #recipeGrid>div>div:first-child{height:160px!important}
+    #recipeGrid>div>div:first-child span.rounded-xl,#recipeGrid>div>div:first-child>span{border-radius:12px!important;padding:4px 10px!important;font-size:12px!important;font-weight:600!important}
+    #recipeGrid>div>div:last-child{padding:14px 16px 16px!important;gap:12px!important}
+    #recipeGrid h3{font-size:19px!important;line-height:1.25!important}
+    @keyframes pmView{from{opacity:0}to{opacity:1}}
+    main>section.animate-fade-in{animation:pmView .22s ease-out!important;transform:none!important}
+    /* Cart */
+    #cartSummary{font-size:15px!important;margin-top:8px!important;color:var(--pm-mut)!important}
+    #cartMenuBtn{width:44px!important;height:44px!important;border-radius:22px!important;border:0!important;box-shadow:var(--pm-sh1);font-size:18px!important}
+    #cartMenu{border:0!important;border-radius:20px!important;padding:16px!important}
+    #cartMenu button{border-radius:999px!important;font-weight:600!important}
+    #btnShareShoppingWhatsApp{background:#E4EDE2!important;color:#2F5A33!important;height:48px}
+    .pstore-btn{min-height:38px;padding:0 14px!important;font-weight:500!important;font-size:14px!important}
+    .pstore-btn.bg-slate-900{background:#2B2420!important;color:#F8F3ED!important;font-weight:600!important}
+    #addShoppingItemForm>div:first-child>input{height:50px;border-radius:25px!important;font-size:15px!important}
+    #addShoppingItemForm>div:first-child>button{height:50px;border-radius:25px!important;padding:0 24px!important;font-weight:600!important}
+    #addShoppingItemForm summary{font-size:13px;font-weight:600!important;color:var(--pm-mut)}
+    #btnFindProduct,#btnScanPrices{height:46px;background:var(--pm-tint)!important;color:var(--pm-deep)!important;border:0!important;font-size:14px!important;font-weight:600!important;border-radius:23px!important}
+    #cartAdvisor{border-radius:20px!important;padding:16px 18px!important}
+    #cartAdvisor .font-display{font-weight:600!important}
+    #shoppingListContainer>*{border-radius:20px!important}
+    #shoppingListContainer .rounded-2xl.border,#shoppingListContainer details,#shoppingListContainer .border{border-color:transparent!important;box-shadow:var(--pm-sh)}
+    #shoppingListContainer .border-t,#shoppingListContainer .border-b{box-shadow:none!important;border-color:var(--pm-line)!important}
+    #shoppingListContainer h3,#shoppingListContainer h2{font-size:21px!important}
+    #cartTickBar{left:0!important;right:0!important;bottom:calc(66px + env(safe-area-inset-bottom,0px))!important;max-width:none!important;border-radius:0!important;background:#F8F3ED!important;color:var(--pm-ink)!important;box-shadow:none!important;border-top:1px solid var(--pm-line);padding:12px 20px!important;gap:8px!important}
+    html.dark #cartTickBar{background:#1B1714!important}
+    #cartTickCount{font-size:13px!important;font-weight:600!important;flex:none!important}
+    #btnCheckoutCartToPantry{flex:1;height:46px;color:#fff!important;font-weight:600!important;border-radius:23px!important}
+    #btnClearCheckedShopping{height:46px;background:var(--pm-card)!important;color:var(--pm-ink)!important;box-shadow:var(--pm-sh1);font-weight:600!important;border-radius:23px!important;padding:0 14px!important}
+    @media (min-width:768px){#cartTickBar{left:50%!important;right:auto!important;transform:translateX(-30%);width:520px;bottom:24px!important;border-radius:28px!important;border:0;background:var(--pm-card)!important;box-shadow:0 18px 50px rgba(43,36,32,.18)!important}}
+    @media (max-width:767px){
+      #cartMenu:not(.hidden){position:fixed!important;left:0;right:0;bottom:0;top:auto!important;width:auto!important;max-width:none!important;margin:0!important;z-index:70!important;border-radius:28px 28px 0 0!important;padding:22px 20px max(24px,env(safe-area-inset-bottom,0px))!important;box-shadow:0 0 0 100vmax rgba(27,23,20,.5)!important;animation:pcSheetUp .24s var(--pc-ease)}
+    }
+    #shoppingListContainer input[type=checkbox],#cartAdvisor input[type=checkbox]{-webkit-appearance:none;appearance:none;width:26px;height:26px;border-radius:13px;border:2px solid #CDBFB4;background:transparent;flex:none;display:inline-grid;place-content:center;box-shadow:none!important}
+    #shoppingListContainer input[type=checkbox]:checked{background:var(--pm-acc);border-color:var(--pm-acc)}
+    #shoppingListContainer input[type=checkbox]:checked::after{content:"";width:12px;height:7px;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+    /* Windows (sheets on the phone, centred cards on the computer) */
+    [id$="Modal"]>div{border-radius:28px 28px 0 0!important;border:0!important}
+    @media (min-width:640px){[id$="Modal"]>div{border-radius:28px!important}}
+    [id$="Modal"] h3{font-size:24px!important;line-height:1.2}
+    [id$="Modal"]:not(#cookingModeModal):not(#recipeDetailModal) [id^="close"],[id$="Modal"]:not(#cookingModeModal):not(#recipeDetailModal) button[aria-label="Close"]{width:44px!important;height:44px!important;border-radius:22px!important;background:#F8F3ED!important;border:0!important;font-size:16px!important;display:inline-flex;align-items:center;justify-content:center;box-shadow:none!important}
+    html.dark [id$="Modal"] [id^="close"],html.dark [id$="Modal"] button[aria-label="Close"]{background:#322A25!important}
+    [id$="Modal"] label.block,[id$="Modal"] label.text-xs,[id$="Modal"] label.text-sm{letter-spacing:.02em}
+    html.dark #dashboardExpiringList>.dash-card>div:first-child>span{background:#3A2F18!important;color:#E6C27A!important}
+    html.dark .pc-chip.warn{background:#3A2F18!important;color:#E6C27A!important}
+    html.dark #btnPantryDupes::after{background:#322A25;color:#F3ECE4}
+    html.dark .pantry-zone-btn.bg-white,html.dark .pantry-zone-btn[class*="bg-slate-900"]{background:#E0775A!important;color:#1B1714!important}
+    html.dark .pm-filterbtn[aria-expanded=true],html.dark .pc-cook{background:#E0775A!important;color:#1B1714!important}
+    @media (min-width:768px){
+      .pc-ptop>.pc-full,.pc-rtop>.pc-full{flex:1 1 320px!important}
+      .pc-ptop .pc-fill,.pc-rtop .pc-fill{flex:none!important;padding:0 24px!important}
+      #view-recipes .pc-rtop>select{flex:none;min-width:190px}
+      #btnPantryDupes:not(.hidden){order:5}
+    }
 
   </style>
 <base target="_blank">
