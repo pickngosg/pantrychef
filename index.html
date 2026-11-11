@@ -885,26 +885,33 @@
     .pm-timer-n{max-width:70px;overflow:hidden;text-overflow:ellipsis}
     .pm-timer b{font-variant-numeric:tabular-nums;font-weight:700}
     header .pm-timer .pm-timer-x{width:26px!important;height:26px!important;min-width:26px!important;min-height:26px!important;border-radius:13px!important;background:rgba(122,78,12,.14)!important;box-shadow:none!important;color:inherit!important;font-size:16px!important;line-height:1;padding:0!important;display:inline-flex;align-items:center;justify-content:center}
-    /* Opening screen: gentle motion */
+    /* Opening screen: lively motion. The logo sits in the middle of the screen, the same place as the Android start picture. */
+    #gate:has(#gateForm.hidden){align-items:flex-start!important;padding-top:0!important;padding-bottom:0!important}
+    #gate:has(#gateForm.hidden) .gbox{padding-top:calc(50vh - 42px)!important;margin-top:0!important}
+    #gate:has(#gateForm.hidden) .ghead{margin-top:0!important;padding-top:0!important}
     #gate .glogo{position:relative;display:block;width:84px;height:84px;margin:0 auto;transition:transform .25s ease-out}
-    #gate .glogo img{width:84px!important;height:84px!important;border-radius:24px!important;box-shadow:0 14px 30px -10px rgba(180,83,42,.45)!important;animation:gPop .7s cubic-bezier(.2,1.2,.3,1) both,gFloat 3.2s ease-in-out .7s infinite}
-    #gate .glogo i{position:absolute;bottom:78px;width:6px;height:18px;border-radius:3px;background:#E3A98A;opacity:0;animation:gSteam 2.2s ease-in-out infinite}
-    #gate .glogo i:nth-child(1){left:26px;animation-delay:.5s}#gate .glogo i:nth-child(2){left:39px;animation-delay:.9s;height:22px}#gate .glogo i:nth-child(3){left:52px;animation-delay:1.3s}
-    #gate h1{font-family:'Fraunces',Georgia,serif!important;font-weight:600!important;font-size:30px!important;letter-spacing:-.02em;animation:gRise .6s var(--pc-ease,ease-out) .15s both}
-    #gate .gtag{animation:gRise .6s var(--pc-ease,ease-out) .28s both}
-    #gate #gateMsg{animation:gRise .6s var(--pc-ease,ease-out) .4s both}
-    #gate #gateBusy,#gate form{animation:gRise .6s var(--pc-ease,ease-out) .5s both}
+    #gate .glogo::before{content:"";position:absolute;inset:-14px;border-radius:38px;background:#F6E7DD;opacity:0;animation:gRing 1.8s ease-out .2s infinite}
+    #gate .glogo img{position:relative;width:84px!important;height:84px!important;border-radius:24px!important;box-shadow:0 14px 30px -10px rgba(180,83,42,.45)!important;animation:gBounce .9s cubic-bezier(.3,1.5,.5,1) both,gWiggle 2.4s ease-in-out .9s infinite}
+    #gate .glogo i{position:absolute;bottom:80px;width:7px;height:26px;border-radius:4px;background:#E0775A;opacity:0;animation:gSteam 1.5s ease-in-out infinite;z-index:1}
+    #gate .glogo i:nth-child(1){left:22px;animation-delay:.25s}#gate .glogo i:nth-child(2){left:38px;animation-delay:.5s;height:34px}#gate .glogo i:nth-child(3){left:54px;animation-delay:.75s}
+    #gate h1{font-family:'Fraunces',Georgia,serif!important;font-weight:600!important;font-size:30px!important;letter-spacing:-.02em;margin-top:18px!important;animation:gRise .5s var(--pc-ease,ease-out) .2s both}
+    #gate .gtag{animation:gRise .5s var(--pc-ease,ease-out) .32s both}
+    #gate #gateMsg{animation:gRise .5s var(--pc-ease,ease-out) .44s both}
+    #gate #gateBusy,#gate form{animation:gRise .5s var(--pc-ease,ease-out) .5s both}
     #gate .gbar{height:6px}
     #gate input,#gate button{border-radius:999px!important}
     #gate input{border-radius:16px!important}
     #gate form{border:0!important;border-radius:24px!important;box-shadow:0 1px 2px rgba(60,40,20,.06),0 12px 34px rgba(60,40,20,.08)!important}
-    #gate.gout{position:fixed;inset:0;z-index:9999;min-height:0!important;transition:opacity .4s ease,transform .4s ease}
+    #gate.gout{position:fixed;inset:0;z-index:9999;min-height:0!important;transition:opacity .45s ease,transform .45s cubic-bezier(.4,0,.2,1)}
     #gate.gout form,#gate.gout .gfoot{display:none!important}
-    #gate.gbye{opacity:0;transform:scale(1.04);pointer-events:none}
-    @keyframes gPop{0%{transform:scale(.55);opacity:0}100%{transform:scale(1);opacity:1}}
-    @keyframes gFloat{0%,100%{translate:0 0}50%{translate:0 -5px}}
-    @keyframes gSteam{0%{transform:translateY(8px) scaleY(.6);opacity:0}35%{opacity:.75}100%{transform:translateY(-16px) scaleY(1.1);opacity:0}}
-    @keyframes gRise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+    #gate.gbye{opacity:0;transform:translateY(-28px) scale(1.06);pointer-events:none}
+    @keyframes gBounce{0%{transform:scale(1)}35%{transform:scale(1.22) rotate(-6deg)}65%{transform:scale(.94) rotate(4deg)}100%{transform:scale(1) rotate(0)}}
+    @keyframes gWiggle{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-7px) rotate(-4deg)}50%{transform:translateY(0) rotate(0)}75%{transform:translateY(-4px) rotate(4deg)}}
+    @keyframes gRing{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.5);opacity:0}}
+    @keyframes gSteam{0%{transform:translateY(10px) scaleY(.5);opacity:0}30%{opacity:.9}100%{transform:translateY(-26px) scaleY(1.15);opacity:0}}
+    @keyframes gRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+    #gate:has(#gateForm.hidden){--bg:#F8F3ED;--card:#fff;--ink:#2B2420;--mut:#6B5F57;--line:#E4D7CC;--field:#F8F3EF;background:#F8F3ED!important;color:#2B2420!important}
+    #gate:has(#gateForm.hidden) h1{color:#2B2420!important}
 
   </style>
 <base target="_blank">
@@ -1015,7 +1022,7 @@ html.dark #gate .gtag{color:var(--mut)}
   }
   function run(html) {
     booted = true; window.__pcsgLoaded = true;
-    var g = $('gate'); if (g) { try { var rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; if (rm) g.remove(); else { g.classList.add('gout'); var wait = Math.max(0, 750 - (Date.now() - (window.__pcsgT0 || Date.now()))); setTimeout(function () { g.classList.add('gbye'); setTimeout(function () { try { g.remove(); } catch (e) {} }, 420); }, wait); } } catch (e) { try { g.remove(); } catch (e2) {} } }
+    var g = $('gate'); if (g) { try { var rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; if (rm) g.remove(); else { g.classList.add('gout'); var wait = Math.max(0, 1100 - (Date.now() - (window.__pcsgT0 || Date.now()))); setTimeout(function () { g.classList.add('gbye'); setTimeout(function () { try { g.remove(); } catch (e) {} }, 420); }, wait); } } catch (e) { try { g.remove(); } catch (e2) {} } }
     document.body.className = BODYCLASS;
     document.body.appendChild(document.createRange().createContextualFragment(html));
     document.dispatchEvent(new Event('DOMContentLoaded', { bubbles: true }));
