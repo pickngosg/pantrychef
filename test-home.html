@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="referrer" content="no-referrer" />
+  <title>PantryChef SG: Pantry tracker, recipes and grocery prices for Singapore</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#F8F3ED" />
+  <meta name="copyright" content="PantryChef SG. All rights reserved.">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="description" content="PantryChef SG is a free kitchen app for Singapore households. Track what is in your fridge, cook it before it expires, plan meals and compare estimated supermarket prices." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="PantryChef SG" />
+  <meta property="og:url" content="https://pantrychefpro.com/" />
+  <meta property="og:title" content="PantryChef SG: Pantry tracker, recipes and grocery prices for Singapore" />
+  <meta property="og:description" content="PantryChef SG is a free kitchen app for Singapore households. Track what is in your fridge, cook it before it expires, plan meals and compare estimated supermarket prices." />
+  <meta property="og:image" content="https://pantrychefpro.com/img/og-home.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_SG" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://pantrychefpro.com/#org", "name": "MAG-AMG Pte Ltd", "url": "https://pantrychefpro.com/", "email": "cook@pantrychefpro.com", "logo": "https://pantrychefpro.com/icon-512.png", "address": {"@type": "PostalAddress", "addressCountry": "SG"}}, {"@type": "WebSite", "@id": "https://pantrychefpro.com/#site", "url": "https://pantrychefpro.com/", "name": "PantryChef SG", "inLanguage": "en-SG", "publisher": {"@id": "https://pantrychefpro.com/#org"}}, {"@type": "SoftwareApplication", "@id": "https://pantrychefpro.com/#app", "name": "PantryChef SG", "description": "PantryChef SG is a free kitchen app for Singapore households. Track what is in your fridge, cook it before it expires, plan meals and compare estimated supermarket prices.", "url": "https://pantrychefpro.com/", "applicationCategory": "LifestyleApplication", "operatingSystem": "Android, Web", "installUrl": "https://play.google.com/store/apps/details?id=com.pantrychefsg.app", "image": "https://pantrychefpro.com/img/og-home.jpg", "publisher": {"@id": "https://pantrychefpro.com/#org"}, "areaServed": {"@type": "Country", "name": "Singapore"}, "offers": [{"@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "SGD"}, {"@type": "Offer", "name": "Plus (monthly)", "price": "3.98", "priceCurrency": "SGD"}, {"@type": "Offer", "name": "Plus (yearly)", "price": "29.90", "priceCurrency": "SGD"}], "featureList": ["Pantry and expiry tracking", "Recipes from a link or video", "Weekly meal planner", "Shopping list with estimated Singapore shop prices", "Household sharing for up to 10 people", "Step-by-step cooking mode"]}, {"@type": "FAQPage", "@id": "https://pantrychefpro.com/#faq", "mainEntity": [{"@type": "Question", "name": "What is PantryChef SG?", "acceptedAnswer": {"@type": "Answer", "text": "PantryChef SG is a kitchen app made for Singapore households. You list what is in your fridge and pantry with expiry dates, and it helps you use things up, plan meals, build a shopping list and compare estimated shop prices."}}, {"@type": "Question", "name": "Is PantryChef SG free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The app is free to download and use. An optional plan called Plus costs S$3.98 a month or S$29.90 a year and raises the monthly limits for video imports and scans."}}, {"@type": "Question", "name": "Is there an iPhone app?", "acceptedAnswer": {"@type": "Answer", "text": "Not yet. iPhone users can open pantrychefpro.com in Safari and add it to the Home Screen. The Android app is on Google Play."}}, {"@type": "Question", "name": "Are the shop prices live?", "acceptedAnswer": {"@type": "Answer", "text": "No. They come from the app's own price list and each one shows the date it was checked. They are estimates to help you compare."}}, {"@type": "Question", "name": "Can my family share one pantry?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Up to 10 people can share one pantry, shopping list and recipes."}}]}]}</script>
+  <link rel="icon" href="icon-192.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <!-- Styles: the ready-made file (tailwind.css, built by GitHub). No online fallback any more (safer). -->
+  <link rel="stylesheet" href="tailwind.css" />
+  <script src="supabase.js"></script>
+  <script>
+    window.tailwind = window.tailwind || {};
+    tailwind.config = {
+      darkMode: 'class',
+      theme: { extend: { colors: { brand: { 50: '#FBF1EA', 100: '#F6E7DD', 200: '#EFCDB9', 300: '#E3A98A', 400: '#E0775A', 500: '#B4532A', 600: '#9E4722', 700: '#8F3F1C', 800: '#6E3016', 900: '#4F2310', 950: '#2B2420' }, slate: { 50: '#F8F3ED', 100: '#F1EAE0', 200: '#E8DDD0', 300: '#D6C8B8', 400: '#A39385', 500: '#6B5F57', 600: '#574C45', 700: '#3F3530', 800: '#322A25', 900: '#26201C', 950: '#1B1714' } } } }
+    };
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
+
+    /* ===== Motion (rows 21-28): fade, slide, scale only ===== */
+    :root{--pc-ease:cubic-bezier(.22,.8,.3,1)}
+    @keyframes pcRise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    @keyframes pcSheetUp{from{transform:translateY(44px);opacity:0}to{transform:none;opacity:1}}
+    @keyframes pcSheetDown{to{transform:translateY(44px);opacity:0}}
+    @keyframes pcFade{from{opacity:0}to{opacity:1}}
+    @keyframes pcFadeOut{to{opacity:0}}
+    @keyframes pcPop{0%{transform:scale(1)}40%{transform:scale(1.07)}100%{transform:scale(1)}}
+    @keyframes pcDraw{to{stroke-dashoffset:0}}
+    .animate-fade-in{animation:fadeIn .2s var(--pc-ease) forwards}
+    button:not(:disabled),[role="button"],summary{transition-property:scale,background-color,border-color,color,box-shadow,opacity;transition-duration:.15s;transition-timing-function:var(--pc-ease)}
+    button:not(:disabled):active,[role="button"]:active{scale:.97}
+    @media (hover:hover){
+      .dash-tile:hover,#recipeGrid>*:hover,#pantryGrid>*:hover{translate:0 -2px}
+      .dash-tile,#recipeGrid>*,#pantryGrid>*{transition-property:translate,box-shadow,scale;transition-duration:.15s;transition-timing-function:var(--pc-ease)}
+    }
+    .pc-stagger :is(#pantryGrid,#recipeGrid,#shoppingListContainer)>*:nth-child(-n+10){animation:pcRise .28s var(--pc-ease) both}
+    .pc-stagger :is(#pantryGrid,#recipeGrid,#shoppingListContainer)>*:nth-child(2){animation-delay:.03s}
+    .pc-stagger :is(#pantryGrid,#recipeGrid,#shoppingListContainer)>*:nth-child(3){animation-delay:.06s}
+    .pc-stagger :is(#pantryGrid,#recipeGrid,#shoppingListContainer)>*:nth-child(4){animation-delay:.09s}
+    .pc-stagger :is(#pantryGrid,#recipeGrid,#shoppingListContainer)>*:nth-child(5){animation-delay:.12s}
+    .pc-stagger :is(#pantryGrid,#recipeGrid,#shoppingListContainer)>*:nth-child(6){animation-delay:.15s}
+    .pc-stagger :is(#pantryGrid,#recipeGrid,#shoppingListContainer)>*:nth-child(7){animation-delay:.18s}
+    .pc-stagger :is(#pantryGrid,#recipeGrid,#shoppingListContainer)>*:nth-child(8){animation-delay:.21s}
+    .pc-stagger :is(#pantryGrid,#recipeGrid,#shoppingListContainer)>*:nth-child(9){animation-delay:.24s}
+    .pc-stagger :is(#pantryGrid,#recipeGrid,#shoppingListContainer)>*:nth-child(10){animation-delay:.27s}
+    #recipeDetailModal:not(.hidden){animation:pcFade .2s var(--pc-ease)}
+    #recipeDetailModal:not(.hidden)>div{animation:pcFade .22s var(--pc-ease)}
+    @media (max-width:639px){#recipeDetailModal:not(.hidden)>div{animation:pcSheetUp .26s var(--pc-ease)}}
+    #recipeDetailModal.pc-closing{animation:pcFadeOut .18s ease-in forwards}
+    #recipeDetailModal.pc-closing>div{animation:pcSheetDown .18s ease-in forwards}
+    .pc-pop{animation:pcPop .3s var(--pc-ease)}
+    @media (prefers-reduced-motion:reduce){
+      .animate-fade-in,.pc-pop,.pc-stagger :is(#pantryGrid,#recipeGrid,#shoppingListContainer)>*,#recipeDetailModal,#recipeDetailModal>div,#recipeDetailModal.pc-closing,#recipeDetailModal.pc-closing>div{animation:none!important}
+      button,[role="button"],summary,.dash-tile,#recipeGrid>*,#pantryGrid>*{transition:none!important}
+      button:not(:disabled):active,[role="button"]:active,.dash-tile:hover,#recipeGrid>*:hover,#pantryGrid>*:hover{scale:none!important;translate:none!important}
+    }
+    /* ===== Cart compare table (row 19) ===== */
+    .cmp-wrap td.cmp-item{width:112px;min-width:112px;max-width:112px;white-space:normal!important;overflow-wrap:anywhere;line-height:1.25;font-size:13px!important}
+    .cmp-wrap td:not(.cmp-item){padding:8px 6px!important;font-size:13px!important;min-width:62px}
+    .cmp-wrap th{white-space:normal!important;padding:6px 4px!important;font-size:11px!important;vertical-align:bottom}
+    .cmp-nm{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    @media (min-width:640px){
+      .cmp-wrap td.cmp-item{width:auto;min-width:0;max-width:260px;white-space:nowrap!important;overflow:hidden;text-overflow:ellipsis;font-size:14px!important}
+      .cmp-wrap td:not(.cmp-item){padding:9px 10px!important;font-size:14px!important;min-width:0}
+      .cmp-wrap th{white-space:nowrap!important;padding:8px 10px!important;font-size:12px!important}
+      .cmp-nm{display:block;overflow:visible}
+    }
+    /* ===== Recipe screen (rows 15, 17, 18) ===== */
+    #recipeDetailModal #btnTweakHealthy,#recipeDetailModal #btnTweakHalal,#recipeDetailModal #btnTweakProtein{font-size:13px!important;padding:8px 6px!important;line-height:1.2;text-align:center;display:flex;align-items:center;justify-content:center;min-height:40px}
+    @media (max-width:639px){
+      #recipeDetailModal #detailBadges>*{font-size:12px!important;padding:3px 9px!important}
+      #recipeDetailModal #btnTweakHealthy,#recipeDetailModal #btnTweakHalal,#recipeDetailModal #btnTweakProtein{font-size:12px!important;padding:6px 4px!important;min-height:36px}
+      #detailIngredientsList{gap:8px}
+      #detailIngredientsList > *{padding:10px 12px!important;font-size:15px!important}
+    }
+  
+
+    .font-display{font-family:'Fraunces',Georgia,serif}
+    /* ---- Dashboard look ---- */
+    #view-dashboard{position:relative;isolation:isolate}
+    #view-dashboard::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22 viewBox=%220 0 120 120%22%3E%3Cg fill=%22none%22 stroke=%22%23D14A38%22 stroke-opacity=%22.08%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M18 32c10-13 25-11 29 2-12 5-23 4-29-2z%22/%3E%3Cpath d=%22M82 88c10-13 25-11 29 2-12 5-23 4-29-2z%22/%3E%3Ccircle cx=%2290%22 cy=%2226%22 r=%225%22/%3E%3Ccircle cx=%2228%22 cy=%2294%22 r=%224%22/%3E%3Cpath d=%22M60 54v12M54 60h12%22/%3E%3Cpath d=%22M104 56l6 6M110 56l-6 6%22/%3E%3C/g%3E%3C/svg%3E");background-size:120px 120px}
+    html.dark #view-dashboard::before{filter:invert(1);opacity:.55}
+    .dash-hero{background:linear-gradient(135deg,#F9EEE9 0%,#FFF4D9 100%);border:1px solid rgba(180,83,42,.14);box-shadow:0 6px 24px -12px rgba(158,51,38,.35)}
+    html.dark .dash-hero{background:linear-gradient(135deg,#2A2520 0%,#2B2410 100%);border-color:rgba(255,255,255,.08)}
+    .dash-hero-ico{width:64px;height:64px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:34px;background:rgba(255,255,255,.7);flex-shrink:0}
+    html.dark .dash-hero-ico{background:rgba(255,255,255,.08)}
+
+    .dash-pot{width:104px;height:104px;flex-shrink:0;display:block}
+    .dash-pot svg{width:100%;height:100%;overflow:visible;display:block}
+    .dash-pot svg *{transform-box:fill-box;transform-origin:center}
+    .dash-pot .pt-pot{transform-origin:50% 100%}
+    .pt-b{stroke:#B9958A;stroke-width:3;stroke-linejoin:round}
+    .dash-pot [stroke="#E7B7A1"]{stroke:#E0775A}
+    .dash-pot svg{filter:drop-shadow(0 3px 4px rgba(158,51,38,.22))}
+    html.dark .pt-b{stroke:#E6D9D2;stroke-width:2.5}
+    html.dark .dash-pot [stroke="#E7B7A1"]{stroke:#E7B7A1}
+    html.dark .dash-pot svg{filter:none}
+    .pt-calm .pt-pot,.pt-sleepy .pt-pot{animation:ptBreathe 4s ease-in-out infinite}
+    .pt-calm .pt-lid{animation:ptLid 4s ease-in-out infinite}
+    .pt-calm .pt-curl{animation:ptDrift 4s ease-in-out infinite}.pt-calm .pt-curl.r{animation-delay:-2s}
+    .pt-worried .pt-lid{animation:ptRattle 2s linear infinite}
+    .pt-worried .pt-mouth{animation:ptWob 2s linear infinite}
+    .pt-worried .pt-ring{animation:ptPulse 1s ease-in-out infinite}
+    .pt-worried .pt-wisp{animation:ptRise 2s ease-out infinite}.pt-worried .pt-wisp.b{animation-delay:-.67s}.pt-worried .pt-wisp.c{animation-delay:-1.33s}
+    .pt-happy .pt-pot{animation:ptHop 2s ease-in-out infinite}
+    .pt-happy .pt-spark{animation:ptTwinkle 1s ease-in-out infinite}.pt-happy .pt-spark.b{animation-delay:-.5s}
+    .pt-sleepy .pt-z{animation:ptZ 4s ease-in-out infinite}.pt-sleepy .pt-z.b{animation-delay:-2s}
+    .pt-sleepy .pt-snore{animation:ptSnore 4s ease-in-out infinite}
+    @keyframes ptBreathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.015,.985)}}
+    @keyframes ptLid{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.5px)}}
+    @keyframes ptDrift{0%,100%{transform:translateY(2px);opacity:.8}50%{transform:translateY(-4px);opacity:1}}
+    @keyframes ptRattle{0%{transform:translate(0,0) rotate(0)}4%{transform:translate(-1px,-3px) rotate(-3deg)}8%{transform:translate(1px,-1px) rotate(3deg)}12%{transform:translate(-1px,-4px) rotate(-3deg)}16%{transform:translate(1px,-1px) rotate(3deg)}20%{transform:translate(-1px,-3px) rotate(-2deg)}24%{transform:translate(1px,-1px) rotate(2deg)}28%{transform:translate(0,-2px) rotate(-1deg)}34%,100%{transform:translate(0,0) rotate(0)}}
+    @keyframes ptWob{0%{transform:translateX(0)}4%{transform:translateX(-1.5px)}8%{transform:translateX(1.5px)}12%{transform:translateX(-1.5px)}16%{transform:translateX(1.5px)}20%{transform:translateX(-1px)}24%{transform:translateX(1px)}30%,100%{transform:translateX(0)}}
+    @keyframes ptPulse{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.12)}}
+    @keyframes ptRise{0%{transform:translateY(8px);opacity:0}25%{opacity:1}100%{transform:translateY(-14px);opacity:0}}
+    @keyframes ptHop{0%,40%,100%{transform:translateY(0) scale(1,1)}8%{transform:translateY(0) scale(1.05,.93)}22%{transform:translateY(-10px) scale(.97,1.04)}36%{transform:translateY(0) scale(1.04,.95)}}
+    @keyframes ptTwinkle{0%,100%{transform:scale(.6) rotate(0);opacity:.5}50%{transform:scale(1.15) rotate(20deg);opacity:1}}
+    @keyframes ptZ{0%{transform:translate(0,8px);opacity:0}30%{opacity:1}100%{transform:translate(8px,-14px);opacity:0}}
+    @keyframes ptSnore{0%,100%{transform:scale(.8)}50%{transform:scale(1.15)}}
+    @media (prefers-reduced-motion:reduce){.dash-pot *{animation:none!important}}
+    .dash-ico{width:46px;height:46px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:23px;flex-shrink:0}
+    .tn-green{background:#F6E7DD}.tn-amber{background:#FBEBC3}.tn-orange{background:#FDDCC4}.tn-blue{background:#D6E8FA}.tn-rose{background:#FADADD}.tn-violet{background:#E8DDF8}
+    html.dark .tn-green,html.dark .tn-amber,html.dark .tn-orange,html.dark .tn-blue,html.dark .tn-rose,html.dark .tn-violet{background:rgba(255,255,255,.09)}
+    .dash-tile{border-bottom:4px solid transparent;transition:transform .15s,box-shadow .15s;box-shadow:0 2px 10px -6px rgba(15,23,42,.35)}
+    .dash-tile:active{transform:scale(.97)}
+    .dash-tile.c-green{border-bottom-color:#675C53}.dash-tile.c-amber{border-bottom-color:#D99A06}.dash-tile.c-orange{border-bottom-color:#E8691E}.dash-tile.c-blue{border-bottom-color:#2B7BD1}
+    .dash-card{box-shadow:0 2px 12px -8px rgba(15,23,42,.4)}
+    .dash-sec{display:flex;align-items:center;gap:10px}
+    .cal-ring{--p:0;--c:#B4532A;width:132px;height:132px;border-radius:50%;background:conic-gradient(var(--c) calc(var(--p) * 1%),#ECE4DD 0);display:grid;place-items:center;flex-shrink:0}
+    html.dark .cal-ring{background:conic-gradient(var(--c) calc(var(--p) * 1%),#463C34 0)}
+    .cal-ring-in{width:102px;height:102px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.2}
+    html.dark .cal-ring-in{background:#1B1714}
+    .macro-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
+
+    .bg-brand-500.text-slate-950{color:#fff!important}
+    #statTotalPantry,#statExpiringSoon,#statReadyRecipes,#statCartCount{display:block}
+
+    @media (min-width:768px){
+      #btnOpenDataBackupModal,#btnOpenCommandPalette{display:none!important}
+      header nav .side-extra.side-top{margin-top:0;margin-bottom:10px}
+      header nav .side-extra{display:flex;align-items:center;gap:12px;width:100%;margin-top:auto;padding:12px 14px;border-radius:10px;border:1px solid #4D433A;background:#38312B;color:#F8F3ED;font-size:15px;font-weight:700;text-align:left;cursor:pointer}
+      header nav .side-extra:hover{background:#3B332C}
+      #navQuickCommands{margin-top:auto}
+      #navPlanChip,#navBackupSync{margin-top:0}
+      #navBackupSync{margin-top:0}
+    }
+
+    /* ===== Recipe view: larger, easier-to-read text ===== */
+    #recipeDetailModal .text-\[9px\],#recipeDetailModal .text-\[10px\],#recipeDetailModal .text-\[11px\]{font-size:14px!important}
+    #recipeDetailModal .text-xs{font-size:16px!important}
+    #recipeDetailModal .text-sm{font-size:18px!important}
+    #recipeDetailModal .text-base{font-size:20px!important}
+    #detailRecipeTitle{font-family:'Fraunces',Georgia,serif;font-size:clamp(26px,3.2vw,38px)!important;line-height:1.15;letter-spacing:-0.02em}
+    #detailBadges{gap:8px!important;margin-bottom:10px!important}
+    #detailBadges > *{font-size:14px!important;padding:6px 12px!important;border-radius:10px!important}
+    #recipeDetailModal h4{font-family:'Fraunces',Georgia,serif;font-size:20px!important;font-weight:700!important;text-transform:none!important;letter-spacing:-0.01em!important;color:#2B2420!important;margin-bottom:12px!important}
+    html.dark #recipeDetailModal h4{color:#F8F3ED!important}
+    #recipeDetailModal [class*="overflow-y-auto"]{padding:24px!important}
+    #detailIngredientsList{gap:10px;display:flex;flex-direction:column}
+    #detailIngredientsList > *{padding:14px 18px!important;font-size:17px!important}
+    #detailStepsList{font-size:17px!important;line-height:1.7}
+    #detailStepsList > li{padding:14px 18px!important;margin-bottom:10px}
+    #btnPaxMinus,#btnPaxPlus{width:42px!important;height:42px!important;font-size:20px!important}
+    #detailPaxCount{font-size:22px!important;width:36px!important}
+    #btnTweakHealthy,#btnTweakHalal,#btnTweakProtein{font-size:14px!important;padding:10px 14px!important}
+    #detailTweakBanner{font-size:15px!important;padding:14px 18px!important}
+    #btnEditCurrentRecipeFromDetail{font-size:15px!important;padding:10px 16px!important}
+    #closeRecipeDetailModalBtn{width:42px!important;height:42px!important;font-size:16px!important}
+    #btnLogAndDeductRecipe,#btnStartCookingMode{font-size:16px!important;padding:12px 10px!important}
+    #btnPushMissingToCart,#btnTidyIngredients{font-size:14px!important;padding:9px 14px!important}
+    #btnTidyIngredients{display:none!important}
+    #navPlanChip.pc-owner{display:none!important}
+    .pc-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:14px;background:#F6F1EC}
+    html.dark .pc-seg{background:#322A25}
+    .pc-seg button{padding:11px 6px;border-radius:10px;border:0;background:none;font-weight:800;font-size:14.5px;color:inherit}
+    .pc-seg button[aria-pressed=true]{background:#fff;color:#B4532A;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+    html.dark .pc-seg button[aria-pressed=true]{background:#26201C}
+    html.pc-tfade,html.pc-tfade *{transition:background-color .5s ease,color .5s ease,border-color .5s ease!important}
+    /* Planner (rows 48-51) */
+    #view-planner{max-width:1180px!important}
+    .pp-strip{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
+    .pp-strip::-webkit-scrollbar{display:none}
+    .pp-day{flex:1 0 auto;min-width:52px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;border-radius:16px;border:2px solid transparent;background:#F6F1EC;font-weight:800;font-size:13px;color:#334}
+    html.dark .pp-day{background:#322A25;color:#E4D8CE}
+    .pp-day[aria-pressed=true]{border-color:#B4532A;background:#FBF3F0}
+    html.dark .pp-day[aria-pressed=true]{background:#3D2A22}
+    .pp-day.today span.pp-n{color:#B4532A}
+    .pp-ring{--p:0;width:34px;height:34px;border-radius:50%;background:conic-gradient(#B4532A calc(var(--p)*1%),#E8DED5 0);display:flex;align-items:center;justify-content:center;transition:--p .6s ease}
+    html.dark .pp-ring{background:conic-gradient(#B4532A calc(var(--p)*1%),#463C34 0)}
+    .pp-ring i{width:24px;height:24px;border-radius:50%;background:#fff;display:block}
+    html.dark .pp-ring i{background:#1B1714}
+    .pp-sum{font-weight:800;font-size:16px;color:#2B2420;padding:4px 2px}
+    html.dark .pp-sum{color:#F3ECE4}
+    .pp-days{display:grid;gap:12px}
+    .pp-sw{display:inline-flex;gap:4px;padding:4px;border-radius:14px;background:#F6F1EC}
+    html.dark .pp-sw{background:#322A25}
+    .pp-sw button{padding:9px 16px;border-radius:10px;border:0;background:none;font-weight:800;font-size:15px;color:inherit}
+    .pp-sw button[aria-pressed=true]{background:#fff;color:#B4532A;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+    html.dark .pp-sw button[aria-pressed=true]{background:#26201C}
+    .pp-tblwrap{overflow-x:auto}
+    .pp-tbl{width:100%;border-collapse:separate;border-spacing:0 8px;table-layout:fixed;min-width:900px}
+    .pp-tbl th{text-align:left;font-size:13px;font-weight:800;color:#7A6C61;text-transform:uppercase;letter-spacing:.04em;padding:0 8px}
+    .pp-tbl tbody th{font-size:16px;text-transform:none;letter-spacing:0;color:inherit;width:120px;vertical-align:middle}
+    .pp-tbl tbody th small{display:block;color:#B4532A;font-size:12px}
+    .pp-tbl td{padding:4px;background:#fff;vertical-align:middle}
+    html.dark .pp-tbl td{background:#26201C}
+    .pp-tbl td:first-of-type{border-radius:0}
+    .pp-tbl td.tot{width:120px;font-size:14px;color:#6B5F57;padding-left:12px}
+    .pp-tbl .pp-slot,.pp-tbl .pp-add{height:96px;box-sizing:border-box}
+    .pp-tbl .pp-slot small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .pp-days .pp-slot,.pp-days .pp-add{min-height:84px}
+    .pp-pb{display:block;height:5px;border-radius:3px;background:#E8DED5;margin-top:5px;overflow:hidden}
+    html.dark .pp-pb{background:#463C34}
+    .pp-pb i{display:block;height:100%;width:calc(var(--p)*1%);background:#3B8C6A;border-radius:3px}
+    .pp-tbl tr.today td{background:#FBF3F0}
+    html.dark .pp-tbl tr.today td{background:#3D2A22}
+    .pp-days.big .pp-col{grid-template-columns:repeat(3,1fr);gap:14px}
+    .pp-days.big .pp-col h4{grid-column:1/-1}
+    .pp-days.big .pp-slot{flex-direction:column;align-items:flex-start}
+    .pp-days.big .pp-slot img{width:100%;height:150px}
+    .pp-days.big .pp-slot b{font-size:17px}
+    .pp-two{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;align-items:start}
+    .pp-ov{display:grid;gap:8px}
+    .pp-ovr{display:grid;gap:2px;text-align:left;padding:12px 14px;border-radius:16px;border:2px solid transparent;background:#F6F1EC;color:inherit}
+    html.dark .pp-ovr{background:#322A25}
+    .pp-ovr[aria-pressed=true]{border-color:#B4532A}
+    .pp-meals{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+    .pp-pre{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+    .pp-2{display:flex;gap:8px;margin-top:8px}
+    .pp-2 .pp-in{min-width:0;flex:1}
+    .pp-days.big .pp-col{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+    .pp-ovr span{font-size:13.5px;font-weight:700;color:#6B5F57}
+    .pp-ovr small{font-size:12.5px;color:#7A6C61;line-height:1.3}
+    .pp-col{background:#fff;border:1px solid #EBE2DA;border-radius:20px;padding:12px;display:grid;gap:10px;align-content:start}
+    html.dark .pp-col{background:#26201C;border-color:#3A312B}
+    .pp-col h4{font-weight:800;font-size:17px}
+    .pp-ml{font-size:13px;font-weight:800;color:#6B5F57;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+    .pp-slot{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:8px;border-radius:16px;background:#F9F5F2;border:0;color:inherit}
+    html.dark .pp-slot{background:#322A25}
+    .pp-slot img{width:52px;height:52px;border-radius:12px;object-fit:cover;flex:none;background:#ECE4DD}
+    .pp-slot b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:15px;line-height:1.25}
+    .pp-slot small{display:block;color:#7A6C61;font-size:12.5px;margin-top:2px}
+    .pp-add{width:100%;min-height:68px;border:2px dashed #DDCEC0;border-radius:16px;background:none;color:#7A6C61;font-weight:800;font-size:15px}
+    html.dark .pp-add{border-color:#4F443B}
+    .pp-add:hover{border-color:#B4532A;color:#B4532A}
+    #ppSheet[hidden]{display:none}
+    #ppSheet{position:fixed;inset:0;z-index:65;display:flex;align-items:flex-end;justify-content:center}
+    .pp-back{position:absolute;inset:0;background:rgba(0,0,0,.5)}
+    .pp-panel{position:relative;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;background:#fff;color:#2B2420;border-radius:24px 24px 0 0;padding:18px 16px max(18px,env(safe-area-inset-bottom,0px));animation:pcSheetUp .24s var(--pc-ease,ease-out)}
+    html.dark .pp-panel{background:#26201C;color:#F3ECE4}
+    @media (min-width:640px){#ppSheet{align-items:center}.pp-panel{border-radius:24px}}
+    .pp-panel h3{font-weight:800;font-size:20px;margin-bottom:10px}
+    .pp-in{width:100%;height:50px;padding:0 14px;border-radius:14px;border:1px solid #E4D7CC;background:#F9F5F2;font-size:17px;color:inherit;margin-bottom:10px}
+    html.dark .pp-in{background:#322A25;border-color:#3A312B}
+    .pp-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+    .pp-chip{padding:9px 14px;border-radius:999px;border:0;background:#F6F1EC;font-weight:800;font-size:14px;color:inherit}
+    html.dark .pp-chip{background:#322A25}
+    .pp-chip[aria-pressed=true]{background:#B4532A;color:#fff}
+    .pp-row{display:flex;gap:10px;align-items:center;width:100%;text-align:left;padding:10px 8px;border-radius:14px;border:0;background:none;color:inherit;font-size:16px;font-weight:700}
+    .pp-row:active,.pp-row:hover{background:rgba(180,83,42,.1)}
+    .pp-row img{width:46px;height:46px;border-radius:10px;object-fit:cover;flex:none}
+    .pp-btn{display:block;width:100%;padding:14px;border-radius:14px;border:0;font-weight:800;font-size:17px;background:#B4532A;color:#fff;margin-top:10px}
+    .pp-btn.alt{background:#F6F1EC;color:#2B2420}
+    html.dark .pp-btn.alt{background:#322A25;color:#F3ECE4}
+    .pp-ck{display:flex;gap:10px;align-items:center;padding:10px 4px;font-weight:700;font-size:16px}
+    .pp-ck input{width:22px;height:22px;accent-color:#B4532A}
+    .pp-tn{display:flex;gap:14px;align-items:center}
+    .pp-tn img{width:84px;height:84px;border-radius:18px;object-fit:cover;flex:none}
+    .pp-tn .pp-b{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .pp-tn .pp-b button{padding:10px 14px;border-radius:12px;border:0;font-weight:800;font-size:14.5px;background:#F6F1EC;color:#2B2420}
+    html.dark .pp-tn .pp-b button{background:#322A25;color:#F3ECE4}
+    .pp-tn .pp-b button.main{background:#B4532A;color:#fff}
+    /* Quick actions (row 52) */
+    .pc-handle{display:none;justify-content:center;padding:10px 0 0}
+    .pc-handle i{width:44px;height:5px;border-radius:3px;background:#D4CBC4}
+    @media (max-width:639px){#commandPaletteModal{align-items:flex-end!important;padding:0!important}#commandPaletteModal>div{max-width:none!important;border-radius:24px 24px 0 0!important;max-height:88vh}.pc-handle{display:flex}}
+    .pc-qh{font-weight:800;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:#7A6C61;padding:10px 8px 4px}
+    .pc-qtiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .pc-qtile{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:14px;border-radius:18px;background:#F9F5F2;border:0;text-align:left;font-weight:800;font-size:16px;color:#2B2420;min-height:92px;position:relative}
+    html.dark .pc-qtile{background:#322A25;color:#F3ECE4}
+    .pc-qtile .pc-qi{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#4A2A22}
+    .pc-qb{margin-left:auto;flex:none;font-size:13px;font-weight:800;padding:4px 10px;border-radius:999px;background:#F6E7DD;color:#8F3F1C}
+    .pc-qtile .pc-qb{position:absolute;top:10px;right:10px;margin:0}
+    #commandPaletteResults [data-qa]:focus-visible,#commandPaletteResults [data-qa].pc-sel-on{outline:2px solid #B4532A;outline-offset:-2px}
+    /* Pantry redesign (rows 53-55) */
+    .pc-strip{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;scrollbar-width:none}
+    .pc-strip::-webkit-scrollbar{display:none}
+    .pc-chip{flex:none;padding:9px 14px;border-radius:999px;font-weight:800;font-size:15px;background:#F6F1EC;color:#334;border:0;white-space:nowrap}
+    html.dark .pc-chip{background:#322A25;color:#E4D8CE}
+    .pc-chip[aria-pressed=true]{background:#B4532A;color:#fff}
+    .pc-chip.warn{background:#F6E7DD;color:#8F3F1C}.pc-chip.warn[aria-pressed=true]{background:#B4532A;color:#fff}
+    .pc-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .pc-sel,.pc-tbtn{height:42px;padding:0 14px;border-radius:12px;font-weight:700;font-size:15px;background:#fff;color:#2B2420;border:1px solid #E4D7CC}
+    html.dark .pc-sel,html.dark .pc-tbtn{background:#26201C;color:#F3ECE4;border-color:#3A312B}
+    .pc-tbtn[aria-pressed=true]{background:#F6E7DD;color:#8F3F1C;border-color:#B4532A}
+    .pc-cook{margin-left:auto;background:#B4532A;color:#fff;border-color:#B4532A}
+    .pc-need{grid-column:1/-1;border:1px solid #EFCEBE;background:#FBF3F0;border-radius:18px;padding:4px 14px}
+    html.dark .pc-need{background:#3D2A22;border-color:#5A2E27}
+    .pc-need>summary{cursor:pointer;list-style:none;font-weight:800;font-size:17px;padding:12px 0;color:#8F3F1C}
+    html.dark .pc-need>summary{color:#ECC5B3}
+    .pc-need>summary::-webkit-details-marker{display:none}
+    .pc-nrow{padding:10px 0;border-top:1px solid rgba(158,51,38,.18)}
+    .pc-nact{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+    .pc-nact button{padding:9px 14px;border-radius:12px;font-weight:700;font-size:14px;background:#fff;color:#2B2420;border:1px solid #E4D7CC}
+    html.dark .pc-nact button{background:#26201C;color:#F3ECE4;border-color:#3A312B}
+    .pc-grp{grid-column:1/-1;font-weight:800;font-size:15px;color:#6B5F57;padding:8px 2px 0}
+    .pc-bar{height:5px;border-radius:3px;background:#ECE4DD;margin-top:6px;overflow:hidden}
+    html.dark .pc-bar{background:#463C34}
+    .pc-bar i{display:block;height:100%;border-radius:3px}
+    .pc-stp{width:38px!important;height:38px!important;font-size:18px!important;border-radius:12px!important}
+    /* Premium clean-up (rows 78-95) */
+    .pc-ptop,.pc-rtop{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+    .pc-ptop>.pc-full,.pc-rtop>.pc-full{flex:1 1 100%;position:relative}
+    .pc-ptop button,.pc-rtop button,.pc-rtop select{height:48px;white-space:nowrap;justify-content:center;font-weight:800}
+    .pc-ptop .pc-fill,.pc-rtop .pc-fill{flex:1 1 0;min-width:0}
+    .pc-ibtn{width:48px;padding:0!important;flex:none;display:inline-flex;align-items:center;justify-content:center}
+    .pc-rtop select{flex:1 1 calc(50% - 4px);min-width:0}
+    .pc-pill{white-space:nowrap}
+    .pc-pcard{background:#fff;border:1px solid #EFE6DA;border-radius:18px;padding:16px;display:grid;gap:14px}
+    html.dark .pc-pcard{background:#26201C;border-color:#3A312B}
+    .pc-phead{display:flex;gap:12px;align-items:center}
+    .pc-pico{width:44px;height:44px;border-radius:12px;background:#F6E7DD;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none}
+    .pc-phead h2{font-weight:800;font-size:21px;line-height:1.2;color:#2B2420}
+    html.dark .pc-phead h2{color:#F3ECE4}
+    .pc-phead p{font-size:14px;color:#6B5F57;margin-top:2px;line-height:1.35}
+    .pc-tg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .pc-tgc{display:grid;gap:4px;padding:10px 12px;border-radius:12px;background:#F9F5F2;border:1px solid #EFE6DA}
+    html.dark .pc-tgc{background:#322A25;border-color:#3A312B}
+    .pc-tgc>span{font-size:13px;font-weight:800;color:#6B5F57}
+    .pc-tgc>div{display:flex;align-items:baseline;gap:6px}
+    .pc-tgc input{width:100%;min-width:0;border:0;background:transparent;font-weight:900;font-size:24px;color:#2B2420;outline:none;padding:0}
+    html.dark .pc-tgc input{color:#F3ECE4}
+    .pc-tgc em{font-style:normal;font-size:14px;font-weight:700;color:#6B5F57}
+    .pc-pact{display:flex;gap:8px;align-items:stretch}
+    .pc-main{flex:1;height:50px;border-radius:12px;border:0;background:#B4532A;color:#fff;font-weight:800;font-size:16px}
+    .pc-more{position:relative;flex:none}
+    .pc-more>button{width:50px;height:50px;border-radius:12px;border:1px solid #E4D7CC;background:#fff;font-size:22px;font-weight:900;color:#2B2420}
+    html.dark .pc-more>button{background:#26201C;border-color:#3A312B;color:#F3ECE4}
+    .pc-more .pc-mm{position:absolute;right:0;top:56px;z-index:30;min-width:250px;background:#fff;border:1px solid #EFE6DA;border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.18);padding:6px;display:grid;gap:2px}
+    html.dark .pc-more .pc-mm{background:#26201C;border-color:#3A312B}
+    .pc-more .pc-mm[hidden]{display:none}
+    .pc-mm button{text-align:left;padding:13px 14px;border-radius:10px;border:0;background:transparent;font-weight:700;font-size:15px;color:#2B2420}
+    html.dark .pc-mm button{color:#F3ECE4}
+    .pc-mm button:active{background:#F6F1EC}
+    .pc-mm button.danger{color:#D56836}
+    .pp-meals{background:#fff;border:1px solid #EFE6DA;border-radius:18px;padding:12px 14px}
+    html.dark .pp-meals{background:#26201C;border-color:#3A312B}
+    .pp-meals .pp-chip{padding:8px 13px;font-size:14px}
+    .pp-pre{margin-left:0!important;flex-basis:100%;padding-top:10px;border-top:1px solid #F4EEE8}
+    html.dark .pp-pre{border-color:#3A312B}
+    .pp-sum{display:flex;gap:8px;flex-wrap:wrap}
+    .pp-st{flex:1 1 calc(33% - 8px);min-width:0;background:#fff;border:1px solid #EFE6DA;border-radius:14px;padding:10px 12px;display:grid;gap:2px}
+    html.dark .pp-st{background:#26201C;border-color:#3A312B}
+    .pp-st b{font-size:20px;font-weight:900;line-height:1.1}
+    .pp-st small{font-size:12.5px;color:#6B5F57;font-weight:700;line-height:1.3}
+    .pc-xh{margin-top:16px;font-weight:800;font-size:15px;color:#8F3F1C}
+    html.dark .pc-xh{color:#ECC5B3}
+    .pc-xrow{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid #F4EEE8}
+    html.dark .pc-xrow{border-color:#3A312B}
+    .pc-xn{flex:1;min-width:0}
+    .pc-xn b{display:block;font-size:16px;color:#2B2420;line-height:1.25}
+    html.dark .pc-xn b{color:#F3ECE4}
+    .pc-xn small{font-size:13px;color:#6B5F57}
+    .pc-xrow button{padding:9px 12px;border-radius:10px;font-weight:800;font-size:14px;border:1px solid #E4D7CC;background:#fff;color:#2B2420;white-space:nowrap}
+    html.dark .pc-xrow button{background:#26201C;color:#F3ECE4;border-color:#3A312B}
+    .pc-xrow button.bin{background:#F6E7DD;color:#8F3F1C;border-color:#EFCEBE}
+    .pc-xmore{margin-top:6px;font-weight:800;font-size:14px;color:#B4532A;background:none;border:0;padding:8px 0}
+    .pc-cb{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;padding:8px 14px;border-radius:999px;border:1.5px solid #E4D7CC;background:transparent;color:#6B5F57}
+    html.dark .pc-cb{border-color:#3A312B;color:#D2C9C1}
+    .pc-cb.on{border-color:#AD9C8E;background:#E4F4EA;color:#1F5A38}
+    html.dark .pc-cb.on{background:#2C2722;color:#9FD6B2;border-color:#2F6B47}
+    .pc-pnote{font-size:12px;line-height:1.45;color:#7F7165;margin:8px 0 0}
+    html.dark .pc-pnote{color:#B2A294}
+    /* Row 63: hover and press reactions */
+    .recipe-filter-pill,.pstore-btn,[data-open-recipe].rounded-3xl,[data-open-recipe] .grid-cols-4>div,[data-fav],[data-edit-recipe]{transition:transform .18s var(--pc-ease,ease-out),box-shadow .18s ease,background-color .18s ease,color .18s ease}
+    @media (hover:hover) and (pointer:fine){
+      .recipe-filter-pill:not([class*="bg-brand"]):hover,.pstore-btn:not([class*="bg-slate-900"]):not([class*="bg-white"]):hover{background-color:#F6E7DD!important;color:#8F3F1C!important;transform:translateY(-1px);box-shadow:0 4px 10px -4px rgba(180,83,42,.35)}
+      html.dark .recipe-filter-pill:not([class*="bg-brand"]):hover{background-color:#3D2A22!important;color:#ECC5B3!important}
+      [data-open-recipe].rounded-3xl:hover{transform:translateY(-3px);box-shadow:0 14px 30px -12px rgba(30,35,42,.35)}
+      [data-open-recipe] .grid-cols-4>div:hover{background-color:#F6E7DD;transform:translateY(-1px)}
+      html.dark [data-open-recipe] .grid-cols-4>div:hover{background-color:#3D2A22}
+      [data-edit-recipe]:hover{background-color:#F6E7DD!important;color:#8F3F1C!important}
+      [data-fav]:hover{background-color:#F6E7DD!important;color:#B4532A!important}
+    }
+    .recipe-filter-pill:active,[data-open-recipe].rounded-3xl:active,[data-fav]:active,[data-edit-recipe]:active{transform:scale(.97)}
+    @keyframes pcHeart{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+    .pc-heart{animation:pcHeart .34s var(--pc-ease,ease-out)}
+    @media (prefers-reduced-motion:reduce){.pc-heart{animation:none}[data-open-recipe].rounded-3xl:hover,.recipe-filter-pill:hover{transform:none}}
+    /* Row 61: Add food to pantry */
+    #pantryItemModal .pc-fl{display:block;font-weight:700;margin-bottom:6px}
+    #pantryItemModal .pc-el{display:inline-block;margin-top:6px;font-size:14px;font-weight:600;color:#8F3F1C;background:none;border:0;padding:4px 0;text-decoration:underline;text-underline-offset:3px}
+    html.dark #pantryItemModal .pc-el{color:#ECC5B3}
+    #pantryItemModal select,#pantryItemModal input[type=number],#pantryItemModal input[type=date]{height:52px;min-width:0}
+    #pantryItemModal .pc-pic>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;list-style:none;font-weight:700;padding:2px 0}
+    #pantryItemModal .pc-pic>summary::-webkit-details-marker{display:none}
+    #pantryItemModal .pc-pic[open]>summary{margin-bottom:10px}
+    #pantryItemModal .pc-save{position:sticky;bottom:0;background:linear-gradient(to top,#fff 70%,rgba(255,255,255,0));padding:14px 0 4px;margin-top:6px}
+    html.dark #pantryItemModal .pc-save{background:linear-gradient(to top,#0F172A 70%,rgba(15,23,42,0))}
+    /* Round B last group: popups ease in, drag-down, swipe, pull-to-refresh */
+    div.fixed.inset-0[id$="Modal"]:not(.hidden):not(#recipeDetailModal)>div{animation:pcFade .2s ease-out}
+    .pc-dragging{transition:none!important}
+    .pc-snap{transition:transform .22s var(--pc-ease,ease-out)}
+    .pc-swiping{transition:none!important}
+    #pcPtr{position:fixed;left:50%;top:0;z-index:70;width:40px;height:40px;margin-left:-20px;border-radius:50%;background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;transform:translateY(-60px);pointer-events:none;font-size:18px;color:#B4532A}
+    html.dark #pcPtr{background:#26201C}
+    html,body{overscroll-behavior-y:contain}
+    /* Round B step 3/4: skeletons and empty screens */
+    @keyframes pcShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .pc-skel i{display:block;border-radius:10px;background:linear-gradient(90deg,#F0E6DE 25%,#F8F3EF 50%,#F0E6DE 75%);background-size:200% 100%;animation:pcShimmer 1.4s linear infinite}
+    html.dark .pc-skel i{background:linear-gradient(90deg,#322A25 25%,#39322B 50%,#322A25 75%);background-size:200% 100%}
+    @media (prefers-reduced-motion:reduce){.pc-skel i{animation:none}}
+    .pc-empty-t{font-family:'Fraunces',Georgia,serif;font-weight:800;font-size:19px;margin-top:4px}
+    .pc-empty-b{display:inline-block;margin-top:14px;padding:12px 24px;border-radius:14px;background:#B4532A;color:#fff;font-weight:800;font-size:16px;border:0}
+    .pc-empty-b:active{transform:scale(.97)}
+    /* Round B step 3: rings and bars fill in, rows slide away, toasts slide in */
+    @property --p{syntax:'<number>';inherits:false;initial-value:0}
+    .cal-ring{transition:--p .9s var(--pc-ease,ease-out)}
+    #view-dashboard .h-full.rounded-full,#planBars .h-full.rounded-full{transition:width .8s var(--pc-ease,ease-out)}
+    @keyframes pcToastIn{from{transform:translateY(16px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+    .pc-toast{animation:pcToastIn .28s var(--pc-ease,ease-out)}
+    .pc-toast.pc-leave{transition:transform .25s ease,opacity .25s ease;transform:translateY(10px);opacity:0}
+    .pc-rowout{transition:transform .24s ease,opacity .24s ease,max-height .24s ease,padding .24s ease;transform:translateX(40px);opacity:0;max-height:0!important;overflow:hidden;padding-top:0!important;padding-bottom:0!important}
+    @media (prefers-reduced-motion:reduce){.cal-ring,#view-dashboard .h-full.rounded-full{transition:none}.pc-toast{animation:none}.pc-rowout,.pc-toast.pc-leave{transition:none}}
+    /* Look (row 33 step 1) + buttons (row 36) + pill, stepper (row 37) */
+    body{font-variant-numeric:tabular-nums}
+    #recipeDetailModal>div:not(.pc-menu):not(.pc-menu-back),#dataBackupModal>div{box-shadow:0 1px 2px rgba(30,35,42,.06),0 8px 24px -6px rgba(30,35,42,.18),0 24px 60px -12px rgba(30,35,42,.28)!important}
+    button:focus-visible,a:focus-visible,summary:focus-visible,[role=switch]:focus-visible{outline:2px solid #B4532A;outline-offset:2px}
+    button:disabled{opacity:.45;cursor:not-allowed}
+    .pc-busy{position:relative;pointer-events:none;color:transparent!important}
+    .pc-busy::after{content:"";position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;border:3px solid rgba(128,128,128,.4);border-top-color:#B4532A;animation:pcSpin .8s linear infinite}
+    @keyframes pcSpin{to{transform:rotate(360deg)}}
+    .pc-pill{display:none}
+    body>nav{position:fixed}
+    body>nav .pc-pill{display:block;position:absolute;top:0;height:3px;border-radius:0 0 3px 3px;background:#B4532A;transition:left .28s var(--pc-ease,ease-out),width .28s var(--pc-ease,ease-out);pointer-events:none}
+    @keyframes pcRoll{from{transform:translateY(7px);opacity:0}to{transform:none;opacity:1}}
+    .pc-roll{display:inline-block;animation:pcRoll .22s var(--pc-ease,ease-out)}
+    @media (prefers-reduced-motion:reduce){.pc-busy::after{animation-duration:2s}body>nav .pc-pill{transition:none}.pc-roll{animation:none}}
+    .pc-sh-desk{display:none}
+    @media (min-width:640px){.pc-sh-desk{display:flex}}
+    .pc-menu-back{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.35)}
+    .pc-menu{position:fixed;z-index:61;left:0;right:0;bottom:0;background:#fff;color:#2B2420;border-radius:22px 22px 0 0;padding:8px 8px max(14px,env(safe-area-inset-bottom,0px));box-shadow:0 -10px 40px rgba(0,0,0,.3);animation:pcSheetUp .24s var(--pc-ease,ease-out)}
+    html.dark .pc-menu{background:#26201C;color:#F3ECE4}
+    .pc-menu button{display:block;width:100%;text-align:left;padding:15px 16px;font-size:17px;font-weight:700;border-radius:14px;background:none;border:0;color:inherit;min-height:48px}
+    .pc-menu button:active{background:rgba(180,83,42,.12)}
+    .pc-menu button{display:flex;align-items:center;white-space:nowrap}
+    @media (min-width:640px){.pc-menu{width:350px}}
+    #pantryItemModal #btnQuickManageUnits{display:block;margin-left:auto}
+    .pc-menu .ico{display:inline-flex;vertical-align:middle;margin-right:14px;color:#B4532A}
+    .pc-menu .ico svg{width:22px;height:22px}
+    .pc-menu[hidden],.pc-menu-back[hidden],.pc-menu button[hidden]{display:none!important}
+    @media (min-width:640px){.pc-menu{left:auto;right:calc(50% - 440px);top:calc(50% - 250px);bottom:auto;width:350px;border-radius:16px;padding:6px;animation:pcFade .15s ease-out}.pc-menu button{padding:11px 14px;font-size:15px;min-height:0}}
+    @media (prefers-reduced-motion:reduce){.pc-menu{animation:none}}
+    @media (max-width:639px){
+      #detailRecipeImageWrap{height:170px!important}
+      #detailBadges{flex-wrap:nowrap!important;overflow:hidden;margin-bottom:6px!important}
+      #detailBadges>*{white-space:nowrap;flex-shrink:0;font-size:12px!important;padding:3px 9px!important}
+      #detailRecipeTitle{font-size:21px!important;line-height:1.2!important}
+      #recipeDetailModal>div{max-height:94vh!important}
+    }
+
+    /* ===== Larger text and controls across the main screens ===== */
+    main .text-xs{font-size:15px!important;line-height:1.4!important}
+    main .text-\[11px\]{font-size:14px!important}
+    main .text-\[10px\]{font-size:13px!important}
+    main .text-\[9px\]{font-size:12px!important}
+    #searchRecipeInput,#searchPantryInput{font-size:16px!important;padding-top:14px!important;padding-bottom:14px!important;padding-left:46px!important}
+    #view-recipes svg.absolute,#view-pantry svg.absolute{width:20px;height:20px;left:16px}
+    #recipeCategoryFilterSelect{font-size:15px!important;padding:0 12px!important}
+    @media (min-width:1024px){#dashboardCartCompare{column-count:2;column-gap:2.5rem}#dashboardCartCompare>*{break-inside:avoid}}
+    #btnOpenRecipeImport,#btnOpenNewRecipeModal,#btnOpenAddPantryModal,#btnOpenBatchPantryModal{font-size:15px!important;padding:0 14px!important;gap:8px}
+    #btnOpenRecipeImport span:first-child,#btnOpenNewRecipeModal span:first-child,#btnOpenAddPantryModal span:first-child{font-size:18px}
+    #recipeFilterRow{-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent);mask-image:linear-gradient(90deg,#000 92%,transparent)}
+    @media (min-width:768px){#recipeFilterRow{-webkit-mask-image:none;mask-image:none}}
+    #recipeSortSelect{font-size:15px!important;padding:0 12px!important}
+    .recipe-filter-pill{font-size:16px!important;padding:11px 20px!important;border-radius:14px!important}
+    #view-pantry select,#view-planner select{font-size:15px!important;padding-top:11px!important;padding-bottom:11px!important}
+
+    .ico{color:var(--ic,#B4532A);display:inline-block;width:1.15em;height:1.15em;vertical-align:-0.2em;flex-shrink:0}
+    .ico svg{width:100%;height:100%;display:block}
+
+    .bg-brand-500 .ico,.bg-slate-900 .ico,#btnLogAndDeductRecipe .ico,#btnStartCookingMode .ico,[class*="bg-black"] .ico,#cookingModeModal .ico,.bg-\[\#B4532A\] .ico{color:inherit!important}
+    #view-planner h2{font-family:'Fraunces',Georgia,serif}
+    /* ===== PantryChef redesign layer: pandan green, ink, kaya gold ===== */
+    h1,h2,h3,h4,.cal-ring-in b,[id$="Title"]{font-family:'Fraunces',Georgia,serif;letter-spacing:-0.02em}
+    html:not(.dark) body{background:#F8F3ED!important}
+    html.dark body{background:#1B1714!important}
+    main .shadow-sm{box-shadow:none!important}
+    html:not(.dark) main div.border.rounded-3xl,html:not(.dark) main div.border.rounded-2xl{border-color:#EFE6DA!important}
+    /* Shape scale by role: big cards and sheets 14px, inner cards 10px, buttons and fields 8px, small chips 6px, pills stay round */
+    .rounded-3xl{border-radius:14px!important}
+    .rounded-t-3xl{border-top-left-radius:14px!important;border-top-right-radius:14px!important}
+    .rounded-2xl{border-radius:10px!important}
+    .rounded-xl{border-radius:8px!important}
+    .rounded-lg{border-radius:6px!important}
+    @media (min-width:640px){.sm\:rounded-3xl{border-radius:14px!important}}
+    .dash-ico{border-radius:10px}
+    /* Quieter home page: the three lower sections sit on the page with a hairline above, not in boxes */
+    section.dash-card{background:#fff!important;box-shadow:0 1px 2px rgba(30,35,42,.05)!important;border-radius:18px!important;border:1px solid #EFE6DA;padding:18px!important}
+    html.dark section.dash-card{background:#26201C!important;border-color:#3A312B}
+    html:not(.dark) .dash-card .text-slate-500,html:not(.dark) .dash-card .text-slate-400{color:#6B5F57}
+    #view-dashboard::before{display:none!important}
+    /* Shopping list: narrower reading column, outlined action buttons */
+    #view-shopping{max-width:1040px!important}
+    #btnFindProduct,#btnScanPrices{background:transparent!important;border:1.5px solid #B4532A;color:#AB5229!important}
+    #btnFindProduct:hover,#btnScanPrices:hover{background:rgba(180,83,42,.08)!important}
+    html.dark #btnFindProduct,html.dark #btnScanPrices{color:#E2A88D!important}
+    #statTotalPantry,#statExpiringSoon,#statReadyRecipes,#statCartCount{font-family:'Fraunces',Georgia,serif;font-size:34px!important;letter-spacing:-0.03em;line-height:1.1}
+    #navCartBadge{background:#E9B949!important;color:#2B2420!important;margin-left:auto}
+    body>nav{background:#2B2420!important;border:0!important;backdrop-filter:none!important;padding-top:6px!important;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px))!important}
+    body>nav .nav-tab-btn{color:#E5D9CE!important}
+    body>nav .nav-tab-btn.font-black{color:#E9B949!important}
+    @media (min-width:768px){
+      body{padding-left:232px}
+      header{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-bottom:0!important}
+      html:not(.dark) header{background:#F8F3ED!important}
+      html.dark header{background:#1B1714!important}
+      header>div{max-width:1240px!important;justify-content:flex-end!important}
+      header>div>div:first-child{display:none!important}
+      main,main>section{max-width:1240px!important}
+      header nav,header nav.rounded-2xl{border-radius:0!important}
+      header nav{position:fixed;left:0;top:0;bottom:0;width:232px;display:flex!important;flex-direction:column;align-items:stretch;gap:6px;padding:138px 18px 28px!important;background:#2B2420!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+      header nav::after{content:"";position:absolute;top:26px;left:50%;margin-left:-28px;width:56px;height:56px;border-radius:16px;background:url(icon-192.png) center/cover no-repeat;box-shadow:0 6px 16px -6px rgba(180,83,42,.6)}
+      header nav::before{content:"PantryChef";position:absolute;top:92px;left:0;right:0;text-align:center;font:800 24px 'Fraunces',Georgia,serif;letter-spacing:-0.02em;color:#F8F3ED}
+      header nav .nav-tab-btn{display:flex!important;align-items:center;gap:12px;width:100%;padding:11px 14px!important;border-radius:10px!important;font-size:15px!important;font-weight:500!important;color:#E5D9CE!important;background:none!important;box-shadow:none!important;text-align:left}
+      header nav .nav-tab-btn:hover{background:#38312B!important}
+      header nav .nav-tab-btn.shadow-sm{background:#F8F3ED!important;color:#2B2420!important;font-weight:700!important}
+    }
+  
+    /* ===== Premium look (Nov 2026): shapes, type and touch feedback ===== */
+    :root{--pm-acc:#B4532A;--pm-deep:#8F3F1C;--pm-tint:#F6E7DD;--pm-line:#EFE6DA;--pm-ink:#2B2420;--pm-mut:#6B5F57;--pm-card:#FFFFFF;--pm-sh:0 1px 2px rgba(60,40,20,.06),0 8px 24px rgba(60,40,20,.05);--pm-sh1:0 1px 2px rgba(60,40,20,.08)}
+    html.dark{--pm-acc:#E0775A;--pm-deep:#F0A98F;--pm-tint:#3D2A22;--pm-line:#3A312B;--pm-ink:#F3ECE4;--pm-mut:#B8AA9F;--pm-card:#26201C;--pm-sh:0 0 0 1px #3A312B;--pm-sh1:0 0 0 1px #3A312B}
+    body{letter-spacing:-.003em;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+    h1,h2,h3,.font-display{font-family:'Fraunces',Georgia,serif;font-weight:600!important;letter-spacing:-.012em}
+    .font-black,.font-extrabold{font-weight:700}
+    .font-bold{font-weight:600}
+    /* Shapes: pill buttons, soft fields, calm cards */
+    button.rounded-xl,button.rounded-2xl,button.rounded-lg,a.rounded-xl,a.rounded-2xl,label.rounded-xl,label.rounded-2xl,.pc-main,.pp-btn,.pstore-btn,.recipe-filter-pill,.pc-chip,.pc-pill,.pp-chip{border-radius:999px!important}
+    input.rounded-xl,input.rounded-2xl,select.rounded-xl,select.rounded-2xl,textarea.rounded-xl,textarea.rounded-2xl,.pp-in{border-radius:16px!important}
+    input:not([type=checkbox]):not([type=radio]):not([type=range]),select,textarea{border-color:transparent!important;background-color:#F8F3ED;box-shadow:none;transition:box-shadow .18s var(--pc-ease),background-color .18s}
+    html.dark input:not([type=checkbox]):not([type=radio]):not([type=range]),html.dark select,html.dark textarea{background-color:#322A25}
+    main>section>div>input,main>section input[type=search],#pantrySearchInput,#recipeSearchInput{background-color:var(--pm-card)!important;box-shadow:var(--pm-sh1)!important;border-radius:999px!important}
+    input:focus,select:focus,textarea:focus{outline:none!important;box-shadow:0 0 0 2px var(--pm-acc)!important}
+    .rounded-3xl{border-radius:22px}
+    .rounded-2xl:not(button):not(a):not(label):not(input):not(select):not(textarea){border-radius:18px}
+    .shadow-sm,.shadow,.shadow-md{--tw-shadow:var(--pm-sh)!important;box-shadow:var(--pm-sh)!important}
+    .shadow-lg,.shadow-xl,.shadow-2xl{--tw-shadow:0 18px 50px rgba(43,36,32,.18)!important;box-shadow:0 18px 50px rgba(43,36,32,.18)!important}
+    main section>.border,main section .rounded-3xl.border,main section .rounded-2xl.border,.dash-card,.dash-tile{border-color:transparent!important;box-shadow:var(--pm-sh)}
+    html.dark main section .rounded-3xl.border,html.dark main section .rounded-2xl.border,html.dark .dash-card,html.dark .dash-tile{border-color:#3A312B!important;box-shadow:none}
+    /* Primary buttons */
+    .bg-brand-500,.bg-brand-600,.pc-main{color:#fff!important;box-shadow:0 4px 10px rgba(180,83,42,.25)}
+    html.dark .bg-brand-500,html.dark .bg-brand-600,html.dark .pc-main{background-color:#E0775A!important;color:#1B1714!important;box-shadow:none}
+    /* Phone bottom bar: light, calm, terracotta when active */
+    body>nav{background:rgba(255,255,255,.97)!important;border-top:1px solid var(--pm-line)!important;padding:8px 6px max(8px,env(safe-area-inset-bottom))!important;box-shadow:0 -6px 24px rgba(60,40,20,.05)}
+    html.dark body>nav{background:rgba(38,32,28,.97)!important;box-shadow:none}
+    body>nav .nav-tab-btn{color:var(--pm-mut)!important;font-weight:500!important;font-size:11px!important;gap:3px;border-radius:14px!important;min-width:58px;transition:color .2s,transform .12s var(--pc-ease)}
+    body>nav .nav-tab-btn.font-black{color:var(--pm-acc)!important;font-weight:600!important}
+    body>nav .nav-tab-btn:active{transform:scale(.92)}
+    /* Top bar */
+    header{background:#F8F3ED!important}
+    html.dark header{background:#1B1714!important}
+    header h1{font-family:'Fraunces',Georgia,serif;font-weight:700!important;font-size:19px!important;color:var(--pm-acc)!important;letter-spacing:-.01em}
+    header img{box-shadow:none!important;border-radius:12px!important}
+    header button:not(.nav-tab-btn):not(.side-extra){border-radius:999px!important;background:var(--pm-card)!important;border-color:transparent!important;box-shadow:var(--pm-sh1)!important;color:var(--pm-ink)!important;min-width:44px;min-height:44px}
+    /* Touch feedback and motion */
+    button,a,label[for],summary,.nav-tab-btn,[role=button]{transition:transform .12s var(--pc-ease),background-color .2s,color .2s,box-shadow .2s,opacity .2s;-webkit-tap-highlight-color:transparent}
+    button:active:not(:disabled),a.rounded-xl:active,a.rounded-2xl:active,label.rounded-xl:active,label.rounded-2xl:active{transform:scale(.97)}
+    :focus-visible{outline:2px solid var(--pm-acc);outline-offset:2px;border-radius:inherit}
+    @media (hover:hover){
+      main section .rounded-3xl.border,main section .rounded-2xl.border,.dash-tile{transition:transform .22s var(--pc-ease),box-shadow .22s}
+      #recipeGrid>*:hover,#pantryGrid>*:hover,.dash-tile:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(60,40,20,.06),0 14px 34px rgba(60,40,20,.09)}
+      button.bg-brand-500:hover,button.bg-brand-600:hover,.pc-main:hover{filter:brightness(1.05)}
+    }
+    @keyframes pmPop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+    input[type=checkbox]:checked{animation:pmPop .22s var(--pc-ease)}
+    ::selection{background:#F6E7DD;color:#2B2420}
+    *{scrollbar-width:thin;scrollbar-color:#D6C8B8 transparent}
+    @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+    #searchPantryInput,#searchRecipeInput,#inputNewShoppingItem{background-color:var(--pm-card)!important;box-shadow:var(--pm-sh1)!important;border-radius:999px!important}
+    #commandPaletteInput,#commandPaletteInput:focus{background:transparent!important;box-shadow:none!important}
+    /* Computer side menu: light, with a soft terracotta highlight */
+    @media (min-width:768px){
+      header nav{background:var(--pm-card)!important;border-right:1px solid var(--pm-line)!important}
+      header nav::before{color:var(--pm-acc)!important;font-weight:700!important}
+      header nav::after{box-shadow:none!important}
+      header nav .nav-tab-btn{color:var(--pm-mut)!important;border-radius:12px!important}
+      header nav .nav-tab-btn:hover{background:#F8F3ED!important;color:var(--pm-ink)!important}
+      html.dark header nav .nav-tab-btn:hover{background:#322A25!important}
+      header nav .nav-tab-btn.shadow-sm{background:var(--pm-tint)!important;color:var(--pm-deep)!important;font-weight:600!important;box-shadow:none!important}
+      header nav .side-extra{background:transparent!important;border:0!important;color:var(--pm-mut)!important;font-weight:500!important;border-radius:12px!important;box-shadow:none!important}
+      header nav .side-extra:hover{background:#F8F3ED!important;color:var(--pm-ink)!important}
+      html.dark header nav .side-extra:hover{background:#322A25!important}
+      header nav #navPlanChip{background:var(--pm-tint)!important;color:var(--pm-deep)!important;font-weight:600!important}
+    }
+    html.dark .bg-white{background-color:#26201C}
+    @media (min-width:768px) and (max-width:1100px){#pantryGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}#recipeGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+      /* ===== Premium layout (stage 2): screens arranged like the design board ===== */
+    main{max-width:1120px!important}
+    @media (max-width:767px){
+      header>div{padding:14px 20px 6px!important}
+      header img{display:none!important}
+      header h1{font-size:20px!important;white-space:nowrap}
+      #btnToggleDarkMode{display:none!important}
+      header button:not(.nav-tab-btn):not(.side-extra):not(.hidden){width:44px;height:44px;min-width:44px;padding:0!important;display:inline-flex;align-items:center;justify-content:center;font-size:17px!important}
+      header button svg{width:20px!important;height:20px!important}
+      main>section{padding:8px 20px 28px!important}
+      body>nav .nav-tab-btn svg{width:22px;height:22px}
+    }
+    .pm-h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:30px;line-height:1.12;letter-spacing:-.02em;color:var(--pm-ink);margin:0}
+    .pm-sub{font-size:15px;color:var(--pm-mut);margin-top:8px;line-height:1.4}
+    .pm-sticky{position:sticky;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:20;margin:16px -20px 0;padding:12px 20px;background:#F8F3ED;border-top:1px solid var(--pm-line);display:flex;gap:10px;align-items:center}
+    html.dark .pm-sticky{background:#1B1714}
+    .pm-sticky[hidden]{display:none}
+    .pm-sticky .pc-main{flex:1;height:48px;font-size:15px;font-weight:600;border:0;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+    @media (min-width:768px){.pm-sticky{bottom:0;margin:16px 0 0;border:0;background:transparent;padding:0}.pm-sticky .pc-main{flex:none;padding:0 24px}}
+    /* Planner */
+    #view-planner .pc-pcard{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;position:relative;gap:16px}
+    #view-planner .pc-pico{display:none}
+    #view-planner .pc-phead h2{font-size:30px;line-height:1.12;letter-spacing:-.02em;padding-right:56px}
+    #view-planner .pc-phead p{font-size:15px;margin-top:8px}
+    #view-planner .pc-tgc{background:var(--pm-card)!important;border:0!important;border-radius:20px!important;box-shadow:var(--pm-sh);padding:12px 14px!important}
+    html.dark #view-planner .pc-tgc{box-shadow:var(--pm-sh)}
+    #view-planner .pc-tgc>span{font-size:12px;font-weight:600;color:var(--pm-mut)}
+    #view-planner .pc-tgc input{background:transparent!important;box-shadow:none!important;font-family:'Fraunces',Georgia,serif;font-size:24px;font-weight:600;padding:0!important;border-radius:0!important}
+    #view-planner .pc-tgc em{font-style:normal;font-size:13px;font-weight:400;color:var(--pm-mut)}
+    #view-planner .pc-pact{display:block}
+    #view-planner .pc-more{position:absolute;top:0;right:0}
+    .pc-more>button{width:44px!important;height:44px!important;border-radius:22px!important;border:0!important;background:var(--pm-card)!important;box-shadow:var(--pm-sh1);font-size:18px!important;display:inline-flex;align-items:center;justify-content:center}
+    .pc-more .pc-mm{top:52px!important;border:0!important;border-radius:20px!important;padding:8px!important;box-shadow:0 18px 50px rgba(43,36,32,.2)!important}
+    .pc-more .pc-mm button{border-radius:12px!important;min-height:46px;font-weight:500}
+    #btnAutoPlanWeek{width:100%;height:52px;font-size:16px;font-weight:600;border:0;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+    .pp-meals{border:0!important;border-radius:20px!important;box-shadow:var(--pm-sh);padding:14px 16px!important}
+    .pp-meals>.pp-ml{flex-basis:100%;font-size:12px!important;letter-spacing:.08em;text-transform:uppercase;color:var(--pm-mut);font-weight:600!important}
+    .pp-chip{background:#F8F3ED!important;font-weight:500!important;min-height:38px;padding:0 14px!important;display:inline-flex;align-items:center}
+    html.dark .pp-chip{background:#322A25!important}
+    .pp-chip[aria-pressed=true]{background:#2B2420!important;color:#F8F3ED!important;font-weight:600!important}
+    html.dark .pp-chip[aria-pressed=true]{background:#E0775A!important;color:#1B1714!important}
+    .pp-meals .pp-pre{flex-basis:100%;display:flex;gap:8px;border-top:1px solid var(--pm-line);padding-top:10px;margin-top:2px}
+    .pp-strip{display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px!important;overflow:visible!important}
+    .pp-day{min-width:0!important;background:var(--pm-card)!important;box-shadow:var(--pm-sh1);border-radius:16px!important;padding:10px 0 8px!important;font-weight:600!important;font-size:12px!important;color:var(--pm-mut)!important;gap:6px!important}
+    .pp-day[aria-pressed=true]{border-color:var(--pm-acc)!important;color:var(--pm-acc)!important}
+    .pp-day .pp-pb{display:none}
+    .pp-ring{width:28px!important;height:28px!important}.pp-ring i{width:18px!important;height:18px!important;background:var(--pm-card)!important}
+    .pp-sum{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px!important;padding:0!important}
+    .pp-sum .pp-st{background:var(--pm-card);border-radius:20px;box-shadow:var(--pm-sh);padding:12px;display:block}
+    .pp-sum .pp-st b{display:block;font-family:'Fraunces',Georgia,serif;font-size:22px;font-weight:600;line-height:1.1}
+    .pp-sum .pp-st small{display:block;font-size:12px;font-weight:400;color:var(--pm-mut);line-height:1.35;margin-top:2px}
+    .pp-col{border:0!important;border-radius:20px!important;box-shadow:var(--pm-sh);padding:16px 18px!important}
+    html.dark .pp-col{box-shadow:var(--pm-sh)}
+    .pp-col h4{font-family:'Fraunces',Georgia,serif;font-size:21px!important;font-weight:600!important;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+    .pp-col h4 small{font-family:'Inter',sans-serif;font-size:13px!important;font-weight:400!important;color:var(--pm-mut)!important}
+    .pp-col .pp-ml{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--pm-mut);font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:8px}
+    .pp-slot{background:#F8F3ED!important;border-radius:18px!important;padding:10px 12px!important;min-height:0!important}
+    html.dark .pp-slot{background:#322A25!important}
+    .pp-slot img{border-radius:14px!important}
+    .pp-slot b{font-weight:600!important}
+    .pp-add{border:1.5px dashed #CDBFB4!important;border-radius:16px!important;min-height:52px!important;font-weight:600!important;color:var(--pm-mut)!important}
+    .pp-panel{border-radius:28px 28px 0 0!important;padding:22px 22px max(24px,env(safe-area-inset-bottom,0px))!important}
+    .pp-panel h3{font-size:24px!important;font-weight:600!important}
+    .pp-row{font-weight:500!important;border-radius:14px!important}
+    .pp-btn{border-radius:999px!important;font-weight:600!important;height:52px;padding:0 20px!important}
+    .pp-btn.alt{background:#F8F3ED!important}
+    html.dark .pp-btn.alt{background:#322A25!important}
+    /* Home */
+    #view-dashboard{display:flex;flex-direction:column;gap:16px}
+    #view-dashboard>*{margin-top:0!important;margin-bottom:0!important}
+    #view-dashboard::before{display:none!important}
+    .dash-hero{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;display:block!important;border-radius:0!important}
+    #dashIcon{display:none!important}
+    #dashTitle{font-size:30px!important;line-height:1.12!important;letter-spacing:-.02em}
+    #dashSub{font-size:15px!important;margin-top:8px!important;color:var(--pm-mut)!important}
+    #dashSummary{display:inline-flex;margin-top:10px!important;padding:4px 10px;border-radius:12px;background:#F6E7C8;color:#7A4E0C!important;font-size:12px!important;font-weight:600!important}
+    html.dark #dashSummary{background:#3A2F18;color:#E6C27A!important}
+    #dashSummary:empty{display:none}
+    #dashSaved{font-weight:600!important}
+    .pm-home-act{display:grid;gap:14px;margin-top:16px}
+    .pm-jump{display:flex;align-items:center;gap:10px;width:100%;height:50px;padding:0 18px;border:0;border-radius:25px;background:var(--pm-card);box-shadow:var(--pm-sh1);color:var(--pm-mut);font-size:15px;text-align:left}
+    .pm-two{display:flex;gap:10px}
+    .pm-two>button{flex:1;height:50px;border:0;border-radius:25px;font-size:15px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+    .pm-ghost{background:var(--pm-card);color:var(--pm-ink);box-shadow:var(--pm-sh1)}
+    #view-dashboard>.dash-hero{order:1}#dashTonightCard{order:2}#view-dashboard>section.dash-card{order:3}#view-dashboard>.pm-tiles{order:4}#view-dashboard>.pm-lower{order:5}#dashSavedCard{order:6}#view-dashboard>.pm-homefoot{order:7}
+    #dashTonightCard:empty{display:none}
+    #btnHomeScanReceipt{display:none!important}
+    .pm-homefoot{text-align:center}
+    .pm-homefoot button{color:var(--pm-acc)!important;font-weight:600!important}
+    .dash-sec .dash-ico{display:none!important}
+    .dash-sec{font-size:21px!important;line-height:1.2}
+    .dash-card{border-radius:20px!important;padding:16px 18px!important}
+    #dashTonightCard .dash-card{background:#2B2420!important;color:#F8F3ED;box-shadow:none!important;border:0!important}
+    html.dark #dashTonightCard .dash-card{background:#322A25!important}
+    #dashTonightCard .pp-ml{color:#CDBFB4!important;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+    #dashTonightCard .font-display{color:#F8F3ED;font-size:19px!important;font-weight:600!important}
+    #dashTonightCard small{color:#CDBFB4!important}
+    #dashTonightCard .pp-tn img{border-radius:14px}
+    #dashTonightCard .pp-b{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    #dashTonightCard .pp-b button{height:44px;padding:0 18px;border:0;border-radius:22px!important;background:rgba(255,255,255,.12);color:#F8F3ED;font-size:14px;font-weight:600}
+    #dashTonightCard .pp-b button.main{background:var(--pm-acc);color:#fff;order:-1}
+    html.dark #dashTonightCard .pp-b button.main{color:#1B1714}
+    #dashboardExpiringList{display:block!important}
+    #dashboardExpiringList>.dash-card{display:grid!important;grid-template-columns:44px minmax(0,1fr) auto;grid-template-areas:"ico name tag" "ico qty btn";column-gap:12px;row-gap:2px;align-items:center;padding:12px 0!important;border-radius:0!important;box-shadow:none!important;border:0!important;border-bottom:1px solid var(--pm-line)!important;background:none!important}
+    #dashboardExpiringList>.dash-card:last-child{border-bottom:0!important}
+    #dashboardExpiringList>.dash-card>div:first-child{display:contents}
+    #dashboardExpiringList>.dash-card>div:first-child>span{grid-area:tag;justify-self:end;padding:4px 10px!important;font-size:12px!important;font-weight:600!important;background:#F6E7C8!important;color:#7A4E0C!important}
+    #dashboardExpiringList>.dash-card>div:first-child>div{grid-area:ico}
+    #dashboardExpiringList>.dash-card>div:first-child>div>span{width:44px!important;height:44px!important;border-radius:14px!important;font-size:22px!important;background:var(--pm-tint)}
+    #dashboardExpiringList>.dash-card>div:nth-child(2){grid-area:name;margin:0!important;font-family:'Inter',sans-serif!important;font-size:15px!important;font-weight:600!important;line-height:1.3}
+    #dashboardExpiringList>.dash-card>div:nth-child(3){grid-area:qty;margin:0!important;font-size:13px!important;color:var(--pm-mut)}
+    #dashboardExpiringList>.dash-card>button{grid-area:btn;justify-self:end;margin:0!important;padding:0!important;background:none!important;color:var(--pm-acc)!important;font-size:13px!important;font-weight:600!important;box-shadow:none!important;border-radius:0!important;min-height:28px}
+    .pm-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .dash-tile{display:block!important;border-bottom:0!important;border-radius:20px!important;padding:14px 16px!important}
+    .dash-tile .dash-ico{display:none!important}
+    .dash-tile [id^=stat]{display:block;font-family:'Fraunces',Georgia,serif;font-size:28px;font-weight:600;line-height:1.15}
+    .dash-tile .text-sm{font-size:13px!important;margin-top:2px!important}
+    #dashboardTopRecipes>div{padding:12px 0!important;border-color:var(--pm-line)!important}
+    #dashboardTopRecipes .dash-ico{width:52px!important;height:52px!important;border-radius:14px!important;font-size:24px!important;background:var(--pm-tint)!important}
+    #dashboardTopRecipes .font-bold{font-size:15px;font-weight:600!important}
+    #dashboardTopRecipes .text-sm{font-size:13px!important}
+    #dashboardTopRecipes .text-sm>span{display:block;font-weight:600!important;color:#7A4E0C!important}
+    html.dark #dashboardTopRecipes .text-sm>span{color:#E6C27A!important}
+    #dashboardTopRecipes>div>span:last-child{background:#E4EDE2!important;color:#2F5A33!important;font-weight:600!important;white-space:nowrap}
+    #dashboardCartCompare button{background:none!important;color:var(--pm-acc)!important;box-shadow:none!important;width:auto!important;padding:0!important;font-size:13px!important;font-weight:600!important;margin-top:8px!important}
+    #dashboardCartCompare>div{background:none!important;padding:0!important}
+    #dashSavedCard{background:var(--pm-card)!important;border:0!important;border-radius:20px!important;box-shadow:var(--pm-sh);padding:16px 18px!important}
+    #dashSavedBig{font-size:24px!important;font-weight:600!important;color:var(--pm-ink)!important}
+    html.dark #dashSavedCard{background:#26201C!important}
+    .cal-ring{flex:none}
+    #btnResetDailyIntake{height:36px;padding:0 14px!important;font-size:13px!important}
+    @media (min-width:768px){
+      main>section{padding:26px 40px 44px!important}
+      #dashTitle{font-size:38px!important}
+      .pm-home-act{grid-template-columns:minmax(0,1fr) auto;max-width:720px}
+      .pm-two>button{flex:none;padding:0 24px}
+      .pm-tiles{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+      #view-dashboard>.pm-lower{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+      #view-planner .pc-phead h2,.pm-h1{font-size:38px}
+    }
+    /* Shared page head, phone-only pieces and menus */
+    .pm-head{display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative}
+    .pm-headbtns{display:flex;gap:8px}
+    .pm-headbtns button,.pm-tint,.pm-filterbtn{height:44px;padding:0 16px;border:0;border-radius:22px!important;font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+    .pm-tint{background:var(--pm-tint);color:var(--pm-deep)}
+    .pm-dark{background:#2B2420;color:#F8F3ED;border:0;border-radius:24px!important;height:48px;font-size:15px;font-weight:600;flex:1}
+    html.dark .pm-dark{background:#322A25}
+    .pm-sticky .pc-main{white-space:nowrap}
+    @media (min-width:768px){.pm-phone{display:none!important}}
+    @media (max-width:767px){
+      .pc-more .pc-mm{position:fixed!important;left:0;right:0;bottom:0;top:auto!important;z-index:70!important;min-width:0!important;border-radius:28px 28px 0 0!important;padding:22px 16px max(24px,env(safe-area-inset-bottom,0px))!important;box-shadow:0 0 0 100vmax rgba(27,23,20,.5)!important;animation:pcSheetUp .24s var(--pc-ease)}
+      .pc-more .pc-mm button{min-height:54px;font-size:16px;padding:0 12px;text-align:left}
+    }
+    /* Pantry */
+    #view-pantry,#view-recipes,#view-shopping{display:flex;flex-direction:column;gap:16px}
+    #view-pantry>*,#view-recipes>*,#view-shopping>*{margin-top:0!important;margin-bottom:0!important}
+    #view-pantry.hidden,#view-recipes.hidden,#view-shopping.hidden,#view-dashboard.hidden{display:none!important}
+    #view-pantry .pc-full input,#view-recipes .pc-full input{height:50px;font-size:15px!important;padding-left:44px!important}
+    #view-pantry .pc-full svg,#view-recipes .pc-full svg{left:16px!important}
+    #btnPantryDupes:not(.hidden){display:flex!important;flex:1 1 100%;width:100%;height:auto!important;justify-content:flex-start!important;gap:8px;background:#F6E7C8!important;color:#7A4E0C!important;border:0!important;border-radius:20px!important;padding:12px 14px!important;font-size:15px!important;font-weight:600!important;box-shadow:none!important}
+    #btnPantryDupes>span{display:inline!important;margin:0!important}
+    #btnPantryDupes #dupeCount{order:-1;background:none!important;color:inherit!important;padding:0!important;font-size:15px!important}
+    #btnPantryDupes>span:first-child{order:-2}
+    #btnPantryDupes::after{content:"Review";margin-left:auto;background:#fff;color:#2B2420;border-radius:20px;padding:9px 16px;font-size:14px;font-weight:600;box-shadow:var(--pm-sh1)}
+    html.dark #btnPantryDupes:not(.hidden){background:#3A2F18!important;color:#E6C27A!important}
+    .pc-strip{gap:8px;padding:0!important}
+    .pc-chip{background:var(--pm-card)!important;color:var(--pm-ink)!important;box-shadow:var(--pm-sh1);font-weight:500!important;font-size:14px!important;min-height:38px;padding:0 14px!important}
+    .pc-chip.warn{background:#F6E7C8!important;color:#7A4E0C!important;font-weight:600!important;box-shadow:none}
+    .pc-chip[aria-pressed=true]{background:#2B2420!important;color:#F8F3ED!important;font-weight:600!important;box-shadow:none}
+    html.dark .pc-chip[aria-pressed=true]{background:#E0775A!important;color:#1B1714!important}
+    .pantry-zone-btn{border-radius:999px!important;min-height:38px;padding:0 14px!important;font-size:14px!important;font-weight:500!important;border:0!important;box-shadow:var(--pm-sh1)}
+    #pantryZoneTabsContainer{gap:8px;padding:2px 0 4px!important}
+    #pantryZoneTabsContainer>*{margin-left:0!important}
+    .pc-sel,.pc-tbtn{border:0!important;border-radius:999px!important;height:38px!important;font-size:14px!important;font-weight:500!important;box-shadow:var(--pm-sh1)}
+    .pc-tbtn[aria-pressed=true]{background:#2B2420!important;color:#F8F3ED!important;font-weight:600!important}
+    html.dark .pc-tbtn[aria-pressed=true]{background:#E0775A!important;color:#1B1714!important}
+    .pc-cook{background:#2B2420!important;color:#F8F3ED!important;font-weight:600!important}
+    .pc-grp{font-size:12px!important;letter-spacing:.08em;text-transform:uppercase;color:var(--pm-mut)!important;font-weight:600!important;padding:6px 4px 0!important}
+    #pantryGrid{gap:10px!important}
+    #pantryGrid>div[data-pid]{border:0!important;border-radius:20px!important;box-shadow:var(--pm-sh);padding:14px 16px!important}
+    #pantryGrid>div[data-pid] [data-noicon]{width:44px!important;height:44px!important;border-radius:14px!important;font-size:22px!important;background:var(--pm-tint)}
+    #pantryGrid>div[data-pid] .pr-2{display:flex;flex-direction:column;gap:1px}
+    #pantryGrid>div[data-pid] h4{order:1;font-family:'Inter',sans-serif!important;font-size:15px!important;font-weight:600!important;line-height:1.3}
+    #pantryGrid>div[data-pid] h4+span{order:2;font-size:13px!important;font-weight:600!important;color:var(--pm-ink)!important}
+    #pantryGrid>div[data-pid] .pr-2>div:first-child{order:3;margin:0!important;gap:0 6px!important}
+    #pantryGrid>div[data-pid] .pc-pill{position:static!important;height:auto!important;display:inline!important;background:none!important;padding:0!important;font-size:12px!important;font-weight:500!important;color:var(--pm-mut);border-radius:0!important}
+    #pantryGrid>div[data-pid] .pc-bar{order:4;height:4px;margin-top:6px}
+    .pc-stp{width:40px!important;height:40px!important;border-radius:20px!important;background:#F8F3ED!important;font-size:18px!important;font-weight:500!important}
+    html.dark .pc-stp{background:#322A25!important}
+    #pantryScanBanner{border:0!important;border-radius:20px!important;box-shadow:var(--pm-sh);padding:14px 16px!important}
+    #pantryScanBanner .font-display{font-family:'Inter',sans-serif!important;font-size:15px!important;font-weight:600!important}
+    #pantryScanBanner>span:last-child{background:var(--pm-tint)!important;color:var(--pm-deep)!important;border-radius:22px!important;box-shadow:none!important;font-weight:600!important}
+    #view-pantry>.pm-head{order:0}#view-pantry>.pc-ptop{order:1}#pantryStatusStrip{order:2}#pantryZoneTabsContainer{order:4}#pantryTools{order:5}#pantryGrid{order:6}#pantryScanBanner{order:7}#view-pantry>.pm-sticky{order:8}
+    @media (max-width:767px){
+      #view-pantry .pc-ptop>#btnOpenPantryConfigModal,#view-pantry .pc-ptop>#btnOpenBatchPantryModal,#view-pantry .pc-ptop>#btnOpenAddPantryModal,#pantryCookBtn,#pantryOutBtn{display:none!important}
+      #pantryTools{justify-content:space-between}
+      #pantryTools #pantryGroupBtn{margin-left:auto}
+      #view-recipes .pc-rtop>#btnOpenRecipeImport,#view-recipes .pc-rtop>#btnOpenNewRecipeModal,#view-recipes .pc-rtop>#btnOpenCategoryManagerModal{display:none!important}
+      #view-recipes .pc-rtop>select{flex:1 1 0;min-width:0}
+      #recipeFilterRow.pm-open{flex-wrap:wrap;overflow:visible}
+    }
+    /* Recipes */
+    #view-recipes .pc-rtop select{border:0!important;border-radius:999px!important;height:44px!important;font-size:14px!important;font-weight:500!important;background-color:var(--pm-card)!important;box-shadow:var(--pm-sh1)!important;padding:0 14px!important}
+    .pm-filterbtn{background:var(--pm-card);color:var(--pm-ink);box-shadow:var(--pm-sh1);font-weight:500!important}
+    .pm-filterbtn[aria-expanded=true]{background:#2B2420;color:#F8F3ED}
+    #recipeFilterRow{gap:8px!important;padding:2px 0 4px!important}
+    .recipe-filter-pill{min-height:38px;padding:0 14px!important;font-size:14px!important;font-weight:500!important;background:var(--pm-card)!important;color:var(--pm-ink)!important;box-shadow:var(--pm-sh1)!important}
+    .recipe-filter-pill.bg-brand-500{background:#2B2420!important;color:#F8F3ED!important;font-weight:600!important;box-shadow:none!important}
+    html.dark .recipe-filter-pill.bg-brand-500{background:#E0775A!important;color:#1B1714!important}
+    #recipeGrid{gap:16px!important}
+    #recipeGrid>div{border:0!important;border-radius:20px!important;box-shadow:var(--pm-sh);overflow:hidden}
+    #recipeGrid>div>div:first-child{height:160px!important}
+    #recipeGrid>div>div:first-child span.rounded-xl,#recipeGrid>div>div:first-child>span{border-radius:12px!important;padding:4px 10px!important;font-size:12px!important;font-weight:600!important}
+    #recipeGrid>div>div:last-child{padding:14px 16px 16px!important;gap:12px!important}
+    #recipeGrid h3{font-size:19px!important;line-height:1.25!important}
+    @keyframes pmView{from{opacity:0}to{opacity:1}}
+    main>section.animate-fade-in{animation:pmView .22s ease-out!important;transform:none!important}
+    /* Cart */
+    #cartSummary{font-size:15px!important;margin-top:8px!important;color:var(--pm-mut)!important}
+    #cartMenuBtn{width:44px!important;height:44px!important;border-radius:22px!important;border:0!important;box-shadow:var(--pm-sh1);font-size:18px!important}
+    #cartMenu{border:0!important;border-radius:20px!important;padding:16px!important}
+    #cartMenu button{border-radius:999px!important;font-weight:600!important}
+    #btnShareShoppingWhatsApp{background:#E4EDE2!important;color:#2F5A33!important;height:48px}
+    .pstore-btn{min-height:38px;padding:0 14px!important;font-weight:500!important;font-size:14px!important}
+    .pstore-btn.bg-slate-900{background:#2B2420!important;color:#F8F3ED!important;font-weight:600!important}
+    #addShoppingItemForm>div:first-child>input{height:50px;border-radius:25px!important;font-size:15px!important}
+    #addShoppingItemForm>div:first-child>button{height:50px;border-radius:25px!important;padding:0 24px!important;font-weight:600!important}
+    #addShoppingItemForm summary{font-size:13px;font-weight:600!important;color:var(--pm-mut)}
+    #btnFindProduct,#btnScanPrices{height:46px;background:var(--pm-tint)!important;color:var(--pm-deep)!important;border:0!important;font-size:14px!important;font-weight:600!important;border-radius:23px!important}
+    #cartAdvisor{border-radius:20px!important;padding:16px 18px!important}
+    #cartAdvisor .font-display{font-weight:600!important}
+    #shoppingListContainer>*{border-radius:20px!important}
+    #shoppingListContainer .rounded-2xl.border,#shoppingListContainer details,#shoppingListContainer .border{border-color:transparent!important;box-shadow:var(--pm-sh)}
+    #shoppingListContainer .border-t,#shoppingListContainer .border-b{box-shadow:none!important;border-color:var(--pm-line)!important}
+    #shoppingListContainer h3,#shoppingListContainer h2{font-size:21px!important}
+    #cartTickBar{left:0!important;right:0!important;bottom:calc(66px + env(safe-area-inset-bottom,0px))!important;max-width:none!important;border-radius:0!important;background:#F8F3ED!important;color:var(--pm-ink)!important;box-shadow:none!important;border-top:1px solid var(--pm-line);padding:12px 20px!important;gap:8px!important}
+    html.dark #cartTickBar{background:#1B1714!important}
+    #cartTickCount{font-size:13px!important;font-weight:600!important;flex:none!important}
+    #btnCheckoutCartToPantry{flex:1;height:46px;color:#fff!important;font-weight:600!important;border-radius:23px!important}
+    #btnClearCheckedShopping{height:46px;background:var(--pm-card)!important;color:var(--pm-ink)!important;box-shadow:var(--pm-sh1);font-weight:600!important;border-radius:23px!important;padding:0 14px!important}
+    @media (min-width:768px){#cartTickBar{left:50%!important;right:auto!important;transform:translateX(-30%);width:520px;bottom:24px!important;border-radius:28px!important;border:0;background:var(--pm-card)!important;box-shadow:0 18px 50px rgba(43,36,32,.18)!important}}
+    @media (max-width:767px){
+      #cartMenu:not(.hidden){position:fixed!important;left:0;right:0;bottom:0;top:auto!important;width:auto!important;max-width:none!important;margin:0!important;z-index:70!important;border-radius:28px 28px 0 0!important;padding:22px 20px max(24px,env(safe-area-inset-bottom,0px))!important;box-shadow:0 0 0 100vmax rgba(27,23,20,.5)!important;animation:pcSheetUp .24s var(--pc-ease)}
+    }
+    #shoppingListContainer input[type=checkbox],#cartAdvisor input[type=checkbox]{-webkit-appearance:none;appearance:none;width:26px;height:26px;border-radius:13px;border:2px solid #CDBFB4;background:transparent;flex:none;display:inline-grid;place-content:center;box-shadow:none!important}
+    #shoppingListContainer input[type=checkbox]:checked{background:var(--pm-acc);border-color:var(--pm-acc)}
+    #shoppingListContainer input[type=checkbox]:checked::after{content:"";width:12px;height:7px;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+    /* Windows (sheets on the phone, centred cards on the computer) */
+    [id$="Modal"]>div{border-radius:28px 28px 0 0!important;border:0!important}
+    @media (min-width:640px){[id$="Modal"]>div{border-radius:28px!important}}
+    [id$="Modal"] h3{font-size:24px!important;line-height:1.2}
+    [id$="Modal"]:not(#cookingModeModal):not(#recipeDetailModal) [id^="close"],[id$="Modal"]:not(#cookingModeModal):not(#recipeDetailModal) button[aria-label="Close"]{width:44px!important;height:44px!important;border-radius:22px!important;background:#F8F3ED!important;border:0!important;font-size:16px!important;display:inline-flex;align-items:center;justify-content:center;box-shadow:none!important}
+    html.dark [id$="Modal"] [id^="close"],html.dark [id$="Modal"] button[aria-label="Close"]{background:#322A25!important}
+    [id$="Modal"] label.block,[id$="Modal"] label.text-xs,[id$="Modal"] label.text-sm{letter-spacing:.02em}
+    html.dark #dashboardExpiringList>.dash-card>div:first-child>span{background:#3A2F18!important;color:#E6C27A!important}
+    html.dark .pc-chip.warn{background:#3A2F18!important;color:#E6C27A!important}
+    html.dark #btnPantryDupes::after{background:#322A25;color:#F3ECE4}
+    html.dark .pantry-zone-btn.bg-white,html.dark .pantry-zone-btn[class*="bg-slate-900"]{background:#E0775A!important;color:#1B1714!important}
+    html.dark .pm-filterbtn[aria-expanded=true],html.dark .pc-cook{background:#E0775A!important;color:#1B1714!important}
+    @media (min-width:768px){
+      .pc-ptop>.pc-full,.pc-rtop>.pc-full{flex:1 1 320px!important}
+      .pc-ptop .pc-fill,.pc-rtop .pc-fill{flex:none!important;padding:0 24px!important}
+      #view-recipes .pc-rtop>select{flex:none;min-width:190px}
+      #btnPantryDupes:not(.hidden){order:5}
+    }
+    /* Cooking timers in the top bar (Row 143) */
+    html,body{overflow-x:clip}
+    header>div>div:first-child{flex:none}
+    header>div>div:last-child{min-width:0}
+    #headerActiveTimers{min-width:0;max-width:46vw;overflow-x:auto;flex-wrap:nowrap;gap:6px;scrollbar-width:none}
+    #headerActiveTimers>*{margin-left:0!important}
+    .pm-timer{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 4px 0 12px;border-radius:17px;background:#F6E7C8;color:#7A4E0C;font-size:13px;font-weight:600;white-space:nowrap;flex:none}
+    html.dark .pm-timer{background:#3A2F18;color:#E6C27A}
+    .pm-timer-n{max-width:70px;overflow:hidden;text-overflow:ellipsis}
+    .pm-timer b{font-variant-numeric:tabular-nums;font-weight:700}
+    header .pm-timer .pm-timer-x{width:26px!important;height:26px!important;min-width:26px!important;min-height:26px!important;border-radius:13px!important;background:rgba(122,78,12,.14)!important;box-shadow:none!important;color:inherit!important;font-size:16px!important;line-height:1;padding:0!important;display:inline-flex;align-items:center;justify-content:center}
+    /* Opening screen: lively motion. The logo sits in the middle of the screen, the same place as the Android start picture. */
+    #gate:has(#gateForm.hidden){align-items:flex-start!important;padding-top:0!important;padding-bottom:0!important}
+    #gate:has(#gateForm.hidden) .gbox{padding-top:calc(50vh - 42px)!important;margin-top:0!important}
+    #gate:has(#gateForm.hidden) .ghead{margin-top:0!important;padding-top:0!important}
+    #gate .glogo{position:relative;display:block;width:84px;height:84px;margin:0 auto;transition:transform .25s ease-out}
+    #gate .glogo::before{content:"";position:absolute;inset:-14px;border-radius:38px;background:#F6E7DD;opacity:0;animation:gRing 1.8s ease-out .2s infinite}
+    #gate .glogo img{position:relative;width:84px!important;height:84px!important;border-radius:24px!important;box-shadow:0 14px 30px -10px rgba(180,83,42,.45)!important;animation:gBounce .9s cubic-bezier(.3,1.5,.5,1) both,gWiggle 2.4s ease-in-out .9s infinite}
+    #gate .glogo i{position:absolute;bottom:80px;width:7px;height:26px;border-radius:4px;background:#E0775A;opacity:0;animation:gSteam 1.5s ease-in-out infinite;z-index:1}
+    #gate .glogo i:nth-child(1){left:22px;animation-delay:.25s}#gate .glogo i:nth-child(2){left:38px;animation-delay:.5s;height:34px}#gate .glogo i:nth-child(3){left:54px;animation-delay:.75s}
+    #gate h1{font-family:'Fraunces',Georgia,serif!important;font-weight:600!important;font-size:30px!important;letter-spacing:-.02em;margin-top:18px!important;animation:gRise .5s var(--pc-ease,ease-out) .2s both}
+    #gate .gtag{animation:gRise .5s var(--pc-ease,ease-out) .32s both}
+    #gate #gateMsg{animation:gRise .5s var(--pc-ease,ease-out) .44s both}
+    #gate #gateBusy,#gate form{animation:gRise .5s var(--pc-ease,ease-out) .5s both}
+    #gate .gbar{height:6px}
+    #gate input,#gate button{border-radius:999px!important}
+    #gate input{border-radius:16px!important}
+    #gate form{border:0!important;border-radius:24px!important;box-shadow:0 1px 2px rgba(60,40,20,.06),0 12px 34px rgba(60,40,20,.08)!important}
+    #gate.gout{position:fixed;inset:0;z-index:9999;min-height:0!important;transition:opacity .45s ease,transform .45s cubic-bezier(.4,0,.2,1)}
+    #gate.gout form,#gate.gout .gfoot{display:none!important}
+    #gate.gbye{opacity:0;transform:translateY(-28px) scale(1.06);pointer-events:none}
+    @keyframes gBounce{0%{transform:scale(1)}35%{transform:scale(1.22) rotate(-6deg)}65%{transform:scale(.94) rotate(4deg)}100%{transform:scale(1) rotate(0)}}
+    @keyframes gWiggle{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-7px) rotate(-4deg)}50%{transform:translateY(0) rotate(0)}75%{transform:translateY(-4px) rotate(4deg)}}
+    @keyframes gRing{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.5);opacity:0}}
+    @keyframes gSteam{0%{transform:translateY(10px) scaleY(.5);opacity:0}30%{opacity:.9}100%{transform:translateY(-26px) scaleY(1.15);opacity:0}}
+    @keyframes gRise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+    #gate:has(#gateForm.hidden){--bg:#F8F3ED;--card:#fff;--ink:#2B2420;--mut:#6B5F57;--line:#E4D7CC;--field:#F8F3EF;background:#F8F3ED!important;color:#2B2420!important}
+    #gate:has(#gateForm.hidden) h1{color:#2B2420!important}
+
+  </style>
+<base target="_blank">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen pb-24 sm:pb-12 transition-colors duration-200">
+<script>
+/* Decide at once what a visitor sees first: the public home page (signed out, in a browser) or the app's opening screen. */
+(function () { try {
+  var d = document.documentElement, has = false, i;
+  var inapp = localStorage.getItem('pcsg_inapp') === '1' || /[?&]app=1\b/.test(location.search) || document.referrer.indexOf('android-app://') === 0 || (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  window.__pcsgInApp = inapp;
+  for (i = 0; i < localStorage.length; i++) { if (/^sb-.*-auth-token$/.test(localStorage.key(i))) has = true; }
+  var back = /[?&#](code|access_token|error|error_description|type)=/.test(location.search + location.hash);
+  if (!inapp && !has && !back) d.classList.add('pc-land');
+} catch (e) {} })();
+</script>
+<style>
+body:has(#gate){padding:0 !important;margin:0 !important}
+#gate{--bg:#F8F3ED;--card:#fff;--ink:#2B2420;--mut:#6B5F57;--line:#E4D7CC;--field:#F8F3EF;--brand:#B4532A;--brand2:#9E4722;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;color:var(--ink);background:var(--bg)}
+html.dark #gate{--bg:#1B1714;--card:#26201C;--ink:#F3ECE4;--mut:#BCAFA3;--line:#3A312B;--field:#322A25}
+#gate .gbox{width:100%;max-width:380px}
+#gate .ghead{text-align:center;margin-bottom:28px}
+#gate .ghead img{display:block;margin:0 auto;width:64px;height:64px;border-radius:18px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+#gate h1{font-family:'Fraunces',Georgia,serif;font-weight:800;font-size:26px;margin:12px 0 0;line-height:1.2}
+#gate #gateMsg{margin:8px 0 0;font-size:16px;color:var(--mut)}
+#gate form{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 6px 24px -12px rgba(0,0,0,.35)}
+#gate form.hidden,#gate #gateBusy.hidden{display:none}
+#gate input,#gate button{font:inherit;font-size:16px;width:100%;box-sizing:border-box;border-radius:14px}
+#gate input{padding:12px 14px;border:1px solid var(--line);background:var(--field);color:var(--ink);outline:none}
+#gate input:focus{border-color:var(--brand);box-shadow:0 0 0 2px rgba(180,83,42,.35)}
+#gate button{padding:12px;cursor:pointer;font-weight:700}
+#gate .gg{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--card);color:var(--ink);border:1px solid var(--line)}
+#gate .gp{background:var(--brand);color:#fff;border:0;font-weight:800}
+#gate .gp:hover{background:var(--brand2)}
+#gate .gs{background:transparent;color:var(--brand);border:2px solid var(--brand)}
+html.dark #gate .gs{color:#8FD0AB;border-color:#3F8F67}
+#gate .gl{background:none;border:0;text-decoration:underline;color:var(--mut);font-size:14px;font-weight:500;padding:4px}
+#gate .gor{text-align:center;font-size:14px;color:var(--mut)}
+#gate #gateErr{margin:0;text-align:center;font-weight:700;color:#C2334D;font-size:15px}
+#gate #gateErr.hidden{display:none}
+#gate #gateBusy{display:flex;flex-direction:column;align-items:center;gap:16px;padding:26px 0}
+#gate #gateBusy.hidden{display:none}
+#gate .gbar{display:block;width:180px;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+#gate .gbar u{display:block;width:40%;height:100%;border-radius:3px;background:var(--brand);animation:gbar 1.2s ease-in-out infinite}
+@keyframes gbar{0%{margin-left:-40%}100%{margin-left:100%}}
+#gate #gateSlow{text-align:center;font-size:15px;color:var(--mut);margin:0}
+#gate #gateSlow.hidden{display:none}
+#gate #gateSlow button{margin-top:10px;padding:10px 22px;width:auto}
+@media (prefers-reduced-motion:reduce){#gate .gbar u{animation:none;width:100%}}
+@keyframes gspin{to{transform:rotate(360deg)}}
+/* While opening, look the same as the phone start screen: warm cream, logo about 28% of the width, name and tagline */
+#gate .gtag{display:none;margin:6px 0 0;font-size:16px;color:#8A7B6E}
+html:not(.dark) #gate:has(#gateForm.hidden){--bg:#F8F3ED}
+#gate:has(#gateForm.hidden) .ghead img{width:clamp(96px,28vw,168px);height:auto;aspect-ratio:1/1;border-radius:22%;box-shadow:0 6px 22px rgba(60,40,30,.18)}
+#gate:has(#gateForm.hidden) h1{margin-top:18px;font-size:28px}
+#gate:has(#gateForm.hidden) .gtag{display:block}
+html.dark #gate .gtag{color:var(--mut)}
+#gate:has(#gateForm.hidden) #gateMsg{font-size:14px;margin-top:22px}
+#gate .gfoot{text-align:center;font-size:13px;color:var(--mut);margin-top:18px;line-height:1.6}
+#gate .gfoot a{color:inherit}
+/* ===== Public home page (shown only to signed-out visitors in a browser) ===== */
+#land{display:none}
+html.pc-land #land{display:block}
+html.pc-land #gate{display:none}
+html.pc-land.pc-auth{overflow:hidden}
+html.pc-land.pc-auth #gate{display:flex;position:fixed;inset:0;z-index:9990;overflow:auto;animation:ldFade .25s ease both}
+#gateBack{display:none}
+html.pc-land.pc-auth #gateBack{display:inline-flex;align-items:center;gap:6px;position:fixed;top:14px;left:14px;width:auto;padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:15px;font-weight:600;z-index:1}
+@keyframes ldFade{from{opacity:0}to{opacity:1}}
+#land{--bg:#F8F3ED;--card:#fff;--ink:#2B2420;--mut:#6B5F57;--line:#E4D7CC;--brand:#B4532A;--brand2:#9E4722;--soft:#F6E7DD;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:17px;line-height:1.6;overflow-x:clip;-webkit-font-smoothing:antialiased}
+#land *{box-sizing:border-box}
+#land h1,#land h2,#land h3{font-family:'Fraunces',Georgia,serif;font-weight:700;line-height:1.12;letter-spacing:-.01em;margin:0;text-wrap:balance}
+#land p{margin:0}
+#land a{color:inherit}
+#land .ld-w{max-width:1120px;margin:0 auto;padding:0 20px}
+#land .ld-nav{position:sticky;top:0;z-index:50;background:rgba(248,243,237,.86);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:border-color .2s,box-shadow .2s}
+#land .ld-nav.ld-stuck{border-color:var(--line);box-shadow:0 6px 20px -16px rgba(60,40,30,.5)}
+#land .ld-nav .ld-w{display:flex;align-items:center;gap:18px;height:64px}
+#land .ld-logo{display:flex;align-items:center;gap:10px;font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:20px;color:var(--brand);text-decoration:none;margin-right:auto}
+#land .ld-logo img{width:34px;height:34px;border-radius:10px}
+#land .ld-links{display:none;gap:26px;font-size:15px;font-weight:500}
+#land .ld-links a{text-decoration:none;color:var(--mut);transition:color .15s}
+#land .ld-links a:hover{color:var(--ink)}
+#land .ld-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 26px;border-radius:999px;border:0;font:inherit;font-size:16px;font-weight:700;text-decoration:none;cursor:pointer;white-space:nowrap;flex:none;width:auto;line-height:1;transition:transform .15s ease,box-shadow .2s ease,background .15s ease;-webkit-tap-highlight-color:transparent}
+#land .ld-btn:active{transform:scale(.97)}
+#land .ld-btn:focus-visible,#land summary:focus-visible,#land a:focus-visible{outline:3px solid rgba(180,83,42,.45);outline-offset:3px}
+#land .ld-p{background:var(--brand);color:#fff;box-shadow:0 10px 24px -12px rgba(180,83,42,.9)}
+#land .ld-p:hover{background:var(--brand2);transform:translateY(-2px)}
+#land .ld-s{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+#land .ld-s:hover{transform:translateY(-2px);box-shadow:0 10px 24px -16px rgba(60,40,30,.6)}
+#land .ld-sm{min-height:42px;padding:0 20px;font-size:15px}
+#land .ld-hero{padding:36px 0 56px}
+#land .ld-hero .ld-w{display:grid;gap:40px;align-items:center}
+#land .ld-eyebrow{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);background:var(--soft);padding:6px 14px;border-radius:999px;margin-bottom:18px}
+#land h1{font-size:clamp(38px,7vw,64px)}
+#land .ld-lead{font-size:clamp(17px,2.2vw,20px);color:var(--mut);margin-top:18px;max-width:34em}
+#land .ld-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+#land .ld-note{font-size:14px;color:var(--mut);margin-top:16px}
+#land .ld-stage{position:relative;display:flex;justify-content:center}
+#land .ld-stage::before{content:"";position:absolute;width:min(420px,90%);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 45%,#F1CDB6 0,#F6E7DD 45%,rgba(248,243,237,0) 70%);top:50%;left:50%;transform:translate(-50%,-50%)}
+#land .ld-phone{position:relative;width:min(270px,70vw);aspect-ratio:360/730;border-radius:38px;padding:9px;background:#2B2420;box-shadow:0 40px 70px -35px rgba(60,40,30,.75),0 0 0 1px rgba(0,0,0,.08);flex:none}
+#land .ld-phone video,#land .ld-phone img{display:block;width:100%;height:100%;object-fit:cover;border-radius:30px;background:#F8F3ED}
+#land .ld-hero .ld-phone{animation:ldFloat 6s ease-in-out infinite}
+@keyframes ldFloat{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-12px) rotate(-.5deg)}}
+#land .ld-play{position:absolute;inset:auto 0 22px 0;margin:auto;width:max-content;padding:10px 18px;border-radius:999px;border:0;background:rgba(43,36,32,.86);color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;display:none}
+#land .ld-sec{padding:64px 0}
+#land .ld-head{text-align:center;max-width:720px;margin:0 auto 44px}
+#land h2{font-size:clamp(30px,4.6vw,44px)}
+#land .ld-sub{color:var(--mut);margin-top:12px}
+#land .ld-feat{display:grid;gap:28px;align-items:center;padding:28px 0;max-width:940px;margin:0 auto}
+#land .ld-feat h3{font-size:clamp(25px,3.4vw,34px)}
+#land .ld-feat p{color:var(--mut);margin-top:12px;max-width:30em}
+#land .ld-num{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:var(--soft);color:var(--brand);font-weight:700;font-size:15px;margin-bottom:14px}
+#land .ld-feat .ld-phone{width:min(250px,66vw)}
+#land .ld-dark{background:#2B2420;color:#F8F3ED;border-radius:36px;margin:0 12px}
+#land .ld-dark .ld-sub,#land .ld-dark .ld-fine{color:#CDBFB3}
+#land .ld-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:0 auto 34px;padding:0;list-style:none;max-width:760px}
+#land .ld-chips li{padding:10px 18px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);font-weight:600;font-size:15px}
+#land .ld-three{display:grid;gap:16px}
+#land .ld-tile{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:24px}
+#land .ld-tile b{display:block;font-family:'Fraunces',Georgia,serif;font-size:21px;font-weight:700;margin-bottom:6px}
+#land .ld-tile span{color:#CDBFB3;font-size:16px}
+#land .ld-fine{font-size:13.5px;line-height:1.55;margin-top:26px;max-width:860px;margin-left:auto;margin-right:auto;text-align:center}
+#land .ld-house .ld-w{display:grid;gap:36px;align-items:center}
+#land .ld-list{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:22px;max-width:380px;width:100%;margin:0 auto;box-shadow:0 30px 60px -40px rgba(60,40,30,.7)}
+#land .ld-list .ld-lt{display:flex;justify-content:space-between;align-items:center;font-weight:700;margin-bottom:8px}
+#land .ld-av{display:flex}
+#land .ld-av i{width:30px;height:30px;border-radius:50%;border:2px solid #fff;margin-left:-8px;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:12px;font-weight:700;color:#fff}
+#land .ld-row{display:flex;align-items:center;gap:12px;padding:12px 4px;border-top:1px solid var(--line);font-size:16px}
+#land .ld-row u{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--line);text-decoration:none;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700}
+#land .ld-row small{margin-left:auto;color:var(--mut);font-size:13px}
+#land .ld-row.ld-tick u{animation:ldTickBox 6s ease infinite}
+#land .ld-row.ld-tick span{animation:ldTickTxt 6s ease infinite}
+#land .ld-row.ld-tick small{animation:ldTickBy 6s ease infinite}
+@keyframes ldTickBox{0%,28%{background:transparent;border-color:var(--line);color:transparent;transform:scale(1)}34%{transform:scale(1.25)}40%,92%{background:#2F8F5B;border-color:#2F8F5B;color:#fff;transform:scale(1)}100%{background:transparent;border-color:var(--line);color:transparent}}
+@keyframes ldTickTxt{0%,34%{opacity:1;text-decoration:none}40%,92%{opacity:.5;text-decoration:line-through}100%{opacity:1;text-decoration:none}}
+@keyframes ldTickBy{0%,36%{opacity:0;transform:translateX(8px)}44%,92%{opacity:1;transform:none}100%{opacity:0}}
+#land .ld-plans{display:grid;gap:18px;max-width:820px;margin:0 auto}
+#land .ld-plan{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:28px;display:flex;flex-direction:column;gap:14px;transition:transform .2s ease,box-shadow .2s ease}
+#land .ld-plan:hover{transform:translateY(-4px);box-shadow:0 30px 50px -36px rgba(60,40,30,.7)}
+#land .ld-plan.ld-hot{border:2px solid var(--brand)}
+#land .ld-plan h3{font-size:24px}
+#land .ld-price{font-family:'Fraunces',Georgia,serif;font-size:40px;font-weight:700;line-height:1}
+#land .ld-price small{font-family:'Inter',sans-serif;font-size:15px;font-weight:500;color:var(--mut)}
+#land .ld-plan ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;font-size:16px;flex:1}
+#land .ld-plan li{display:flex;gap:10px}
+#land .ld-plan li::before{content:"✓";color:#2F8F5B;font-weight:700;flex:none}
+#land .ld-faq{max-width:780px;margin:0 auto;display:grid;gap:12px}
+#land details{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:0 22px;transition:box-shadow .2s}
+#land details[open]{box-shadow:0 20px 40px -32px rgba(60,40,30,.7)}
+#land summary{list-style:none;cursor:pointer;padding:18px 0;font-weight:700;font-size:17px;display:flex;justify-content:space-between;gap:16px;align-items:center}
+#land summary::-webkit-details-marker{display:none}
+#land summary::after{content:"+";flex:none;width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:500;transition:transform .25s ease}
+#land details[open] summary::after{transform:rotate(45deg)}
+#land details p{padding:0 0 20px;color:var(--mut)}
+#land .ld-more{text-align:center;margin-top:24px;font-weight:600}
+#land .ld-end{text-align:center;padding:64px 0}
+#land .ld-end .ld-cta{justify-content:center}
+#land .ld-foot{border-top:1px solid var(--line);padding:28px 0 44px;font-size:14px;color:var(--mut);text-align:center;line-height:1.9}
+#land .ld-foot .ld-fnav{display:flex;flex-wrap:wrap;gap:8px 22px;justify-content:center;margin-bottom:10px;font-weight:600}
+/* scroll animations (only when the page script is running) */
+#land.ld-js .ld-rv{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+#land.ld-js .ld-rv.ld-in{opacity:1;transform:none}
+#land.ld-js .ld-feat .ld-phone.ld-rv{transform:translateY(26px) scale(.96)}
+#land.ld-js .ld-feat .ld-phone.ld-rv.ld-in{transform:none}
+@media (min-width:860px){
+  #land .ld-links{display:flex}
+  #land .ld-hero{padding:56px 0 80px}
+  #land .ld-hero .ld-w{grid-template-columns:1.15fr .85fr;gap:56px}
+  #land .ld-feat{grid-template-columns:1fr 1fr;gap:56px;padding:44px 0}
+  #land .ld-feat:nth-of-type(even) .ld-ft{order:2}
+  #land .ld-feat .ld-ft{padding:0 8px 0 40px}
+  #land .ld-three{grid-template-columns:repeat(3,1fr)}
+  #land .ld-house .ld-w{grid-template-columns:1fr 1fr}
+  #land .ld-plans{grid-template-columns:1fr 1fr}
+  #land .ld-dark{margin:0 24px;border-radius:48px}
+  #land .ld-sec{padding:88px 0}
+}
+@media (prefers-reduced-motion:reduce){
+  #land .ld-hero .ld-phone,#land .ld-row.ld-tick u,#land .ld-row.ld-tick span,#land .ld-row.ld-tick small{animation:none}
+  #land.ld-js .ld-rv{opacity:1;transform:none;transition:none}
+  #land .ld-play{display:block}
+  html.pc-land.pc-auth #gate{animation:none}
+}
+#land .ld-row.ld-tick u{background:#2F8F5B;border-color:#2F8F5B}
+#land .ld-row.ld-tick span{opacity:.5;text-decoration:line-through}
+</style>
+<div id="gate">
+  <button type="button" id="gateBack">&larr; Back</button>
+  <div class="gbox">
+    <div class="ghead">
+      <span class="glogo"><i></i><i></i><i></i><img src="icon-192.png" alt=""></span>
+      <h1>PantryChef SG</h1>
+      <p class="gtag">Your smart Singapore kitchen</p>
+      <p id="gateMsg">Opening your kitchen…</p>
+    </div>
+    <div id="gateBusy"><b class="gbar"><u></u></b><p id="gateSlow" class="hidden">This is taking longer than usual.<br><button type="button" id="gateRetry" class="gs">Try again</button></p></div>
+    <form id="gateForm" class="hidden" autocomplete="on">
+      <button type="button" id="gateGoogle" class="gg"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true" style="flex:none"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg><span>Continue with Google</span></button>
+      <div class="gor">or use your email</div>
+      <input id="gateEmail" type="email" autocomplete="email" placeholder="Email">
+      <input id="gatePass" type="password" autocomplete="current-password" placeholder="Password (8+ characters)">
+      <button type="submit" id="gateIn" class="gp">Sign in</button>
+      <button type="button" id="gateUp" class="gs">Create a free account</button>
+      <button type="button" id="gateForgot" class="gl">Forgot my password</button>
+      <p id="gateErr" class="hidden"></p>
+    </form>
+    <p class="gfoot">By continuing you agree to the <a href="privacy.html">Terms and Privacy</a>.<br>&copy; 2026 PantryChef SG. All rights reserved.</p>
+  </div>
+</div>
+<div id="land" role="main">
+  <div class="ld-nav" id="ldNav" role="banner">
+    <div class="ld-w">
+      <a class="ld-logo" href="#land"><img src="icon-192.png" alt="" width="34" height="34">PantryChef SG</a>
+      <div class="ld-links" role="navigation" aria-label="Sections"><a href="#ld-features">What it does</a><a href="#ld-singapore">Made for Singapore</a><a href="#ld-prices">Prices</a><a href="#ld-faq">Questions</a><a href="guides/">Kitchen guides</a></div>
+      <button type="button" class="ld-btn ld-s ld-sm" data-ld-signin>Sign in</button>
+    </div>
+  </div>
+
+  <div class="ld-hero">
+    <div class="ld-w">
+      <div>
+        <span class="ld-eyebrow ld-rv">Free kitchen app for Singapore</span>
+        <h1 class="ld-rv" style="--d:.08s">Know what's in your kitchen. Cook it before it expires.</h1>
+        <p class="ld-lead ld-rv" style="--d:.16s">PantryChef SG is a free kitchen app made for Singapore households. It tracks your pantry, saves your recipes, plans your meals and helps you spend less on groceries.</p>
+        <div class="ld-cta ld-rv" style="--d:.24s">
+          <a class="ld-btn ld-p" href="https://play.google.com/store/apps/details?id=com.pantrychefsg.app" target="_blank" rel="noopener"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 3.5v17a1 1 0 0 0 1.5.87l14.5-8.5a1 1 0 0 0 0-1.74L6.5 2.63A1 1 0 0 0 5 3.5z"/></svg>Get it on Google Play</a>
+          <button type="button" class="ld-btn ld-s" data-ld-signin>Sign in</button>
+        </div>
+        <p class="ld-note ld-rv" style="--d:.3s">Free to use. On iPhone, open pantrychefpro.com in Safari and add it to your Home Screen.</p>
+      </div>
+      <div class="ld-stage ld-rv" style="--d:.2s">
+        <div class="ld-phone"><video muted playsinline loop preload="none" poster="img/demo-home.jpg" data-src="img/demo-home.mp4" width="360" height="730" aria-label="The PantryChef SG home screen and weekly meal planner"></video><button type="button" class="ld-play">Play demo</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ld-sec" id="ld-features">
+    <div class="ld-w">
+      <div class="ld-head ld-rv"><h2>What it does</h2><p class="ld-sub">Five everyday jobs, one calm app. These are real recordings of PantryChef SG.</p></div>
+
+      <div class="ld-feat">
+        <div class="ld-ft ld-rv"><span class="ld-num">1</span><h3>See what to use up first</h3><p>List what is in your fridge and cupboard with expiry dates. PantryChef shows what is expiring soon, and on Android it can send you a daily reminder.</p></div>
+        <div class="ld-stage"><div class="ld-phone ld-rv"><video muted playsinline loop preload="none" poster="img/demo-pantry.jpg" data-src="img/demo-pantry.mp4" width="360" height="730" aria-label="Scrolling the pantry list, sorted by what expires soonest"></video><button type="button" class="ld-play">Play demo</button></div></div>
+      </div>
+
+      <div class="ld-feat">
+        <div class="ld-ft ld-rv"><span class="ld-num">2</span><h3>Save a recipe from any link or video</h3><p>Paste a link from a recipe website, TikTok, Instagram, Facebook or YouTube and PantryChef turns it into a recipe you can cook from. You can also type your own or use a photo. Imported recipes are read by AI, so check them before cooking.</p></div>
+        <div class="ld-stage"><div class="ld-phone ld-rv"><video muted playsinline loop preload="none" poster="img/demo-recipe.jpg" data-src="img/demo-recipe.mp4" width="360" height="730" aria-label="Pasting a video link and opening the recipe it becomes"></video><button type="button" class="ld-play">Play demo</button></div></div>
+      </div>
+
+      <div class="ld-feat">
+        <div class="ld-ft ld-rv"><span class="ld-num">3</span><h3>Plan your week</h3><p>Put your recipes into a weekly meal plan and see calories and nutrition at a glance.</p></div>
+        <div class="ld-stage"><div class="ld-phone ld-rv"><video muted playsinline loop preload="none" poster="img/demo-planner.jpg" data-src="img/demo-planner.mp4" width="360" height="730" aria-label="The meal planner filling in a week of meals"></video><button type="button" class="ld-play">Play demo</button></div></div>
+      </div>
+
+      <div class="ld-feat">
+        <div class="ld-ft ld-rv"><span class="ld-num">4</span><h3>Build your list and compare prices</h3><p>Turn your meal plan into a shopping list and compare estimated prices across Singapore shops. Scan a receipt to add what you bought.</p></div>
+        <div class="ld-stage"><div class="ld-phone ld-rv"><video muted playsinline loop preload="none" poster="img/demo-cart.jpg" data-src="img/demo-cart.mp4" width="360" height="730" aria-label="The shopping cart comparing estimated prices between shops"></video><button type="button" class="ld-play">Play demo</button></div></div>
+      </div>
+
+      <div class="ld-feat">
+        <div class="ld-ft ld-rv"><span class="ld-num">5</span><h3>Cook step by step, hands-free</h3><p>Open any recipe in step-by-step mode. PantryChef shows one step at a time in large text, can read each step aloud, and offers a timer when a step needs one.</p></div>
+        <div class="ld-stage"><div class="ld-phone ld-rv"><video muted playsinline loop preload="none" poster="img/demo-cook.jpg" data-src="img/demo-cook.mp4" width="360" height="730" aria-label="Step-by-step cooking mode moving through the steps of a recipe"></video><button type="button" class="ld-play">Play demo</button></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ld-sec ld-dark" id="ld-singapore">
+    <div class="ld-w">
+      <div class="ld-head ld-rv"><h2>Built around how Singapore shops and cooks</h2><p class="ld-sub">Compare estimated prices at six shops, cook in three languages, and check ingredients with care.</p></div>
+      <ul class="ld-chips ld-rv" aria-label="Shops you can compare"><li>FairPrice</li><li>Sheng Siong</li><li>Cold Storage</li><li>RedMart</li><li>Suzy Ameer</li><li>Toko Warisan</li></ul>
+      <div class="ld-three">
+        <div class="ld-tile ld-rv"><b>Six shops, side by side</b><span>Compare estimated prices at FairPrice, Sheng Siong, Cold Storage, RedMart, Suzy Ameer and Toko Warisan.</span></div>
+        <div class="ld-tile ld-rv" style="--d:.08s"><b>English, Malay and Chinese</b><span>Recipes work in English, Malay and Chinese.</span></div>
+        <div class="ld-tile ld-rv" style="--d:.16s"><b>Halal check</b><span>A Halal check helps you spot ingredients to look at more closely.</span></div>
+      </div>
+      <p class="ld-fine ld-rv">Prices are estimates from our own price list, each shown with the date it was checked. They are not live shelf prices. The Halal check is a guide only, so always check the label and certification yourself. PantryChef SG is not linked to any shop.</p>
+    </div>
+  </div>
+
+  <div class="ld-sec ld-house" id="ld-household">
+    <div class="ld-w">
+      <div class="ld-rv"><h2>One kitchen, the whole family</h2><p class="ld-sub" style="font-size:19px">Up to 10 people can share one pantry, shopping list and recipe collection. When someone buys the eggs, everyone's list updates.</p></div>
+      <div class="ld-list ld-rv" aria-hidden="true">
+        <div class="ld-lt"><span>Shopping list</span><span class="ld-av"><i style="background:#B4532A;margin-left:0">S</i><i style="background:#2F8F5B">D</i><i style="background:#8A6FB0">A</i></span></div>
+        <div class="ld-row ld-tick"><u>✓</u><span>Fresh eggs</span><small>ticked by Dad</small></div>
+        <div class="ld-row"><u></u><span>Kangkong</span></div>
+        <div class="ld-row"><u></u><span>Coconut milk</span></div>
+        <div class="ld-row"><u></u><span>Jasmine rice</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ld-sec" id="ld-prices" style="padding-top:0">
+    <div class="ld-w">
+      <div class="ld-head ld-rv"><h2>Free, with an optional Plus plan</h2><p class="ld-sub">Everything you need is free. Plus raises the monthly limits for the AI features.</p></div>
+      <div class="ld-plans">
+        <div class="ld-plan ld-rv"><h3>Free</h3><div class="ld-price">S$0</div><p style="color:var(--mut);font-size:15px;margin-top:-6px">free to download and use</p><ul><li>Pantry, recipes, planner, shopping list and household sharing</li><li>3 AI video recipe imports each month</li><li>3 receipt and photo scans each month</li></ul><button type="button" class="ld-btn ld-s" data-ld-signin>Start free</button></div>
+        <div class="ld-plan ld-hot ld-rv" style="--d:.08s"><h3>Plus</h3><div class="ld-price">S$3.98 <small>a month</small></div><p style="color:var(--mut);font-size:15px;margin-top:-6px">or S$29.90 a year</p><ul><li>Everything in Free</li><li>40 AI video recipe imports each month</li><li>60 receipt and photo scans each month</li></ul><button type="button" class="ld-btn ld-p" data-ld-signin>Sign in to choose Plus</button></div>
+      </div>
+      <p class="ld-fine ld-rv" style="color:var(--mut)">Plus is bought on this website and renews until you cancel. Cancel any time.</p>
+    </div>
+  </div>
+
+  <div class="ld-sec" id="ld-faq" style="padding-top:0">
+    <div class="ld-w">
+      <div class="ld-head ld-rv"><h2>Questions and answers</h2></div>
+      <div class="ld-faq">
+        <details class="ld-rv"><summary>What is PantryChef SG?</summary><p>PantryChef SG is a kitchen app made for Singapore households. You list what is in your fridge and pantry with expiry dates, and it helps you use things up, plan meals, build a shopping list and compare estimated shop prices.</p></details>
+        <details class="ld-rv"><summary>Is PantryChef SG free?</summary><p>Yes. The app is free to download and use. An optional plan called Plus costs S$3.98 a month or S$29.90 a year and raises the monthly limits for video imports and scans.</p></details>
+        <details class="ld-rv"><summary>Is there an iPhone app?</summary><p>Not yet. iPhone users can open pantrychefpro.com in Safari and add it to the Home Screen. The Android app is on Google Play.</p></details>
+        <details class="ld-rv"><summary>Are the shop prices live?</summary><p>No. They come from the app's own price list and each one shows the date it was checked. They are estimates to help you compare.</p></details>
+        <details class="ld-rv"><summary>Can my family share one pantry?</summary><p>Yes. Up to 10 people can share one pantry, shopping list and recipes.</p></details>
+      </div>
+      <p class="ld-more ld-rv"><a href="faq.html">See all questions and answers</a></p>
+    </div>
+  </div>
+
+  <div class="ld-end">
+    <div class="ld-w ld-rv">
+      <h2>Start with what's already in your fridge</h2>
+      <div class="ld-cta">
+        <a class="ld-btn ld-p" href="https://play.google.com/store/apps/details?id=com.pantrychefsg.app" target="_blank" rel="noopener">Get it on Google Play</a>
+        <button type="button" class="ld-btn ld-s" data-ld-signin>Sign in</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ld-foot" role="contentinfo">
+    <div class="ld-w">
+      <div class="ld-fnav" role="navigation" aria-label="More pages"><a href="guides/">Kitchen guides</a><a href="faq.html">Questions and answers</a><a href="about.html">About</a><a href="privacy.html">Terms and Privacy</a></div>
+      PantryChef SG is run by MAG-AMG Pte Ltd, Singapore. Contact: <a href="mailto:cook@pantrychefpro.com">cook@pantrychefpro.com</a><br>&copy; 2026 PantryChef SG. All rights reserved.
+    </div>
+  </div>
+</div>
+<noscript><style>#land{display:block!important}#gate{display:none!important}</style></noscript>
+<script>
+(function () {
+  var URL_ = 'https://dpsrjqbnelwdqztdslxt.supabase.co', KEY = 'sb_publishable_NiKqNF6hbH1E7ug3tq3RtQ_KeTzkneO';
+  var $ = function (id) { return document.getElementById(id); };
+  window.__pcsgT0 = Date.now(); try { document.addEventListener('pointermove', function (e) { var l = document.querySelector('#gate .glogo'); if (!l) return; var x = (e.clientX / innerWidth - .5) * 10, y = (e.clientY / innerHeight - .5) * 10; l.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)'; }, { passive: true }); } catch (e) {}
+  var CACHE = 'private-app', CKEY = './__app', BODYCLASS = 'bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen pb-24 sm:pb-12 transition-colors duration-200', booted = false;
+  try { var tm = localStorage.getItem('pc_theme') || 'auto', hr = new Date().getHours(); if (tm === 'dark' || (tm === 'auto' && (hr >= 19 || hr < 7))) document.documentElement.classList.add('dark'); } catch (e) {}
+  try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(function () {}); } catch (e) {}
+  function show(which, msg) {
+    $('gateBusy').classList.toggle('hidden', which !== 'busy');
+    $('gateForm').classList.toggle('hidden', which !== 'form');
+    if (msg) $('gateMsg').textContent = msg;
+    clearTimeout(slowT); $('gateSlow').classList.add('hidden');
+    if (which === 'busy') slowT = setTimeout(function () { $('gateSlow').classList.remove('hidden'); if (!navigator.onLine) $('gateMsg').textContent = 'You seem to be offline.'; }, 8000);
+  }
+  var slowT = 0;
+  /* ---- public home page (signed-out visitors in a browser) ---- */
+  var H = document.documentElement;
+  function landOn() { if (window.__pcsgInApp || !$('land')) return; H.classList.add('pc-land'); landInit(); }
+  function landOff() { H.classList.remove('pc-land', 'pc-auth'); var L = $('land'); if (L) L.remove(); try { document.title = 'PantryChef SG'; } catch (e) {} }
+  function authOpen() { if (!H.classList.contains('pc-land')) return; H.classList.add('pc-auth'); try { $('gate').scrollTop = 0; } catch (e) {} }
+  function authClose() { H.classList.remove('pc-auth'); err(''); }
+  var landReady = false;
+  function landInit() {
+    if (landReady) return; landReady = true;
+    var L = $('land'), rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    L.addEventListener('click', function (e) {
+      var t = e.target.closest ? e.target.closest('[data-ld-signin],.ld-play') : null; if (!t) return;
+      if (t.classList.contains('ld-play')) { var v = t.parentNode.querySelector('video'); if (v) { if (!v.src) v.src = v.getAttribute('data-src'); v.play().catch(function () {}); t.style.display = 'none'; } return; }
+      authOpen();
+    });
+    $('gateBack').addEventListener('click', authClose);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && H.classList.contains('pc-auth') && !booted) authClose(); });
+    var nav = $('ldNav'); addEventListener('scroll', function () { nav.classList.toggle('ld-stuck', scrollY > 8); }, { passive: true });
+    if (!('IntersectionObserver' in window)) return;
+    L.classList.add('ld-js');
+    var io = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('ld-in'); io.unobserve(en.target); } }); }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+    [].forEach.call(L.querySelectorAll('.ld-rv'), function (el) { io.observe(el); });
+    if (rm) return;   // people who switch off motion see still pictures with a Play button
+    var vo = new IntersectionObserver(function (es) { es.forEach(function (en) {
+      var v = en.target;
+      if (en.isIntersecting) { if (!v.src) v.src = v.getAttribute('data-src'); var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+      else if (v.src) v.pause();
+    }); }, { threshold: 0.35 });
+    [].forEach.call(L.querySelectorAll('video'), function (v) { vo.observe(v); });
+  }
+  $('gateRetry').addEventListener('click', function () { location.reload(); });
+  function err(t) { var e = $('gateErr'); e.textContent = t || ''; e.classList.toggle('hidden', !t); }
+  if (!window.supabase) { show('busy'); $('gateMsg').textContent = 'Could not load. Please check your internet and reopen the app.'; return; }
+  var sb = supabase.createClient(URL_, KEY);
+  window.__pcsgSb = sb;
+  sb.auth.onAuthStateChange(function (ev, session) {
+    if (ev === 'PASSWORD_RECOVERY') window.__pcsgRecovery = true;
+    if (ev === 'SIGNED_OUT' && booted) { try { caches.delete(CACHE); } catch (e) {} setTimeout(function () { location.reload(); }, 400); }
+    if (ev === 'SIGNED_IN' && !booted && session) boot();
+  });
+  function hasStoredLogin() { try { for (var i = 0; i < localStorage.length; i++) { if (/^sb-.*-auth-token$/.test(localStorage.key(i))) return true; } } catch (e) {} return false; }
+  async function cached() { try { var c = await caches.open(CACHE), r = await c.match(CKEY); return r ? await r.text() : null; } catch (e) { return null; } }
+  async function save(txt) { try { var c = await caches.open(CACHE); await c.put(CKEY, new Response(txt, { headers: { 'content-type': 'text/html' } })); } catch (e) {} }
+  async function fetchLatest() {
+    var r = await sb.storage.from('app-private').createSignedUrl('app.html', 120);
+    if (r.error || !r.data) throw (r.error || new Error('no url'));
+    var ctl = new AbortController(), t = setTimeout(function () { ctl.abort(); }, 15000);
+    try { var res = await fetch(r.data.signedUrl, { cache: 'no-store', signal: ctl.signal }); if (!res.ok) throw new Error('http ' + res.status); return await res.text(); }
+    finally { clearTimeout(t); }
+  }
+  function run(html) {
+    booted = true; window.__pcsgLoaded = true;
+    var g = $('gate'); if (g) { try { var rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; if (rm) g.remove(); else { g.classList.add('gout'); var wait = Math.max(0, 1100 - (Date.now() - (window.__pcsgT0 || Date.now()))); setTimeout(function () { g.classList.add('gbye'); setTimeout(function () { try { g.remove(); } catch (e) {} }, 420); }, wait); } } catch (e) { try { g.remove(); } catch (e2) {} } }
+    document.body.className = BODYCLASS;
+    document.body.appendChild(document.createRange().createContextualFragment(html));
+    document.dispatchEvent(new Event('DOMContentLoaded', { bubbles: true }));
+    window.dispatchEvent(new Event('load'));
+  }
+  async function boot() {
+    if (booted) return; booted = true; landOff(); show('busy', 'Opening your kitchen…');
+    var have = await cached(), fresh = null;
+    if (have) {
+      booted = false; run(have);
+      fetchLatest().then(function (t) { if (t && t !== have && t.length > 1000) { save(t); try { if (window.showToast) showToast('A new version is ready. Close and reopen the app to get it.', '✨'); } catch (e) {} } }).catch(function () {});
+      return;
+    }
+    try { fresh = await fetchLatest(); } catch (e) { booted = false; show('form', 'We could not open the app. Please check your internet, then sign in again.'); err(String(e && e.message || e).slice(0, 120)); return; }
+    await save(fresh); booted = false; run(fresh);
+  }
+  async function start() {
+    show('busy');
+    var s = null;
+    try { var r = await sb.auth.getSession(); s = r.data && r.data.session; } catch (e) {}
+    if (s) { boot(); return; }
+    if (!navigator.onLine && hasStoredLogin() && await cached()) { boot(); return; }
+    landOn(); show('form', 'Sign in to open your kitchen.');
+  }
+  async function pw(mode) {
+    err(''); var email = $('gateEmail').value.trim(), pass = $('gatePass').value;
+    if (!email || !pass) return err('Please type your email and password.');
+    if (mode === 'up' && pass.length < 8) return err('Please choose a password with 8 or more characters.');
+    show('busy', 'One moment…');
+    var r = mode === 'up' ? await sb.auth.signUp({ email: email, password: pass, options: { emailRedirectTo: location.origin + location.pathname } }) : await sb.auth.signInWithPassword({ email: email, password: pass });
+    if (r.error) { show('form'); return err(r.error.message); }
+    if (!r.data.session) { show('form', 'Check your email'); return err('We sent you an email. Tap the link in it, then come back and sign in.'); }
+    boot();
+  }
+  $('gateForm').addEventListener('submit', function (e) { e.preventDefault(); pw('in'); });
+  $('gateUp').addEventListener('click', function () { pw('up'); });
+  $('gateGoogle').addEventListener('click', async function () {
+    err(''); var r = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname, queryParams: { prompt: 'select_account' } } });
+    if (r.error) err('Could not start Google sign-in. Try again.');
+  });
+  $('gateForgot').addEventListener('click', async function () {
+    err(''); var email = $('gateEmail').value.trim(); if (!email) return err('Type your email above first, then tap Forgot my password.');
+    var r = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+    if (r.error) return err('Could not send the email. Please wait a minute and try again.');
+    err('If that email has an account, a reset link is on its way. Check your inbox and spam.');
+  });
+  start();
+})();
+</script>
+
+</body>
+</html>
