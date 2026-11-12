@@ -11,8 +11,10 @@ Key facts
 - Support: cook@pantrychefpro.com
 
 Pages
+- [Home](https://pantrychefpro.com/): what the app does, with short demo clips, prices and common questions
+- [Kitchen guides](https://pantrychefpro.com/guides/): food storage and expiry guides for Singapore kitchens
 - [About](https://pantrychefpro.com/about.html): what the app is and who it is for
 - [FAQ](https://pantrychefpro.com/faq.html): common questions with short answers
 - [Privacy and terms](https://pantrychefpro.com/privacy.html): how data is handled
 
-Last updated: 8 November 2026
+Last updated: 12 November 2026

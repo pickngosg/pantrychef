@@ -2,7 +2,7 @@
    - Opens instantly and works offline (app + styles + libraries are kept on the phone)
    - Always tries the internet first for the app page, so new versions arrive automatically
    - Never stores logins, sync data, payments or AI imports */
-const VERSION = 'pcsg-v16-2026-11-11';
+const VERSION = 'pcsg-v17-2026-11-12';
 const CORE = ['./', './index.html', './manifest.json', './privacy.html', './icon-192.png', './icon-512.png', './icon-180.png', './badge-96.png', './tailwind.css', './supabase.js'];
 const CDN = ['cdn.tailwindcss.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com', 'placehold.co'];
 const NEVER = ['supabase.co', 'stripe.com', 'googleapis.com/v1beta', 'apify.com', 'r.jina.ai'];
@@ -20,6 +20,7 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (NEVER.some((h) => url.href.includes(h))) return;
+  if (/\.(mp4|webm)$/i.test(url.pathname)) return;   // demo clips on the home page: let the browser stream them itself
 
   // The app page itself (also used when a recipe is shared to the app): internet first, saved copy if offline
   if (req.mode === 'navigate') {

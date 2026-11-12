@@ -4,12 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="referrer" content="no-referrer" />
-  <title>PantryChef SG: Pantry, Recipes and Shopping List</title>
+  <title>PantryChef SG: Pantry tracker, recipes and grocery prices for Singapore</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#F8F3ED" />
   <meta name="copyright" content="PantryChef SG. All rights reserved.">
-  <meta name="robots" content="noindex,nofollow">
-  <meta name="description" content="PantryChef SG: track your pantry, cut food waste, plan meals and compare Singapore supermarket prices." />
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large">
+  <link rel="canonical" href="https://pantrychefpro.com/" />
+  <meta name="description" content="PantryChef SG is a free kitchen app for Singapore households. Track what is in your fridge, cook it before it expires, plan meals and compare estimated supermarket prices." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="PantryChef SG" />
+  <meta property="og:url" content="https://pantrychefpro.com/" />
+  <meta property="og:title" content="PantryChef SG: Pantry tracker, recipes and grocery prices for Singapore" />
+  <meta property="og:description" content="PantryChef SG is a free kitchen app for Singapore households. Track what is in your fridge, cook it before it expires, plan meals and compare estimated supermarket prices." />
+  <meta property="og:image" content="https://pantrychefpro.com/img/og-home.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_SG" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://pantrychefpro.com/#org", "name": "MAG-AMG Pte Ltd", "url": "https://pantrychefpro.com/", "email": "cook@pantrychefpro.com", "logo": "https://pantrychefpro.com/icon-512.png", "address": {"@type": "PostalAddress", "addressCountry": "SG"}}, {"@type": "WebSite", "@id": "https://pantrychefpro.com/#site", "url": "https://pantrychefpro.com/", "name": "PantryChef SG", "inLanguage": "en-SG", "publisher": {"@id": "https://pantrychefpro.com/#org"}}, {"@type": "SoftwareApplication", "@id": "https://pantrychefpro.com/#app", "name": "PantryChef SG", "description": "PantryChef SG is a free kitchen app for Singapore households. Track what is in your fridge, cook it before it expires, plan meals and compare estimated supermarket prices.", "url": "https://pantrychefpro.com/", "applicationCategory": "LifestyleApplication", "operatingSystem": "Android, Web", "installUrl": "https://play.google.com/store/apps/details?id=com.pantrychefsg.app", "image": "https://pantrychefpro.com/img/og-home.jpg", "publisher": {"@id": "https://pantrychefpro.com/#org"}, "areaServed": {"@type": "Country", "name": "Singapore"}, "offers": [{"@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "SGD"}, {"@type": "Offer", "name": "Plus (monthly)", "price": "3.98", "priceCurrency": "SGD"}, {"@type": "Offer", "name": "Plus (yearly)", "price": "29.90", "priceCurrency": "SGD"}], "featureList": ["Pantry and expiry tracking", "Recipes from a link or video", "Weekly meal planner", "Shopping list with estimated Singapore shop prices", "Household sharing for up to 10 people", "Step-by-step cooking mode"]}, {"@type": "FAQPage", "@id": "https://pantrychefpro.com/#faq", "mainEntity": [{"@type": "Question", "name": "What is PantryChef SG?", "acceptedAnswer": {"@type": "Answer", "text": "PantryChef SG is a kitchen app made for Singapore households. You list what is in your fridge and pantry with expiry dates, and it helps you use things up, plan meals, build a shopping list and compare estimated shop prices."}}, {"@type": "Question", "name": "Is PantryChef SG free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The app is free to download and use. An optional plan called Plus costs S$3.98 a month or S$29.90 a year and raises the monthly limits for video imports and scans."}}, {"@type": "Question", "name": "Is there an iPhone app?", "acceptedAnswer": {"@type": "Answer", "text": "Not yet. iPhone users can open pantrychefpro.com in Safari and add it to the Home Screen. The Android app is on Google Play."}}, {"@type": "Question", "name": "Are the shop prices live?", "acceptedAnswer": {"@type": "Answer", "text": "No. They come from the app's own price list and each one shows the date it was checked. They are estimates to help you compare."}}, {"@type": "Question", "name": "Can my family share one pantry?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Up to 10 people can share one pantry, shopping list and recipes."}}]}]}</script>
   <link rel="icon" href="icon-192.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -917,6 +929,17 @@
 <base target="_blank">
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen pb-24 sm:pb-12 transition-colors duration-200">
+<script>
+/* Decide at once what a visitor sees first: the public home page (signed out, in a browser) or the app's opening screen. */
+(function () { try {
+  var d = document.documentElement, has = false, i;
+  var inapp = localStorage.getItem('pcsg_inapp') === '1' || /[?&]app=1\b/.test(location.search) || document.referrer.indexOf('android-app://') === 0 || (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  window.__pcsgInApp = inapp;
+  for (i = 0; i < localStorage.length; i++) { if (/^sb-.*-auth-token$/.test(localStorage.key(i))) has = true; }
+  var back = /[?&#](code|access_token|error|error_description|type)=/.test(location.search + location.hash);
+  if (!inapp && !has && !back) d.classList.add('pc-land');
+} catch (e) {} })();
+</script>
 <style>
 body:has(#gate){padding:0 !important;margin:0 !important}
 #gate{--bg:#F8F3ED;--card:#fff;--ink:#2B2420;--mut:#6B5F57;--line:#E4D7CC;--field:#F8F3EF;--brand:#B4532A;--brand2:#9E4722;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;color:var(--ink);background:var(--bg)}
@@ -961,8 +984,136 @@ html.dark #gate .gtag{color:var(--mut)}
 #gate:has(#gateForm.hidden) #gateMsg{font-size:14px;margin-top:22px}
 #gate .gfoot{text-align:center;font-size:13px;color:var(--mut);margin-top:18px;line-height:1.6}
 #gate .gfoot a{color:inherit}
+/* ===== Public home page (shown only to signed-out visitors in a browser) ===== */
+#land{display:none}
+html.pc-land #land{display:block}
+html.pc-land #gate{display:none}
+html.pc-land.pc-auth{overflow:hidden}
+html.pc-land.pc-auth #gate{display:flex;position:fixed;inset:0;z-index:9990;overflow:auto;animation:ldFade .25s ease both}
+#gateBack{display:none}
+html.pc-land.pc-auth #gateBack{display:inline-flex;align-items:center;gap:6px;position:fixed;top:14px;left:14px;width:auto;padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:15px;font-weight:600;z-index:1}
+@keyframes ldFade{from{opacity:0}to{opacity:1}}
+#land{--bg:#F8F3ED;--card:#fff;--ink:#2B2420;--mut:#6B5F57;--line:#E4D7CC;--brand:#B4532A;--brand2:#9E4722;--soft:#F6E7DD;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:17px;line-height:1.6;overflow-x:clip;-webkit-font-smoothing:antialiased}
+#land *{box-sizing:border-box}
+#land h1,#land h2,#land h3{font-family:'Fraunces',Georgia,serif;font-weight:700;line-height:1.12;letter-spacing:-.01em;margin:0;text-wrap:balance}
+#land p{margin:0}
+#land a{color:inherit}
+#land .ld-w{max-width:1120px;margin:0 auto;padding:0 20px}
+#land .ld-nav{position:sticky;top:0;z-index:50;background:rgba(248,243,237,.86);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:border-color .2s,box-shadow .2s}
+#land .ld-nav.ld-stuck{border-color:var(--line);box-shadow:0 6px 20px -16px rgba(60,40,30,.5)}
+#land .ld-nav .ld-w{display:flex;align-items:center;gap:18px;height:64px}
+#land .ld-logo{display:flex;align-items:center;gap:10px;font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:20px;color:var(--brand);text-decoration:none;margin-right:auto}
+#land .ld-logo img{width:34px;height:34px;border-radius:10px}
+#land .ld-links{display:none;gap:26px;font-size:15px;font-weight:500}
+#land .ld-links a{text-decoration:none;color:var(--mut);transition:color .15s}
+#land .ld-links a:hover{color:var(--ink)}
+#land .ld-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 26px;border-radius:999px;border:0;font:inherit;font-size:16px;font-weight:700;text-decoration:none;cursor:pointer;white-space:nowrap;flex:none;width:auto;line-height:1;transition:transform .15s ease,box-shadow .2s ease,background .15s ease;-webkit-tap-highlight-color:transparent}
+#land .ld-btn:active{transform:scale(.97)}
+#land .ld-btn:focus-visible,#land summary:focus-visible,#land a:focus-visible{outline:3px solid rgba(180,83,42,.45);outline-offset:3px}
+#land .ld-p{background:var(--brand);color:#fff;box-shadow:0 10px 24px -12px rgba(180,83,42,.9)}
+#land .ld-p:hover{background:var(--brand2);transform:translateY(-2px)}
+#land .ld-s{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+#land .ld-s:hover{transform:translateY(-2px);box-shadow:0 10px 24px -16px rgba(60,40,30,.6)}
+#land .ld-sm{min-height:42px;padding:0 20px;font-size:15px}
+#land .ld-hero{padding:36px 0 56px}
+#land .ld-hero .ld-w{display:grid;gap:40px;align-items:center}
+#land .ld-eyebrow{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);background:var(--soft);padding:6px 14px;border-radius:999px;margin-bottom:18px}
+#land h1{font-size:clamp(38px,7vw,64px)}
+#land .ld-lead{font-size:clamp(17px,2.2vw,20px);color:var(--mut);margin-top:18px;max-width:34em}
+#land .ld-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+#land .ld-note{font-size:14px;color:var(--mut);margin-top:16px}
+#land .ld-stage{position:relative;display:flex;justify-content:center}
+#land .ld-stage::before{content:"";position:absolute;width:min(420px,90%);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 45%,#F1CDB6 0,#F6E7DD 45%,rgba(248,243,237,0) 70%);top:50%;left:50%;transform:translate(-50%,-50%)}
+#land .ld-phone{position:relative;width:min(270px,70vw);aspect-ratio:360/730;border-radius:38px;padding:9px;background:#2B2420;box-shadow:0 40px 70px -35px rgba(60,40,30,.75),0 0 0 1px rgba(0,0,0,.08);flex:none}
+#land .ld-phone video,#land .ld-phone img{display:block;width:100%;height:100%;object-fit:cover;border-radius:30px;background:#F8F3ED}
+#land .ld-hero .ld-phone{animation:ldFloat 6s ease-in-out infinite}
+@keyframes ldFloat{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-12px) rotate(-.5deg)}}
+#land .ld-play{position:absolute;inset:auto 0 22px 0;margin:auto;width:max-content;padding:10px 18px;border-radius:999px;border:0;background:rgba(43,36,32,.86);color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;display:none}
+#land .ld-sec{padding:64px 0}
+#land .ld-head{text-align:center;max-width:720px;margin:0 auto 44px}
+#land h2{font-size:clamp(30px,4.6vw,44px)}
+#land .ld-sub{color:var(--mut);margin-top:12px}
+#land .ld-feat{display:grid;gap:28px;align-items:center;padding:28px 0;max-width:940px;margin:0 auto}
+#land .ld-feat h3{font-size:clamp(25px,3.4vw,34px)}
+#land .ld-feat p{color:var(--mut);margin-top:12px;max-width:30em}
+#land .ld-num{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:var(--soft);color:var(--brand);font-weight:700;font-size:15px;margin-bottom:14px}
+#land .ld-feat .ld-phone{width:min(250px,66vw)}
+#land .ld-dark{background:#2B2420;color:#F8F3ED;border-radius:36px;margin:0 12px}
+#land .ld-dark .ld-sub,#land .ld-dark .ld-fine{color:#CDBFB3}
+#land .ld-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:0 auto 34px;padding:0;list-style:none;max-width:760px}
+#land .ld-chips li{padding:10px 18px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);font-weight:600;font-size:15px}
+#land .ld-three{display:grid;gap:16px}
+#land .ld-tile{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:24px}
+#land .ld-tile b{display:block;font-family:'Fraunces',Georgia,serif;font-size:21px;font-weight:700;margin-bottom:6px}
+#land .ld-tile span{color:#CDBFB3;font-size:16px}
+#land .ld-fine{font-size:13.5px;line-height:1.55;margin-top:26px;max-width:860px;margin-left:auto;margin-right:auto;text-align:center}
+#land .ld-house .ld-w{display:grid;gap:36px;align-items:center}
+#land .ld-list{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:22px;max-width:380px;width:100%;margin:0 auto;box-shadow:0 30px 60px -40px rgba(60,40,30,.7)}
+#land .ld-list .ld-lt{display:flex;justify-content:space-between;align-items:center;font-weight:700;margin-bottom:8px}
+#land .ld-av{display:flex}
+#land .ld-av i{width:30px;height:30px;border-radius:50%;border:2px solid #fff;margin-left:-8px;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:12px;font-weight:700;color:#fff}
+#land .ld-row{display:flex;align-items:center;gap:12px;padding:12px 4px;border-top:1px solid var(--line);font-size:16px}
+#land .ld-row u{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--line);text-decoration:none;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700}
+#land .ld-row small{margin-left:auto;color:var(--mut);font-size:13px}
+#land .ld-row.ld-tick u{animation:ldTickBox 6s ease infinite}
+#land .ld-row.ld-tick span{animation:ldTickTxt 6s ease infinite}
+#land .ld-row.ld-tick small{animation:ldTickBy 6s ease infinite}
+@keyframes ldTickBox{0%,28%{background:transparent;border-color:var(--line);color:transparent;transform:scale(1)}34%{transform:scale(1.25)}40%,92%{background:#2F8F5B;border-color:#2F8F5B;color:#fff;transform:scale(1)}100%{background:transparent;border-color:var(--line);color:transparent}}
+@keyframes ldTickTxt{0%,34%{opacity:1;text-decoration:none}40%,92%{opacity:.5;text-decoration:line-through}100%{opacity:1;text-decoration:none}}
+@keyframes ldTickBy{0%,36%{opacity:0;transform:translateX(8px)}44%,92%{opacity:1;transform:none}100%{opacity:0}}
+#land .ld-plans{display:grid;gap:18px;max-width:820px;margin:0 auto}
+#land .ld-plan{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:28px;display:flex;flex-direction:column;gap:14px;transition:transform .2s ease,box-shadow .2s ease}
+#land .ld-plan:hover{transform:translateY(-4px);box-shadow:0 30px 50px -36px rgba(60,40,30,.7)}
+#land .ld-plan.ld-hot{border:2px solid var(--brand)}
+#land .ld-plan h3{font-size:24px}
+#land .ld-price{font-family:'Fraunces',Georgia,serif;font-size:40px;font-weight:700;line-height:1}
+#land .ld-price small{font-family:'Inter',sans-serif;font-size:15px;font-weight:500;color:var(--mut)}
+#land .ld-plan ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;font-size:16px;flex:1}
+#land .ld-plan li{display:flex;gap:10px}
+#land .ld-plan li::before{content:"✓";color:#2F8F5B;font-weight:700;flex:none}
+#land .ld-faq{max-width:780px;margin:0 auto;display:grid;gap:12px}
+#land details{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:0 22px;transition:box-shadow .2s}
+#land details[open]{box-shadow:0 20px 40px -32px rgba(60,40,30,.7)}
+#land summary{list-style:none;cursor:pointer;padding:18px 0;font-weight:700;font-size:17px;display:flex;justify-content:space-between;gap:16px;align-items:center}
+#land summary::-webkit-details-marker{display:none}
+#land summary::after{content:"+";flex:none;width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--brand);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:500;transition:transform .25s ease}
+#land details[open] summary::after{transform:rotate(45deg)}
+#land details p{padding:0 0 20px;color:var(--mut)}
+#land .ld-more{text-align:center;margin-top:24px;font-weight:600}
+#land .ld-end{text-align:center;padding:64px 0}
+#land .ld-end .ld-cta{justify-content:center}
+#land .ld-foot{border-top:1px solid var(--line);padding:28px 0 44px;font-size:14px;color:var(--mut);text-align:center;line-height:1.9}
+#land .ld-foot .ld-fnav{display:flex;flex-wrap:wrap;gap:8px 22px;justify-content:center;margin-bottom:10px;font-weight:600}
+/* scroll animations (only when the page script is running) */
+#land.ld-js .ld-rv{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+#land.ld-js .ld-rv.ld-in{opacity:1;transform:none}
+#land.ld-js .ld-feat .ld-phone.ld-rv{transform:translateY(26px) scale(.96)}
+#land.ld-js .ld-feat .ld-phone.ld-rv.ld-in{transform:none}
+@media (min-width:860px){
+  #land .ld-links{display:flex}
+  #land .ld-hero{padding:56px 0 80px}
+  #land .ld-hero .ld-w{grid-template-columns:1.15fr .85fr;gap:56px}
+  #land .ld-feat{grid-template-columns:1fr 1fr;gap:56px;padding:44px 0}
+  #land .ld-feat:nth-of-type(even) .ld-ft{order:2}
+  #land .ld-feat .ld-ft{padding:0 8px 0 40px}
+  #land .ld-three{grid-template-columns:repeat(3,1fr)}
+  #land .ld-house .ld-w{grid-template-columns:1fr 1fr}
+  #land .ld-plans{grid-template-columns:1fr 1fr}
+  #land .ld-dark{margin:0 24px;border-radius:48px}
+  #land .ld-sec{padding:88px 0}
+}
+@media (prefers-reduced-motion:reduce){
+  #land .ld-hero .ld-phone,#land .ld-row.ld-tick u,#land .ld-row.ld-tick span,#land .ld-row.ld-tick small{animation:none}
+  #land.ld-js .ld-rv{opacity:1;transform:none;transition:none}
+  #land .ld-play{display:block}
+  html.pc-land.pc-auth #gate{animation:none}
+}
+#land .ld-row.ld-tick u{background:#2F8F5B;border-color:#2F8F5B}
+#land .ld-row.ld-tick span{opacity:.5;text-decoration:line-through}
+#land [id^="ld-"]{scroll-margin-top:76px}
 </style>
 <div id="gate">
+  <button type="button" id="gateBack">&larr; Back</button>
   <div class="gbox">
     <div class="ghead">
       <span class="glogo"><i></i><i></i><i></i><img src="icon-192.png" alt=""></span>
@@ -984,6 +1135,133 @@ html.dark #gate .gtag{color:var(--mut)}
     <p class="gfoot">By continuing you agree to the <a href="privacy.html">Terms and Privacy</a>.<br>&copy; 2026 PantryChef SG. All rights reserved.</p>
   </div>
 </div>
+<div id="land" role="main">
+  <div class="ld-nav" id="ldNav" role="banner">
+    <div class="ld-w">
+      <a class="ld-logo" href="#land" target="_self"><img src="icon-192.png" alt="" width="34" height="34">PantryChef SG</a>
+      <div class="ld-links" role="navigation" aria-label="Sections"><a href="#ld-features" target="_self">What it does</a><a href="#ld-singapore" target="_self">Made for Singapore</a><a href="#ld-prices" target="_self">Prices</a><a href="#ld-faq" target="_self">Questions</a><a href="guides/" target="_self">Kitchen guides</a></div>
+      <button type="button" class="ld-btn ld-s ld-sm" data-ld-signin>Sign in</button>
+    </div>
+  </div>
+
+  <div class="ld-hero">
+    <div class="ld-w">
+      <div>
+        <span class="ld-eyebrow ld-rv">Free kitchen app for Singapore</span>
+        <h1 class="ld-rv" style="--d:.08s">Know what's in your kitchen. Cook it before it expires.</h1>
+        <p class="ld-lead ld-rv" style="--d:.16s">PantryChef SG is a free kitchen app made for Singapore households. It tracks your pantry, saves your recipes, plans your meals and helps you spend less on groceries.</p>
+        <div class="ld-cta ld-rv" style="--d:.24s">
+          <a class="ld-btn ld-p" href="https://play.google.com/store/apps/details?id=com.pantrychefsg.app" target="_blank" rel="noopener"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 3.5v17a1 1 0 0 0 1.5.87l14.5-8.5a1 1 0 0 0 0-1.74L6.5 2.63A1 1 0 0 0 5 3.5z"/></svg>Get it on Google Play</a>
+          <button type="button" class="ld-btn ld-s" data-ld-signin>Sign in</button>
+        </div>
+        <p class="ld-note ld-rv" style="--d:.3s">Free to use. On iPhone, open pantrychefpro.com in Safari and add it to your Home Screen.</p>
+      </div>
+      <div class="ld-stage ld-rv" style="--d:.2s">
+        <div class="ld-phone"><video muted playsinline loop preload="none" poster="img/demo-home.jpg" data-src="img/demo-home.mp4" width="360" height="730" aria-label="The PantryChef SG home screen and weekly meal planner"></video><button type="button" class="ld-play">Play demo</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ld-sec" id="ld-features">
+    <div class="ld-w">
+      <div class="ld-head ld-rv"><h2>What it does</h2><p class="ld-sub">Five everyday jobs, one calm app. These are real recordings of PantryChef SG.</p></div>
+
+      <div class="ld-feat">
+        <div class="ld-ft ld-rv"><span class="ld-num">1</span><h3>See what to use up first</h3><p>List what is in your fridge and cupboard with expiry dates. PantryChef shows what is expiring soon, and on Android it can send you a daily reminder.</p></div>
+        <div class="ld-stage"><div class="ld-phone ld-rv"><video muted playsinline loop preload="none" poster="img/demo-pantry.jpg" data-src="img/demo-pantry.mp4" width="360" height="730" aria-label="Scrolling the pantry list, sorted by what expires soonest"></video><button type="button" class="ld-play">Play demo</button></div></div>
+      </div>
+
+      <div class="ld-feat">
+        <div class="ld-ft ld-rv"><span class="ld-num">2</span><h3>Save a recipe from any link or video</h3><p>Paste a link from a recipe website, TikTok, Instagram, Facebook or YouTube and PantryChef turns it into a recipe you can cook from. You can also type your own or use a photo. Imported recipes are read by AI, so check them before cooking.</p></div>
+        <div class="ld-stage"><div class="ld-phone ld-rv"><video muted playsinline loop preload="none" poster="img/demo-recipe.jpg" data-src="img/demo-recipe.mp4" width="360" height="730" aria-label="Pasting a video link and opening the recipe it becomes"></video><button type="button" class="ld-play">Play demo</button></div></div>
+      </div>
+
+      <div class="ld-feat">
+        <div class="ld-ft ld-rv"><span class="ld-num">3</span><h3>Plan your week</h3><p>Put your recipes into a weekly meal plan and see calories and nutrition at a glance.</p></div>
+        <div class="ld-stage"><div class="ld-phone ld-rv"><video muted playsinline loop preload="none" poster="img/demo-planner.jpg" data-src="img/demo-planner.mp4" width="360" height="730" aria-label="The meal planner filling in a week of meals"></video><button type="button" class="ld-play">Play demo</button></div></div>
+      </div>
+
+      <div class="ld-feat">
+        <div class="ld-ft ld-rv"><span class="ld-num">4</span><h3>Build your list and compare prices</h3><p>Turn your meal plan into a shopping list and compare estimated prices across Singapore shops. Scan a receipt to add what you bought.</p></div>
+        <div class="ld-stage"><div class="ld-phone ld-rv"><video muted playsinline loop preload="none" poster="img/demo-cart.jpg" data-src="img/demo-cart.mp4" width="360" height="730" aria-label="The shopping cart comparing estimated prices between shops"></video><button type="button" class="ld-play">Play demo</button></div></div>
+      </div>
+
+      <div class="ld-feat">
+        <div class="ld-ft ld-rv"><span class="ld-num">5</span><h3>Cook step by step, hands-free</h3><p>Open any recipe in step-by-step mode. PantryChef shows one step at a time in large text, can read each step aloud, and offers a timer when a step needs one.</p></div>
+        <div class="ld-stage"><div class="ld-phone ld-rv"><video muted playsinline loop preload="none" poster="img/demo-cook.jpg" data-src="img/demo-cook.mp4" width="360" height="730" aria-label="Step-by-step cooking mode moving through the steps of a recipe"></video><button type="button" class="ld-play">Play demo</button></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ld-sec ld-dark" id="ld-singapore">
+    <div class="ld-w">
+      <div class="ld-head ld-rv"><h2>Built around how Singapore shops and cooks</h2><p class="ld-sub">Compare estimated prices at six shops, cook in three languages, and check ingredients with care.</p></div>
+      <ul class="ld-chips ld-rv" aria-label="Shops you can compare"><li>FairPrice</li><li>Sheng Siong</li><li>Cold Storage</li><li>RedMart</li><li>Suzy Ameer</li><li>Toko Warisan</li></ul>
+      <div class="ld-three">
+        <div class="ld-tile ld-rv"><b>Six shops, side by side</b><span>Compare estimated prices at FairPrice, Sheng Siong, Cold Storage, RedMart, Suzy Ameer and Toko Warisan.</span></div>
+        <div class="ld-tile ld-rv" style="--d:.08s"><b>English, Malay and Chinese</b><span>Recipes work in English, Malay and Chinese.</span></div>
+        <div class="ld-tile ld-rv" style="--d:.16s"><b>Halal check</b><span>A Halal check helps you spot ingredients to look at more closely.</span></div>
+      </div>
+      <p class="ld-fine ld-rv">Prices are estimates from our own price list, each shown with the date it was checked. They are not live shelf prices. The Halal check is a guide only, so always check the label and certification yourself. PantryChef SG is not linked to any shop.</p>
+    </div>
+  </div>
+
+  <div class="ld-sec ld-house" id="ld-household">
+    <div class="ld-w">
+      <div class="ld-rv"><h2>One kitchen, the whole family</h2><p class="ld-sub" style="font-size:19px">Up to 10 people can share one pantry, shopping list and recipe collection. When someone buys the eggs, everyone's list updates.</p></div>
+      <div class="ld-list ld-rv" aria-hidden="true">
+        <div class="ld-lt"><span>Shopping list</span><span class="ld-av"><i style="background:#B4532A;margin-left:0">S</i><i style="background:#2F8F5B">D</i><i style="background:#8A6FB0">A</i></span></div>
+        <div class="ld-row ld-tick"><u>✓</u><span>Fresh eggs</span><small>ticked by Dad</small></div>
+        <div class="ld-row"><u></u><span>Kangkong</span></div>
+        <div class="ld-row"><u></u><span>Coconut milk</span></div>
+        <div class="ld-row"><u></u><span>Jasmine rice</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ld-sec" id="ld-prices" style="padding-top:0">
+    <div class="ld-w">
+      <div class="ld-head ld-rv"><h2>Free, with an optional Plus plan</h2><p class="ld-sub">Everything you need is free. Plus raises the monthly limits for the AI features.</p></div>
+      <div class="ld-plans">
+        <div class="ld-plan ld-rv"><h3>Free</h3><div class="ld-price">S$0</div><p style="color:var(--mut);font-size:15px;margin-top:-6px">free to download and use</p><ul><li>Pantry, recipes, planner, shopping list and household sharing</li><li>3 AI video recipe imports each month</li><li>3 receipt and photo scans each month</li></ul><button type="button" class="ld-btn ld-s" data-ld-signin>Start free</button></div>
+        <div class="ld-plan ld-hot ld-rv" style="--d:.08s"><h3>Plus</h3><div class="ld-price">S$3.98 <small>a month</small></div><p style="color:var(--mut);font-size:15px;margin-top:-6px">or S$29.90 a year</p><ul><li>Everything in Free</li><li>40 AI video recipe imports each month</li><li>60 receipt and photo scans each month</li></ul><button type="button" class="ld-btn ld-p" data-ld-signin>Sign in to choose Plus</button></div>
+      </div>
+      <p class="ld-fine ld-rv" style="color:var(--mut)">Plus is bought on this website and renews until you cancel. Cancel any time.</p>
+    </div>
+  </div>
+
+  <div class="ld-sec" id="ld-faq" style="padding-top:0">
+    <div class="ld-w">
+      <div class="ld-head ld-rv"><h2>Questions and answers</h2></div>
+      <div class="ld-faq">
+        <details class="ld-rv"><summary>What is PantryChef SG?</summary><p>PantryChef SG is a kitchen app made for Singapore households. You list what is in your fridge and pantry with expiry dates, and it helps you use things up, plan meals, build a shopping list and compare estimated shop prices.</p></details>
+        <details class="ld-rv"><summary>Is PantryChef SG free?</summary><p>Yes. The app is free to download and use. An optional plan called Plus costs S$3.98 a month or S$29.90 a year and raises the monthly limits for video imports and scans.</p></details>
+        <details class="ld-rv"><summary>Is there an iPhone app?</summary><p>Not yet. iPhone users can open pantrychefpro.com in Safari and add it to the Home Screen. The Android app is on Google Play.</p></details>
+        <details class="ld-rv"><summary>Are the shop prices live?</summary><p>No. They come from the app's own price list and each one shows the date it was checked. They are estimates to help you compare.</p></details>
+        <details class="ld-rv"><summary>Can my family share one pantry?</summary><p>Yes. Up to 10 people can share one pantry, shopping list and recipes.</p></details>
+      </div>
+      <p class="ld-more ld-rv"><a href="faq.html" target="_self">See all questions and answers</a></p>
+    </div>
+  </div>
+
+  <div class="ld-end">
+    <div class="ld-w ld-rv">
+      <h2>Start with what's already in your fridge</h2>
+      <div class="ld-cta">
+        <a class="ld-btn ld-p" href="https://play.google.com/store/apps/details?id=com.pantrychefsg.app" target="_blank" rel="noopener">Get it on Google Play</a>
+        <button type="button" class="ld-btn ld-s" data-ld-signin>Sign in</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ld-foot" role="contentinfo">
+    <div class="ld-w">
+      <div class="ld-fnav" role="navigation" aria-label="More pages"><a href="guides/" target="_self">Kitchen guides</a><a href="faq.html" target="_self">Questions and answers</a><a href="about.html" target="_self">About</a><a href="privacy.html" target="_self">Terms and Privacy</a></div>
+      PantryChef SG is run by MAG-AMG Pte Ltd, Singapore. Contact: <a href="mailto:cook@pantrychefpro.com">cook@pantrychefpro.com</a><br>&copy; 2026 PantryChef SG. All rights reserved.
+    </div>
+  </div>
+</div>
+<noscript><style>#land{display:block!important}#gate{display:none!important}</style></noscript>
 <script>
 (function () {
   var URL_ = 'https://dpsrjqbnelwdqztdslxt.supabase.co', KEY = 'sb_publishable_NiKqNF6hbH1E7ug3tq3RtQ_KeTzkneO';
@@ -1000,6 +1278,36 @@ html.dark #gate .gtag{color:var(--mut)}
     if (which === 'busy') slowT = setTimeout(function () { $('gateSlow').classList.remove('hidden'); if (!navigator.onLine) $('gateMsg').textContent = 'You seem to be offline.'; }, 8000);
   }
   var slowT = 0;
+  /* ---- public home page (signed-out visitors in a browser) ---- */
+  var H = document.documentElement;
+  function landOn() { if (window.__pcsgInApp || !$('land')) return; H.classList.add('pc-land'); landInit(); }
+  function landOff() { H.classList.remove('pc-land', 'pc-auth'); var L = $('land'); if (L) L.remove(); try { document.title = 'PantryChef SG'; } catch (e) {} }
+  function authOpen() { if (!H.classList.contains('pc-land')) return; H.classList.add('pc-auth'); try { $('gate').scrollTop = 0; } catch (e) {} }
+  function authClose() { H.classList.remove('pc-auth'); err(''); }
+  var landReady = false;
+  function landInit() {
+    if (landReady) return; landReady = true;
+    var L = $('land'), rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    L.addEventListener('click', function (e) {
+      var t = e.target.closest ? e.target.closest('[data-ld-signin],.ld-play') : null; if (!t) return;
+      if (t.classList.contains('ld-play')) { var v = t.parentNode.querySelector('video'); if (v) { if (!v.src) v.src = v.getAttribute('data-src'); v.play().catch(function () {}); t.style.display = 'none'; } return; }
+      authOpen();
+    });
+    $('gateBack').addEventListener('click', authClose);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && H.classList.contains('pc-auth') && !booted) authClose(); });
+    var nav = $('ldNav'); addEventListener('scroll', function () { nav.classList.toggle('ld-stuck', scrollY > 8); }, { passive: true });
+    if (!('IntersectionObserver' in window)) return;
+    L.classList.add('ld-js');
+    var io = new IntersectionObserver(function (es) { es.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('ld-in'); io.unobserve(en.target); } }); }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+    [].forEach.call(L.querySelectorAll('.ld-rv'), function (el) { io.observe(el); });
+    if (rm) return;   // people who switch off motion see still pictures with a Play button
+    var vo = new IntersectionObserver(function (es) { es.forEach(function (en) {
+      var v = en.target;
+      if (en.isIntersecting) { if (!v.src) v.src = v.getAttribute('data-src'); var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+      else if (v.src) v.pause();
+    }); }, { threshold: 0.35 });
+    [].forEach.call(L.querySelectorAll('video'), function (v) { vo.observe(v); });
+  }
   $('gateRetry').addEventListener('click', function () { location.reload(); });
   function err(t) { var e = $('gateErr'); e.textContent = t || ''; e.classList.toggle('hidden', !t); }
   if (!window.supabase) { show('busy'); $('gateMsg').textContent = 'Could not load. Please check your internet and reopen the app.'; return; }
@@ -1029,7 +1337,7 @@ html.dark #gate .gtag{color:var(--mut)}
     window.dispatchEvent(new Event('load'));
   }
   async function boot() {
-    if (booted) return; booted = true; show('busy', 'Opening your kitchen…');
+    if (booted) return; booted = true; landOff(); show('busy', 'Opening your kitchen…');
     var have = await cached(), fresh = null;
     if (have) {
       booted = false; run(have);
@@ -1045,7 +1353,7 @@ html.dark #gate .gtag{color:var(--mut)}
     try { var r = await sb.auth.getSession(); s = r.data && r.data.session; } catch (e) {}
     if (s) { boot(); return; }
     if (!navigator.onLine && hasStoredLogin() && await cached()) { boot(); return; }
-    show('form', 'Sign in to open your kitchen.');
+    landOn(); show('form', 'Sign in to open your kitchen.');
   }
   async function pw(mode) {
     err(''); var email = $('gateEmail').value.trim(), pass = $('gatePass').value;
