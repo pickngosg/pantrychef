@@ -1111,6 +1111,36 @@ html.pc-land.pc-auth #gateBack{display:inline-flex;align-items:center;gap:6px;po
 #land .ld-row.ld-tick u{background:#2F8F5B;border-color:#2F8F5B}
 #land .ld-row.ld-tick span{opacity:.5;text-decoration:line-through}
 #land [id^="ld-"]{scroll-margin-top:76px}
+#land .ld-only-ios{display:none}
+#land.ld-ios .ld-only-ios{display:inline-flex}
+#land.ld-ios .ld-not-ios{display:none}
+#land [hidden]{display:none!important}
+#land .ld-sheet{position:fixed;inset:0;z-index:9980;background:rgba(43,36,32,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;padding:12px;animation:ldFade .2s ease both}
+#land .ld-card{position:relative;width:100%;max-width:440px;max-height:calc(100vh - 24px);overflow:auto;background:var(--card);border-radius:30px;padding:26px 22px 22px;text-align:center;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);animation:ldUp .35s cubic-bezier(.2,.8,.2,1) both}
+@keyframes ldUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+#land .ld-card>img{border-radius:16px;box-shadow:0 8px 20px -8px rgba(60,40,30,.5)}
+#land .ld-card h3{font-size:25px;margin-top:14px}
+#land .ld-cs{color:var(--mut);font-size:16px;margin-top:8px}
+#land .ld-x{position:absolute;top:12px;right:12px;width:40px;height:40px;border-radius:50%;border:0;background:var(--soft);color:var(--ink);font-size:24px;line-height:1;cursor:pointer;padding:0}
+#land .ld-warn{background:#FFF4D6;border:1px solid #F0D48A;color:#5C4500;border-radius:16px;padding:12px 14px;font-size:15px;margin-top:14px;line-height:1.5}
+#land .ld-warn .ld-btn{margin-top:10px}
+#land .ld-steps{list-style:none;margin:18px 0;padding:0;text-align:left;display:grid;gap:10px}
+#land .ld-steps li{display:flex;gap:14px;align-items:center;background:var(--bg);border-radius:18px;padding:14px}
+#land .ld-steps b{display:block;font-size:17px}
+#land .ld-steps small{display:block;color:var(--mut);font-size:14px;line-height:1.4;margin-top:2px}
+#land .ld-ic{flex:none;width:52px;height:52px;border-radius:14px;background:#fff;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:#1E7BEA}
+#land .ld-ic svg{width:26px;height:26px}
+#land .ld-ic img{border-radius:8px}
+#land .ld-pulse{animation:ldPulse 1.6s ease-in-out infinite}
+@keyframes ldPulse{0%,100%{box-shadow:0 0 0 0 rgba(30,123,234,.45)}60%{box-shadow:0 0 0 12px rgba(30,123,234,0)}}
+#land .ld-card>.ld-btn{width:100%}
+@media (min-width:640px){#land .ld-sheet{align-items:center}}
+@media (prefers-reduced-motion:reduce){#land .ld-pulse,#land .ld-card,#land .ld-sheet{animation:none}}
+#land.ld-and .ld-hero [data-ld-ios]{display:none}
+#land .ld-card>img{display:block;margin:0 auto}
+#land .ld-steps{counter-reset:ldstep}
+#land .ld-steps li{position:relative}
+#land .ld-steps li::before{counter-increment:ldstep;content:counter(ldstep);position:absolute;left:-6px;top:-6px;width:24px;height:24px;border-radius:50%;background:var(--brand);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
 </style>
 <div id="gate">
   <button type="button" id="gateBack">&larr; Back</button>
@@ -1151,10 +1181,13 @@ html.pc-land.pc-auth #gateBack{display:inline-flex;align-items:center;gap:6px;po
         <h1 class="ld-rv" style="--d:.08s">Know what's in your kitchen. Cook it before it expires.</h1>
         <p class="ld-lead ld-rv" style="--d:.16s">PantryChef SG is a free kitchen app made for Singapore households. It tracks your pantry, saves your recipes, plans your meals and helps you spend less on groceries.</p>
         <div class="ld-cta ld-rv" style="--d:.24s">
-          <a class="ld-btn ld-p" href="https://play.google.com/store/apps/details?id=com.pantrychefsg.app" target="_blank" rel="noopener"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 3.5v17a1 1 0 0 0 1.5.87l14.5-8.5a1 1 0 0 0 0-1.74L6.5 2.63A1 1 0 0 0 5 3.5z"/></svg>Get it on Google Play</a>
+          <button type="button" class="ld-btn ld-p ld-only-ios" data-ld-ios><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M12 8v6M9 11h6"/></svg>Add to your iPhone</button>
+          <a class="ld-btn ld-p ld-not-ios" href="https://play.google.com/store/apps/details?id=com.pantrychefsg.app" target="_blank" rel="noopener"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 3.5v17a1 1 0 0 0 1.5.87l14.5-8.5a1 1 0 0 0 0-1.74L6.5 2.63A1 1 0 0 0 5 3.5z"/></svg>Get it on Google Play</a>
           <button type="button" class="ld-btn ld-s" data-ld-signin>Sign in</button>
+          <button type="button" class="ld-btn ld-s ld-not-ios" data-ld-ios><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M12 8v6M9 11h6"/></svg>Using an iPhone?</button>
+          <button type="button" class="ld-btn ld-s" id="ldInstall" hidden>Install on this computer</button>
         </div>
-        <p class="ld-note ld-rv" style="--d:.3s">Free to use. On iPhone, open pantrychefpro.com in Safari and add it to your Home Screen.</p>
+        <p class="ld-note ld-rv" style="--d:.3s">Free to use. No App Store needed on iPhone.</p>
       </div>
       <div class="ld-stage ld-rv" style="--d:.2s">
         <div class="ld-phone"><video muted playsinline loop preload="none" poster="img/demo-home.jpg" data-src="img/demo-home.mp4" width="360" height="730" aria-label="The PantryChef SG home screen and weekly meal planner"></video><button type="button" class="ld-play">Play demo</button></div>
@@ -1236,7 +1269,7 @@ html.pc-land.pc-auth #gateBack{display:inline-flex;align-items:center;gap:6px;po
       <div class="ld-faq">
         <details class="ld-rv"><summary>What is PantryChef SG?</summary><p>PantryChef SG is a kitchen app made for Singapore households. You list what is in your fridge and pantry with expiry dates, and it helps you use things up, plan meals, build a shopping list and compare estimated shop prices.</p></details>
         <details class="ld-rv"><summary>Is PantryChef SG free?</summary><p>Yes. The app is free to download and use. An optional plan called Plus costs S$3.98 a month or S$29.90 a year and raises the monthly limits for video imports and scans.</p></details>
-        <details class="ld-rv"><summary>Is there an iPhone app?</summary><p>Not yet. iPhone users can open pantrychefpro.com in Safari and add it to the Home Screen. The Android app is on Google Play.</p></details>
+        <details class="ld-rv"><summary>Is there an iPhone app?</summary><p>Not yet. iPhone users can open pantrychefpro.com in Safari and add it to the Home Screen. The Android app is on Google Play.</p><p><button type="button" class="ld-btn ld-s ld-sm" data-ld-ios>Show me how on iPhone</button></p></details>
         <details class="ld-rv"><summary>Are the shop prices live?</summary><p>No. They come from the app's own price list and each one shows the date it was checked. They are estimates to help you compare.</p></details>
         <details class="ld-rv"><summary>Can my family share one pantry?</summary><p>Yes. Up to 10 people can share one pantry, shopping list and recipes.</p></details>
       </div>
@@ -1248,7 +1281,8 @@ html.pc-land.pc-auth #gateBack{display:inline-flex;align-items:center;gap:6px;po
     <div class="ld-w ld-rv">
       <h2>Start with what's already in your fridge</h2>
       <div class="ld-cta">
-        <a class="ld-btn ld-p" href="https://play.google.com/store/apps/details?id=com.pantrychefsg.app" target="_blank" rel="noopener">Get it on Google Play</a>
+        <button type="button" class="ld-btn ld-p ld-only-ios" data-ld-ios>Add to your iPhone</button>
+        <a class="ld-btn ld-p ld-not-ios" href="https://play.google.com/store/apps/details?id=com.pantrychefsg.app" target="_blank" rel="noopener">Get it on Google Play</a>
         <button type="button" class="ld-btn ld-s" data-ld-signin>Sign in</button>
       </div>
     </div>
@@ -1258,6 +1292,22 @@ html.pc-land.pc-auth #gateBack{display:inline-flex;align-items:center;gap:6px;po
     <div class="ld-w">
       <div class="ld-fnav" role="navigation" aria-label="More pages"><a href="guides/" target="_self">Kitchen guides</a><a href="faq.html" target="_self">Questions and answers</a><a href="about.html" target="_self">About</a><a href="privacy.html" target="_self">Terms and Privacy</a></div>
       PantryChef SG is run by MAG-AMG Pte Ltd, Singapore. Contact: <a href="mailto:cook@pantrychefpro.com">cook@pantrychefpro.com</a><br>&copy; 2026 PantryChef SG. All rights reserved.
+    </div>
+  </div>
+  <div class="ld-sheet" id="ldIosSheet" role="dialog" aria-modal="true" aria-labelledby="ldIosT" hidden>
+    <div class="ld-card">
+      <button type="button" class="ld-x" data-ld-close aria-label="Close">&times;</button>
+      <img src="icon-192.png" alt="" width="56" height="56">
+      <h3 id="ldIosT">Add PantryChef to your iPhone</h3>
+      <p class="ld-cs">It takes about 10 seconds and then opens like any other app. No App Store needed.</p>
+      <p class="ld-warn" id="ldIosWarn" hidden>You are not in Safari right now. Tap <b>Copy link</b>, open <b>Safari</b>, paste the link, then follow the steps.<br><button type="button" class="ld-btn ld-p ld-sm" id="ldCopy">Copy link</button></p>
+      <p class="ld-warn" id="ldIosDesk" hidden>First open <b>pantrychefpro.com</b> in <b>Safari</b> on your iPhone, then follow these steps there.</p>
+      <ol class="ld-steps">
+        <li><span class="ld-ic ld-pulse"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3M8 7l4-4 4 4"/><path d="M6 11H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1"/></svg></span><div><b>Tap the Share button</b><small>It is the square with an arrow pointing up, in Safari's bar. If you cannot see it, tap the three dots first.</small></div></li>
+        <li><span class="ld-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg></span><div><b>Tap "Add to Home Screen"</b><small>Scroll down the list to find it.</small></div></li>
+        <li><span class="ld-ic"><img src="icon-192.png" alt="" width="30" height="30"></span><div><b>Tap "Add"</b><small>PantryChef now sits on your Home Screen. Open it from there and sign in.</small></div></li>
+      </ol>
+      <button type="button" class="ld-btn ld-s" data-ld-close>Got it</button>
     </div>
   </div>
 </div>
@@ -1281,20 +1331,35 @@ html.pc-land.pc-auth #gateBack{display:inline-flex;align-items:center;gap:6px;po
   /* ---- public home page (signed-out visitors in a browser) ---- */
   var H = document.documentElement;
   function landOn() { if (window.__pcsgInApp || !$('land')) return; H.classList.add('pc-land'); landInit(); }
-  function landOff() { H.classList.remove('pc-land', 'pc-auth'); var L = $('land'); if (L) L.remove(); try { document.title = 'PantryChef SG'; } catch (e) {} }
+  function landOff() { H.classList.remove('pc-land', 'pc-auth'); H.style.overflow = ''; var L = $('land'); if (L) L.remove(); try { document.title = 'PantryChef SG'; } catch (e) {} }
   function authOpen() { if (!H.classList.contains('pc-land')) return; H.classList.add('pc-auth'); try { $('gate').scrollTop = 0; } catch (e) {} }
   function authClose() { H.classList.remove('pc-auth'); err(''); }
   var landReady = false;
   function landInit() {
     if (landReady) return; landReady = true;
     var L = $('land'), rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // iPhone and iPad: Apple gives no button that installs for you, so we show a clear 3-step guide instead
+    var ua = navigator.userAgent || '', ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    var notSafari = /CriOS|FxiOS|EdgiOS|OPiOS|OPT\/|FBAN|FBAV|Instagram|Line\/|TikTok|musical_ly|GSA\/|DuckDuckGo|Snapchat|WhatsApp/i.test(ua);
+    var sheet = $('ldIosSheet'), lastFocus = null, installEv = null;
+    if (ios) L.classList.add('ld-ios');
+    if (/Android/i.test(ua)) L.classList.add('ld-and');
+    function iosOpen() { lastFocus = document.activeElement; $('ldIosWarn').hidden = !(ios && notSafari); $('ldIosDesk').hidden = ios; sheet.hidden = false; H.style.overflow = 'hidden'; try { sheet.querySelector('.ld-x').focus(); } catch (e) {} }
+    function iosClose() { sheet.hidden = true; H.style.overflow = ''; try { if (lastFocus) lastFocus.focus(); } catch (e) {} }
+    // Laptops with Chrome or Edge can install in one click; the browser tells us when that is possible
+    addEventListener('beforeinstallprompt', function (e) { if (/Android|iPhone|iPad|Mobile/i.test(ua)) return; e.preventDefault(); installEv = e; var b = $('ldInstall'); if (b) b.hidden = false; });
     L.addEventListener('click', function (e) {
-      var t = e.target.closest ? e.target.closest('[data-ld-signin],.ld-play') : null; if (!t) return;
+      var t = e.target.closest ? e.target.closest('[data-ld-signin],.ld-play,[data-ld-ios],[data-ld-close],#ldCopy,#ldInstall') : null;
+      if (!t) { if (e.target === sheet) iosClose(); return; }
+      if (t.hasAttribute('data-ld-ios')) { iosOpen(); return; }
+      if (t.hasAttribute('data-ld-close')) { iosClose(); return; }
+      if (t.id === 'ldCopy') { var done = function () { t.textContent = 'Link copied. Now open Safari'; }; try { navigator.clipboard.writeText('https://pantrychefpro.com/').then(done, function () { t.textContent = 'pantrychefpro.com'; }); } catch (x) { t.textContent = 'pantrychefpro.com'; } return; }
+      if (t.id === 'ldInstall') { if (installEv) { installEv.prompt(); installEv = null; t.hidden = true; } return; }
       if (t.classList.contains('ld-play')) { var v = t.parentNode.querySelector('video'); if (v) { if (!v.src) v.src = v.getAttribute('data-src'); v.play().catch(function () {}); t.style.display = 'none'; } return; }
       authOpen();
     });
     $('gateBack').addEventListener('click', authClose);
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && H.classList.contains('pc-auth') && !booted) authClose(); });
+    document.addEventListener('keydown', function (e) { if (e.key !== 'Escape') return; if (!sheet.hidden) { iosClose(); return; } if (H.classList.contains('pc-auth') && !booted) authClose(); });
     var nav = $('ldNav'); addEventListener('scroll', function () { nav.classList.toggle('ld-stuck', scrollY > 8); }, { passive: true });
     if (!('IntersectionObserver' in window)) return;
     L.classList.add('ld-js');
