@@ -7,7 +7,7 @@ Key facts
 - Android app: https://play.google.com/store/apps/details?id=com.pantrychefsg.app
 - iPhone: no App Store app; use the web version
 - Prices shown are estimates from the app's own shop price list, not live shelf prices
-- Free to download; optional Plus plan at S$3.98 a month or S$29.90 a year
+- Free to download, with 3 free tries of each Plus helper; optional Plus plan at S$3.98 a month or S$29.90 a year (unlimited saved recipes, Auto-plan week, send to cart and cheapest shop guide; 40 video imports and 60 scans a month)
 - Support: cook@pantrychefpro.com
 
 Pages
@@ -17,4 +17,4 @@ Pages
 - [FAQ](https://pantrychefpro.com/faq.html): common questions with short answers
 - [Privacy and terms](https://pantrychefpro.com/privacy.html): how data is handled
 
-Last updated: 12 November 2026
+Last updated: 13 November 2026
